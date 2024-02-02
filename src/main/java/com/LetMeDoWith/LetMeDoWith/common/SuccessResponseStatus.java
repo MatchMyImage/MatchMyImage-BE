@@ -1,25 +1,25 @@
 package com.LetMeDoWith.LetMeDoWith.common;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
-public enum ApiResponseSuccessStatus {
+@Getter
+public enum SuccessResponseStatus {
     OK("OK", "OK", HttpStatus.OK, "성공적으로 조회하였습니다."),
     OBJECT_NOT_FOUND("OBJECT_NOT_FOUND", "OBJECT_NOT_FOUND", HttpStatus.OK, "조회 결과가 존재하지 않습니다.");
 
 
-    private String statusName;
-    private String code;
-    private HttpStatus httpStatus;
-    private String message;
+    private final String statusName;
+    private final String statusCode;
+    private final HttpStatus httpStatusCode;
+    private final String message;
 
     @Override
     public String toString() {
         return message;
     }
 
-    public String getCode() {
-        return code;
-    }
 }
