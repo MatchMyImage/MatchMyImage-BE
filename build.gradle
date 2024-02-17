@@ -33,6 +33,7 @@ dependencies {
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux:3.2.2'
+
 }
 
 tasks.named('test') {
