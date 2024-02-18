@@ -29,6 +29,8 @@ public class WebClientTest {
 			.bodyToMono(TestResponseDto.class)
 			.block();
 
+		System.out.println("요청 완료 후 결과값 반환 Point");
+
 		Assertions.assertThat(responseBody.userId).isEqualTo(1);
 		Assertions.assertThat(responseBody.id).isEqualTo(1);
 
@@ -50,6 +52,8 @@ public class WebClientTest {
 				Assertions.assertThat(body.userId).isEqualTo(1);
 				Assertions.assertThat(body.id).isEqualTo(1);
 			});
+
+		System.out.println("요청 완료 후 결과값 반환 Point");
 
 		Thread.sleep(3000);
 

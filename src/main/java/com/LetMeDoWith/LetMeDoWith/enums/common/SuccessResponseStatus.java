@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common;
+package com.LetMeDoWith.LetMeDoWith.enums.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

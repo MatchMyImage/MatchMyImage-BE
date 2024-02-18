@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.util;
 
-import com.LetMeDoWith.LetMeDoWith.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.common.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.dto.ResponseDto;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpHeaders;
