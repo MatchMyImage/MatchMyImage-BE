@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class GoogleAuthClient {
+public class GoogleAuthClient implements AuthClient {
 
 	private final WebClient webClient;
 }

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoAuthClient {
+public class KakaoAuthClient implements AuthClient {
 
 	private final WebClient webClient;
 }
