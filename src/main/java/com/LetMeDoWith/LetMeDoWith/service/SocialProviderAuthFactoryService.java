@@ -9,14 +9,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthFactoryService {
+public class SocialProviderAuthFactoryService {
 
 	private final ApplicationContext applicationContext;
 
-	public AuthClient testMethod(SocialProvider socialProvider, String email) {
+	private AuthClient getClient(SocialProvider socialProvider) {
 
-		AuthClient authClient = (AuthClient) applicationContext.getBean(socialProvider.getCode().toLowerCase() + "AuthClient");
+		return (AuthClient) applicationContext.getBean(socialProvider.getCode().toLowerCase() + "AuthClient");
 
-		return authClient;
 	}
 }
