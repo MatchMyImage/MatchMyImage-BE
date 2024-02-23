@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
+import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
+import com.LetMeDoWith.LetMeDoWith.client.KakaoAuthClient;
+import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.service.AuthFactoryService;
 import com.LetMeDoWith.LetMeDoWith.service.AuthService;
 
 @SpringBootTest
@@ -18,6 +22,9 @@ public class BeanTest {
 
 	@Autowired
 	private BeanFactory beanFactory;
+
+	@Autowired
+	private AuthFactoryService authFactoryService;
 
 	@Test
 	@DisplayName("application context bean Test")
@@ -43,6 +50,17 @@ public class BeanTest {
 		// then
 		Assertions.assertThat(authService1).isInstanceOf(AuthService.class);
 		Assertions.assertThat(authService2).isInstanceOf(AuthService.class);
+	}
+
+	@Test
+	@DisplayName("AuthFactoryService Social Provider Test")
+	void authFactoryServiceTest() {
+
+		// when
+		KakaoAuthClient authClient = (KakaoAuthClient) authFactoryService.testMethod(SocialProvider.KAKAO, "test");
+
+		// then
+		Assertions.assertThat(authClient).isInstanceOf(KakaoAuthClient.class);
 	}
 
 }
