@@ -1,7 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.dto;
 
-import com.LetMeDoWith.LetMeDoWith.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.SuccessResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
