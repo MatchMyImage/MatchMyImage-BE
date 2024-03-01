@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.repository.user;
 
+import com.LetMeDoWith.LetMeDoWith.enums.user.UserStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.user.UserType;
 import com.LetMeDoWith.LetMeDoWith.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -30,8 +32,8 @@ class UserRepositoryTest {
     void test_insert_new() {
         User testUserObj = User.builder().email("test@email.com").nickname("nickname")
                 .selfDescription("self desc")
-                .status("Y")
-                .type("user")
+                .status(UserStatus.NORMAL)
+                .type(UserType.USER)
                 .userProfileImageUrl("image.jpeg")
                 .marketingTermAgreeYn(true)
                 .build();
@@ -42,6 +44,7 @@ class UserRepositoryTest {
 
         assertInstanceOf(User.class, user.get());
         assertEquals(user.get().getNickname(), "nickname");
+        assertEquals(user.get().getStatus(), UserStatus.NORMAL);
     }
 
     @Test
@@ -49,8 +52,8 @@ class UserRepositoryTest {
     void test_delete() {
         User testUserObj = User.builder().email("test@email.com").nickname("nickname")
                 .selfDescription("self desc")
-                .status("Y")
-                .type("user")
+                .status(UserStatus.NORMAL)
+                .type(UserType.USER)
                 .userProfileImageUrl("image.jpeg")
                 .marketingTermAgreeYn(true)
                 .build();

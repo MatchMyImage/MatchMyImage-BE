@@ -1,5 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.model.user;
 
+import com.LetMeDoWith.LetMeDoWith.enums.converter.user.UserStatusConverter;
+import com.LetMeDoWith.LetMeDoWith.enums.converter.user.UserTypeConverter;
+import com.LetMeDoWith.LetMeDoWith.enums.user.UserStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.user.UserType;
 import com.LetMeDoWith.LetMeDoWith.model.Audit;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -18,8 +22,9 @@ public class User extends Audit {
     @Column
     private String email;
 
+    @Convert(converter = UserStatusConverter.class)
     @Column(nullable = false)
-    private String status;
+    private UserStatus status;
 
     @Column(nullable = false)
     private String nickname;
@@ -27,8 +32,9 @@ public class User extends Audit {
     @Column(name = "self_description")
     private String selfDescription;
 
+    @Convert(converter = UserTypeConverter.class)
     @Column(nullable = false)
-    private String type;
+    private UserType type;
 
     @Column(name = "user_profile_image_url")
     private String userProfileImageUrl;
@@ -37,7 +43,7 @@ public class User extends Audit {
     private boolean marketingTermAgreeYn = false;
 
     @Builder
-    public User(String email, String status, String nickname, String selfDescription, String type, String userProfileImageUrl, boolean marketingTermAgreeYn) {
+    public User(String email, UserStatus status, String nickname, String selfDescription, UserType type, String userProfileImageUrl, boolean marketingTermAgreeYn) {
         this.email = email;
         this.status = status;
         this.nickname = nickname;
