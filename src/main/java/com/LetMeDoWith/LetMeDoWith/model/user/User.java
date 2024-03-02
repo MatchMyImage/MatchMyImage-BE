@@ -1,17 +1,18 @@
 package com.LetMeDoWith.LetMeDoWith.model.user;
 
-import com.LetMeDoWith.LetMeDoWith.model.Audit;
+import com.LetMeDoWith.LetMeDoWith.model.BaseAuditModel;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "user")
 @Getter
 @NoArgsConstructor
-public class User extends Audit {
+public class User extends BaseAuditModel {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long id;
 

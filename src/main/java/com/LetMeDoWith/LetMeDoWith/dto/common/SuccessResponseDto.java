@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.dto;
+package com.LetMeDoWith.LetMeDoWith.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @AllArgsConstructor
-public class ResponseDto<T> {
+public class SuccessResponseDto<T> {
 
     private final boolean successYn;
     private final String statusCode;
