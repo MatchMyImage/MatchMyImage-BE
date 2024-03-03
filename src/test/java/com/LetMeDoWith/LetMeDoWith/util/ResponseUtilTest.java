@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.util;
 
-import com.LetMeDoWith.LetMeDoWith.dto.common.SuccessResponseDto;
+import com.LetMeDoWith.LetMeDoWith.dto.common.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.common.SuccessResponseStatus;
 
@@ -20,9 +20,8 @@ class ResponseUtilTest {
     @Test
     @DisplayName("성공응답 테스트 - no parameter")
     void test_success_res_no_param() {
-        ResponseEntity<SuccessResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse();
+        ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse();
 
-        assertTrue(successResponse.getBody().isSuccessYn());
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
         assertEquals(successResponse.getBody().getStatusCode(), "S100");
     }
@@ -30,9 +29,8 @@ class ResponseUtilTest {
     @Test
     @DisplayName("성공응답 테스트 - with data")
     void test_success_res_with_data() {
-        ResponseEntity<SuccessResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data");
+        ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data");
 
-        assertTrue(successResponse.getBody().isSuccessYn());
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
         assertEquals(successResponse.getBody().getStatusCode(), "S100");
 
@@ -46,9 +44,8 @@ class ResponseUtilTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("attr", "val");
 
-        ResponseEntity<SuccessResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data", httpHeaders);
+        ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data", httpHeaders);
 
-        assertTrue(successResponse.getBody().isSuccessYn());
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
         assertEquals(successResponse.getBody().getStatusCode(), "S100");
 
@@ -63,23 +60,12 @@ class ResponseUtilTest {
     @Test
     @DisplayName("성공응답 테스트 - with custom status")
     void test_success_res_with_status() {
-        ResponseEntity<SuccessResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse(SuccessResponseStatus.OBJECT_NOT_FOUND);
+        ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse(SuccessResponseStatus.OBJECT_NOT_FOUND);
 
-        assertTrue(successResponse.getBody().isSuccessYn());
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
 
         // 사용자 지정 상태와 일치하는지 확인
         assertEquals(successResponse.getBody().getStatusCode(), "S101");
-    }
-
-    @Test
-    @DisplayName("실패응답 테스트")
-    void test_fail_res_no_param() {
-        ResponseEntity<SuccessResponseDto<Object>> failResponse = ResponseUtil.createFailResponse(FailResponseStatus.BAD_REQUEST);
-
-        assertFalse(failResponse.getBody().isSuccessYn());
-        assertEquals(failResponse.getStatusCode(), HttpStatus.BAD_REQUEST);
-        assertEquals(failResponse.getBody().getStatusCode(), "E200");
     }
 
 }

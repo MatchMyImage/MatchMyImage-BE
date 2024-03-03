@@ -8,9 +8,8 @@ import lombok.Getter;
 @Builder
 @Getter
 @AllArgsConstructor
-public class SuccessResponseDto<T> {
+public class ResponseDto<T> {
 
-    private final boolean successYn;
     private final String statusCode;
     private final String message;
     private final T data;
