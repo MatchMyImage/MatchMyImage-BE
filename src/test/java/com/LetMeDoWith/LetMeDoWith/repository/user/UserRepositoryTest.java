@@ -72,4 +72,37 @@ class UserRepositoryTest {
 
         Assertions.assertThrows(NoSuchElementException.class, userAfterDelete::get);
     }
+
+    @Test
+    void test_duplicated_key() {
+        User testUserObj = User.builder()
+                .id(1L)
+                .email("test@email.com")
+                .nickname("nickname")
+                .selfDescription("self desc")
+                .status(UserStatus.NORMAL)
+                .type(UserType.USER)
+                .userProfileImageUrl("image.jpeg")
+                .marketingTermAgreeYn(true)
+                .build();
+
+        User testUserObjWithoutKey = User.builder()
+                .email("test@email.com")
+                .nickname("nickname2")
+                .selfDescription("self desc")
+                .status(UserStatus.NORMAL)
+                .type(UserType.USER)
+                .userProfileImageUrl("image.jpeg")
+                .marketingTermAgreeYn(true)
+                .build();
+
+        userRepository.save(testUserObj);
+        userRepository.save(testUserObjWithoutKey);
+
+        Optional<User> userWithCustomKey = userRepository.findByNickname("nickname");
+        Optional<User> userWithDefaultKey = userRepository.findByNickname("nickname2");
+
+        assertEquals(userWithCustomKey.get().getId(), 1L);
+        assertEquals(userWithDefaultKey.get().getId(), 2L);
+    }
 }

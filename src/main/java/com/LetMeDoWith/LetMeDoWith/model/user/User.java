@@ -4,8 +4,9 @@ import com.LetMeDoWith.LetMeDoWith.enums.converter.user.UserStatusConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.converter.user.UserTypeConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.user.UserStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.user.UserType;
-import com.LetMeDoWith.LetMeDoWith.model.Audit;
+import com.LetMeDoWith.LetMeDoWith.model.BaseAuditModel;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class User extends Audit {
+@AllArgsConstructor
+@Builder
+public class User extends BaseAuditModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long id;
 
@@ -42,14 +45,4 @@ public class User extends Audit {
     @Column(name = "marketing_term_agree_yn", nullable = false)
     private boolean marketingTermAgreeYn = false;
 
-    @Builder
-    public User(String email, UserStatus status, String nickname, String selfDescription, UserType type, String userProfileImageUrl, boolean marketingTermAgreeYn) {
-        this.email = email;
-        this.status = status;
-        this.nickname = nickname;
-        this.selfDescription = selfDescription;
-        this.type = type;
-        this.userProfileImageUrl = userProfileImageUrl;
-        this.marketingTermAgreeYn = marketingTermAgreeYn;
-    }
 }
