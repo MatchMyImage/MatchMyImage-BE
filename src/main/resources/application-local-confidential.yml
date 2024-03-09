@@ -1,0 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: local-confidential
+  datasource:
+    username: letmedowith
+    password: letmedowith@admin#2024
+  flyway:
+    user: letmedowith
+    password: letmedowith@admin#2024
