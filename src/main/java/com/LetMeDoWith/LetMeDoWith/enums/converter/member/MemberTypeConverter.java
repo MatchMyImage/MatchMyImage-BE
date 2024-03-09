@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.enums.converter.member;
 
+import com.LetMeDoWith.LetMeDoWith.enums.converter.AbstractAttributeConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import jakarta.persistence.Converter;
 

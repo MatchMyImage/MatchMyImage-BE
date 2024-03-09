@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.enums.converter.member;
+package com.LetMeDoWith.LetMeDoWith.enums.converter;
 
 import com.LetMeDoWith.LetMeDoWith.enums.BaseEnum;
 import com.LetMeDoWith.LetMeDoWith.util.EnumUtil;
@@ -27,6 +27,7 @@ public class AbstractAttributeConverter<T extends BaseEnum> implements
         try {
             return EnumUtil.getEnum(targetClass, dbData);
         } catch (Exception e) {
+            // TODO: 적절한 Exception 구현 후 대치
             throw new RuntimeException(e);
         }
     }
