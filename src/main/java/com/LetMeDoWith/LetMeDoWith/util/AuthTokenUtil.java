@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.util;
 
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class AuthTokenUtil {
 		String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
 
 		// SecretKey 객체 생성
-		this.secretKey = Keys.hmacShaKeyFor(keyBase64Encoded.getBytes(StandardCharsets.UTF_8));
+		this.secretKey = Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
 
 	}
 
@@ -63,12 +64,11 @@ public class AuthTokenUtil {
 
 		String accessToken = Jwts.builder()
 			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-			.setHeaderParam("alg", "HS256")
 			.setIssuer(this.issuer)
 			.setIssuedAt(nowDate)
 			.setExpiration(expireAt)
 			.setSubject("ATK")
-			.claim("id", memberId)
+			.claim("memberId", memberId)
 			.signWith(secretKey)
 			.compact();
 
@@ -127,7 +127,7 @@ public class AuthTokenUtil {
 			final Jws<Claims> claims = parseTokenToJws(token, secretKey);
 
 			if (claims.getBody().get("sub").equals("ATK") && claims.getBody().get("iss").equals(this.issuer)) {
-				return claims.getBody().get("id").toString();
+				return claims.getBody().get("memberId").toString();
 
 			} else {
 				throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
@@ -153,8 +153,10 @@ public class AuthTokenUtil {
 			throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED);
 		} catch (SignatureException | MalformedJwtException e) {
 			// JWT 시그니터 검증 실패
+			e.printStackTrace();
 			throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
 		}
 	}
