@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum FailResponseStatus {
 
-    NOT_FOUND("NOT_FOUND", "E500", HttpStatus.NOT_FOUND, "존재하지 않는 API Endpoint 입니다."),
+    NOT_FOUND("NOT_FOUND", "E510", HttpStatus.NOT_FOUND, "존재하지 않는 API Endpoint 입니다."),
 
     /**
      * 400 BAD Request Error
@@ -23,8 +23,10 @@ public enum FailResponseStatus {
      * 401 UnAuthorized Error
      * 인증 관련 오류
      */
-    UNAUTHORIZED("UNAUTHORIZED", "E300", HttpStatus.UNAUTHORIZED, "접근 권한이 없습니다."),
-    TOKEN_EXPIRED("TOKEN_EXPIRED", "E310", HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
+    UNAUTHORIZED("UNAUTHORIZED", "E300", HttpStatus.UNAUTHORIZED, "Request is not authorized."),
+    ATK_NOT_EXIST("ATK_NOT_EXIST", "E301", HttpStatus.UNAUTHORIZED, "Access token is not exist."),
+    TOKEN_EXPIRED("TOKEN_EXPIRED", "E302", HttpStatus.UNAUTHORIZED, "Token is expired"),
+    INVALID_TOKEN("INVALID_TOKEN", "E303", HttpStatus.UNAUTHORIZED, "Token is not valid"),
 
 
     /**

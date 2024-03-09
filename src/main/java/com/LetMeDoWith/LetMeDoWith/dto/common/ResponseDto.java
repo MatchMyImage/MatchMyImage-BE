@@ -6,12 +6,6 @@ import lombok.Getter;
 
 
 @Builder
-@Getter
-@AllArgsConstructor
-public class ResponseDto<T> {
-
-    private final String statusCode;
-    private final String message;
-    private final T data;
+public record ResponseDto<T>(String statusCode, String message, T data) {
 
 }
