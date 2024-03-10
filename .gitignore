@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Prod-Confidential ###
+/src/main/**/application-prod-confidential.yml

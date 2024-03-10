@@ -23,7 +23,7 @@ class ResponseUtilTest {
         ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse();
 
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
-        assertEquals(successResponse.getBody().getStatusCode(), "S100");
+        assertEquals(successResponse.getBody().statusCode(), "S100");
     }
 
     @Test
@@ -32,10 +32,10 @@ class ResponseUtilTest {
         ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data");
 
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
-        assertEquals(successResponse.getBody().getStatusCode(), "S100");
+        assertEquals(successResponse.getBody().statusCode(), "S100");
 
         // 데이터가 올바르게 들어갔는지 확인
-        assertEquals(successResponse.getBody().getData(), "data");
+        assertEquals(successResponse.getBody().data(), "data");
     }
 
     @Test
@@ -47,10 +47,10 @@ class ResponseUtilTest {
         ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data", httpHeaders);
 
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
-        assertEquals(successResponse.getBody().getStatusCode(), "S100");
+        assertEquals(successResponse.getBody().statusCode(), "S100");
 
         // 데이터가 올바르게 들어갔는지 확인
-        assertEquals(successResponse.getBody().getData(), "data");
+        assertEquals(successResponse.getBody().data(), "data");
 
         // 헤더가 올바르게 들어갔는지 확인
         assertEquals(successResponse.getHeaders().get("attr").get(0), "val");
@@ -65,7 +65,7 @@ class ResponseUtilTest {
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
 
         // 사용자 지정 상태와 일치하는지 확인
-        assertEquals(successResponse.getBody().getStatusCode(), "S101");
+        assertEquals(successResponse.getBody().statusCode(), "S101");
     }
 
 }
