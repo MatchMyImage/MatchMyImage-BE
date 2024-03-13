@@ -48,7 +48,4 @@ public class Member extends BaseAuditModel {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
     
-    @Column(name = "marketing_term_agree_yn", nullable = false)
-    private boolean marketingTermAgreeYn = false;
-    
 }

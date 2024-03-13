@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.repository.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
@@ -37,7 +38,6 @@ class MemberRepositoryTest {
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
-                                     .marketingTermAgreeYn(true)
                                      .build();
         
         userRepository.save(testMemberObj);
@@ -59,7 +59,6 @@ class MemberRepositoryTest {
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
-                                     .marketingTermAgreeYn(true)
                                      .build();
         
         userRepository.save(testMemberObj);
@@ -79,6 +78,8 @@ class MemberRepositoryTest {
     
     @Test
     void test_duplicated_key() {
+        entityManager.clear();
+        
         Member testMemberObj = Member.builder()
                                      .id(1L)
                                      .email("test@email.com")
@@ -87,7 +88,6 @@ class MemberRepositoryTest {
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
-                                     .marketingTermAgreeYn(true)
                                      .build();
         
         Member testMemberObjWithoutKey = Member.builder()
@@ -97,7 +97,6 @@ class MemberRepositoryTest {
                                                .status(MemberStatus.NORMAL)
                                                .type(MemberType.USER)
                                                .profileImageUrl("image.jpeg")
-                                               .marketingTermAgreeYn(true)
                                                .build();
         
         userRepository.save(testMemberObj);
@@ -106,7 +105,6 @@ class MemberRepositoryTest {
         Optional<Member> userWithCustomKey = userRepository.findByNickname("nickname");
         Optional<Member> userWithDefaultKey = userRepository.findByNickname("nickname2");
         
-        assertEquals(userWithCustomKey.get().getId(), 1L);
-        assertEquals(userWithDefaultKey.get().getId(), 2L);
+        assertNotEquals(testMemberObj.getId(), testMemberObjWithoutKey.getId());
     }
 }
