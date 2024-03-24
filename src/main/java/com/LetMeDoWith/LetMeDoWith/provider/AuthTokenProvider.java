@@ -1,7 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.util;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,11 +8,14 @@ import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import com.LetMeDoWith.LetMeDoWith.dto.common.RefreshTokenDto;
+import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -24,8 +25,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 
-public class AuthTokenUtil {
+@Component
+public class AuthTokenProvider {
 
 	private final SecretKey secretKey;
 
@@ -38,9 +41,12 @@ public class AuthTokenUtil {
 	@Value("${auth.jwt.issuer}")
 	private String issuer;
 
+	private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+
 	// private final long refreshExpireTime = 1 * 60 * 1000L * 60 * 24 * 14; // 14일
 
-	public AuthTokenUtil(String secret) {
+	@Autowired
+	public AuthTokenProvider(@Value("${auth.jwt.secret}") String secret, RefreshTokenRedisRepository refreshTokenRedisRepository) {
 
 		// plain secret Base64로 인코딩
 		String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
@@ -48,6 +54,8 @@ public class AuthTokenUtil {
 		// SecretKey 객체 생성
 		this.secretKey = Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
 
+		// Repository 초기화
+		this.refreshTokenRedisRepository = refreshTokenRedisRepository;
 	}
 
 	/**
@@ -84,11 +92,14 @@ public class AuthTokenUtil {
 	 * @param memberId
 	 * @return
 	 */
-	public RefreshTokenDto createRefreshToken(String memberId) {
+	public RefreshToken createRefreshToken(Long memberId, String accessToken, String userAgent) {
 		String refreshToken = UUID.randomUUID().toString();
-		return RefreshTokenDto.builder()
-			.refreshToken(refreshToken)
+
+		return RefreshToken.builder()
+			.token(refreshToken)
+			.accessToken(accessToken)
 			.memberId(memberId)
+			.userAgent(userAgent)
 			.expireSec(rtkDurationDay * 24 * 60 * 60)
 			.build();
 	}
@@ -99,12 +110,27 @@ public class AuthTokenUtil {
 	 * @param ttl
 	 * @return
 	 */
-	public RefreshTokenDto createRefreshToken(String memberId, Long ttl) {
-		String refreshToken = UUID.randomUUID().toString();
-		return RefreshTokenDto.builder()
-			.refreshToken(refreshToken)
+	public RefreshToken createRefreshToken(Long memberId, String accessToken, String userAgent, Long ttl) {
+
+		Date nowDate = new Date();
+		Date expireAt = new Date(nowDate.getTime() + rtkDurationDay * 24 * 60 * 60 * 1000L);
+
+		String refreshToken = Jwts.builder()
+			.setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+			.setIssuer(this.issuer)
+			.setIssuedAt(nowDate)
+			.setExpiration(expireAt)
+			.setSubject("ATK")
+			.claim("memberId", memberId)
+			.signWith(secretKey)
+			.compact();
+
+		return RefreshToken.builder()
+			.token(refreshToken)
+			.accessToken(accessToken)
 			.memberId(memberId)
-			.expireSec(ttl)
+			.userAgent(userAgent)
+			.expireSec(rtkDurationDay * 24 * 60 * 60)
 			.build();
 	}
 
@@ -114,7 +140,7 @@ public class AuthTokenUtil {
 	 * @return
 	 */
 	public Claims getTokenPayload(final String token) {
-		return parseTokenToJws(token, secretKey).getBody();
+		return parseTokenToJws(token, secretKey, false).getBody();
 	}
 
 	/**
@@ -122,9 +148,9 @@ public class AuthTokenUtil {
 	 * @param token
 	 * @return
 	 */
-	public String validateAccessToken(final String token) {
+	public String validateAccessToken(final String token, final Boolean refresh) {
 		try {
-			final Jws<Claims> claims = parseTokenToJws(token, secretKey);
+			final Jws<Claims> claims = parseTokenToJws(token, secretKey, refresh);
 
 			if (claims.getBody().get("sub").equals("ATK") && claims.getBody().get("iss").equals(this.issuer)) {
 				return claims.getBody().get("memberId").toString();
@@ -140,7 +166,7 @@ public class AuthTokenUtil {
 		}
 	}
 
-	private Jws<Claims> parseTokenToJws(final String token, final SecretKey secretKey) {
+	private Jws<Claims> parseTokenToJws(final String token, final SecretKey secretKey, final Boolean refresh) {
 		try {
 
 			return Jwts.parserBuilder()
@@ -150,7 +176,16 @@ public class AuthTokenUtil {
 
 		} catch (ExpiredJwtException e) {
 			// JWT 유효시간 초과
-			throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED);
+			if(refresh.equals(Boolean.TRUE)) {
+				// refresh 대상인 ATK인 경우
+				return Jwts.parserBuilder()
+					.build()
+					.parseClaimsJws(token);
+			} else {
+				// 인증/인가 대상인 ATK인 경우
+				throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED);
+			}
+
 		} catch (SignatureException | MalformedJwtException e) {
 			// JWT 시그니터 검증 실패
 			e.printStackTrace();

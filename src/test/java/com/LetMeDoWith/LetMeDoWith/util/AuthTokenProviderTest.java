@@ -29,7 +29,7 @@ public class AuthTokenUtilTest {
 		System.out.println(accessTokenDto.get("token"));
 
 		// when
-		String memberId = authTokenUtil.validateAccessToken((String)accessTokenDto.get("token"));
+		String memberId = authTokenUtil.validateAccessToken((String)accessTokenDto.get("token"), false);
 
 		// then
 		Assertions.assertThat(memberId).isEqualTo(MEMBER_ID);
