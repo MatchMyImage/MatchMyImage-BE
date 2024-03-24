@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class HeaderUtil {
+public class AuthUtil {
 
 	private final String AUTHORIZATION_KEY = "AUTHORIZATION";
 
@@ -29,4 +29,12 @@ public class HeaderUtil {
 			return accessToken;
 		}
 	}
+
+	public Long getMemberId() {
+
+		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+		return (Long) request.getAttribute("memberId");
+
+	}
+
 }

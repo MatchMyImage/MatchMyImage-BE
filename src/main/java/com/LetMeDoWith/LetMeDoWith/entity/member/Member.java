@@ -1,10 +1,10 @@
-package com.LetMeDoWith.LetMeDoWith.model.member;
+package com.LetMeDoWith.LetMeDoWith.entity.member;
 
 import com.LetMeDoWith.LetMeDoWith.enums.converter.member.MemberStatusConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.converter.member.MemberTypeConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.model.BaseAuditModel;
+import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Member extends BaseAuditModel {
+public class Member extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
