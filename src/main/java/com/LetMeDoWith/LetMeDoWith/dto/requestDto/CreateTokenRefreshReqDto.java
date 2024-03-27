@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.dto.auth;
+package com.LetMeDoWith.LetMeDoWith.dto.requestDto;
 
 import lombok.Builder;
 

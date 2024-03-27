@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 
 @SpringBootTest
@@ -24,11 +25,11 @@ public class AuthTokenProviderTest {
 	void validateAccessToken() {
 
 		// given
-		Map<Object, Object> accessTokenDto = authTokenProvider.createAccessToken(MEMBER_ID);
-		System.out.println(accessTokenDto.get("token"));
+		AccessTokenVO accessTokenVO = authTokenProvider.createAccessToken(MEMBER_ID);
+		System.out.println(accessTokenVO.token());
 
 		// when
-		Long memberId = authTokenProvider.validateToken((String)accessTokenDto.get("token"), AuthTokenProvider.TokenType.ATK);
+		Long memberId = authTokenProvider.validateToken(accessTokenVO.token(), AuthTokenProvider.TokenType.ATK);
 
 		// then
 		Assertions.assertThat(memberId).isEqualTo(MEMBER_ID);

@@ -5,13 +5,13 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.LetMeDoWith.LetMeDoWith.dto.auth.CreateTokenRefreshResDto;
+import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
 import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
-import com.LetMeDoWith.LetMeDoWith.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,19 +38,17 @@ public class AuthService {
 		}
 
 		// 신규 ATK 발급
-		Map<Object, Object> accessTokenMap = authTokenProvider.createAccessToken(memberId);
-		String newAccessToken = (String) accessTokenMap.get("token");
-		LocalDateTime newAccessTokenExpireAt = (LocalDateTime) accessTokenMap.get("expireAt");
+		AccessTokenVO accessTokenVO = authTokenProvider.createAccessToken(memberId);
 
 		// 신규 RTK 발급
-		RefreshToken newRefreshToken = authTokenProvider.createRefreshToken(memberId, newAccessToken, userAgent);
+		RefreshToken newRefreshToken = authTokenProvider.createRefreshToken(memberId, accessTokenVO.token(), userAgent);
 
 		// 기존 RTK info Redis에서 삭제
 		refreshTokenRedisRepository.delete(savedRefreshToken);
 
 		return CreateTokenRefreshResDto.builder()
-			.accessToken(newAccessToken)
-			.accessTokenExpireAt(newAccessTokenExpireAt)
+			.accessToken(accessTokenVO.token())
+			.accessTokenExpireAt(accessTokenVO.expireAt())
 			.refreshToken(newRefreshToken.getToken())
 			.build();
 

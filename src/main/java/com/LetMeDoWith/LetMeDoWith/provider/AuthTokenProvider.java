@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
 import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
@@ -62,7 +63,7 @@ public class AuthTokenProvider {
 	 * @param memberId
 	 * @return
 	 */
-	public Map<Object, Object> createAccessToken(Long memberId) {
+	public AccessTokenVO createAccessToken(Long memberId) {
 
 		Date nowDate = new Date();
 
@@ -79,11 +80,8 @@ public class AuthTokenProvider {
 			.signWith(secretKey)
 			.compact();
 
-		HashMap<Object, Object> result = new HashMap<>();
-		result.put("token", accessToken);
-		result.put("expireAt", LocalDateTime.ofInstant(expireAt.toInstant(), ZoneId.systemDefault()));
+		return new AccessTokenVO(accessToken, LocalDateTime.ofInstant(expireAt.toInstant(), ZoneId.systemDefault()));
 
-		return result;
 	}
 
 	/**

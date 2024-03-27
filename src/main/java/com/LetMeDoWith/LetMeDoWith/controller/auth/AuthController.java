@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LetMeDoWith.LetMeDoWith.dto.auth.CreateTokenRefreshReqDto;
-import com.LetMeDoWith.LetMeDoWith.dto.auth.CreateTokenRefreshResDto;
+import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateTokenRefreshReqDto;
+import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.service.AuthService;
-import com.LetMeDoWith.LetMeDoWith.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
