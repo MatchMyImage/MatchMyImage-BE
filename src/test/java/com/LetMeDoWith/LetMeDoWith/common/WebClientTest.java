@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.client;
+package com.LetMeDoWith.LetMeDoWith.common;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
