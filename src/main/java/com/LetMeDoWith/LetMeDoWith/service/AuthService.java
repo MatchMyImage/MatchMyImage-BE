@@ -1,11 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.service;
 
 import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
+import com.LetMeDoWith.LetMeDoWith.dto.requestDto.AccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
 import com.LetMeDoWith.LetMeDoWith.dto.valueObject.OidcPublicKeyVO;
 import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
@@ -15,10 +17,12 @@ import com.LetMeDoWith.LetMeDoWith.util.AuthUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -99,6 +103,28 @@ public class AuthService {
                                              .orElseThrow(IllegalArgumentException::new);
         
         return AuthUtil.verifyOidcToken(token, keyVO.n(), keyVO.e());
+    }
+    
+    /**
+     * 로그인, 즉 access token을 발급한다.
+     *
+     * @param member
+     * @return access token
+     */
+    public AccessTokenVO login(Member member) {
+        return authTokenProvider.createAccessToken(member.getId());
+    }
+    
+    /**
+     * 최초 소셜 로그인 시도시 회원가입 단계를 진행하기 위해 임시 Member를 생성한다. 생성된 임시 Member는 필요한 정보가 들어있지 않은 상태이다.
+     * <p>
+     * 이후 회원가입이 완료될 때 Client에서 넘어오는 정보를 가지고 임시 Member를 업데이트한다.
+     *
+     * @param accessTokenReqDto
+     */
+    public void proceedToSignup(AccessTokenReqDto accessTokenReqDto) {
+        // some processes.
+        log.info("Not registered user!");
     }
     
     private String getAudValueForProvider(SocialProvider provider) {
