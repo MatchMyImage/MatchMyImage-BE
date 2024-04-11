@@ -45,10 +45,9 @@ class AuthUtilTest {
     @Test
     @DisplayName("[SUCCESS] ID token 검증 테스트")
     void verifyNormalTokenTest() {
-        String modulus = "zhMyuF42t7vy2VjnXj2pI2kssakfgaNJqtBqKkh_IBidqKTIM2mEejJ-b0HUwgQ0YzyZGA1OixLxvWuRTrY3j9RXPg0wj7J7e7TkPqZ83sMQ7lUqfzHfR4mMJQ9Si33CFSm8pBkJt38QS9ciLb-uf2cg9N-GSo1e6YAiywlc-w5UOW9Ur_2N5OeHQAWJM1V7LxSbJEakGJG_ivrghrLfh9h-VaYcvfyCJnbkcHGtpubH7LSo5a80_-S9hkvoHuhow27w9mxLm0K4IR1N8BmJbIBc19pMm8i-BQouHL0tbOr0-843GpoidCsXsk-jL9Egqmp9W3qA_WDU6Ra_SFJzFmbC6lqWveUYcKIh7h-qjpkwWrU_88kO5WuX0QiyV4VDj_uRhbtkMxzKWC-QVFGOhG5h2FJnC1lL1lQaIPa5KfxcxpptThLho1NKkgQoblItidMb3rxHdxMrWHVMkvgPhbN2Z5Yb3zo0Yxa9Svbh0n73iTB2GNrdM8q8EC12abHZ";
-        String exponent = "AQAB";
-        
-        Jws<Claims> oidcToken = AuthUtil.verifyOidcToken(SAMPLE_TOKEN_NORMAL, modulus, exponent);
+        Jws<Claims> oidcToken = AuthUtil.verifyOidcToken(SAMPLE_TOKEN_NORMAL,
+                                                         SAMPLE_MOD,
+                                                         SAMPLE_EXPONENT);
         
         assertEquals(oidcToken.getBody().getIssuer(), SAMPLE_ISS);
         assertEquals(oidcToken.getBody().getExpiration(),
