@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.entity.member;
 
+import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.converter.member.SocialProviderConverter;
-import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -33,6 +33,6 @@ public class MemberSocialAccount extends BaseAuditEntity {
     private Member member;
     
     @Convert(converter = SocialProviderConverter.class)
-    @Column(name = "column", nullable = false)
+    @Column(name = "provider", nullable = false)
     private SocialProvider type;
 }
