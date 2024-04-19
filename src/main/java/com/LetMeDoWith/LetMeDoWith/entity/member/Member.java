@@ -1,16 +1,19 @@
 package com.LetMeDoWith.LetMeDoWith.entity.member;
 
+import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.enums.converter.member.MemberStatusConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.converter.member.MemberTypeConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +25,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Member extends BaseAuditEntity {
+    
+    @OneToMany(mappedBy = "member")
+    List<MemberSocialAccount> socialAccountList = new ArrayList<>();
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,5 +53,4 @@ public class Member extends BaseAuditEntity {
     
     @Column(name = "profile_image_url")
     private String profileImageUrl;
-    
 }
