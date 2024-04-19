@@ -81,12 +81,12 @@ public class AuthUtil {
                        .build()
                        .parseClaimsJws(token);
         } catch (SignatureException e) {
-            throw new IllegalArgumentException("잘못된 서명입니다.");
+            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
         } catch (ExpiredJwtException e) {
-            throw new RuntimeException("만료된 토큰입니다.");
+            throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED, e);
         } catch (Exception e) {
             log.error(e.toString());
-            throw new RuntimeException("Token을 파싱하는 도중 에러가 밣생했습니다.");
+            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
         }
     }
     
@@ -122,12 +122,12 @@ public class AuthUtil {
                        .build()
                        .parseClaimsJwt(getUnsignedToken(token));
         } catch (ExpiredJwtException e) { // 파싱하면서 만료된 토큰인지 확인.
-            throw new IllegalStateException("토큰이 만료되었습니다.");
+            throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED, e);
         } catch (SignatureException e) {
-            throw new RuntimeException("잘못된 서명입니다.");
+            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
         } catch (Exception e) {
             log.error(e.toString());
-            throw new RuntimeException("Token을 파싱하는 도중 에러가 밣생했습니다.");
+            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
         }
     }
     

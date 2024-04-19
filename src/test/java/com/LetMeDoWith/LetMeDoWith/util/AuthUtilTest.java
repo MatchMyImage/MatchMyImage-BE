@@ -3,6 +3,8 @@ package com.LetMeDoWith.LetMeDoWith.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.time.Instant;
@@ -57,67 +59,70 @@ class AuthUtilTest {
     @Test
     @DisplayName("[FAIL] 만료된 token에서 signature 추출 시도 ")
     void extractSignatureFromExpiredTokenTest() {
-        assertThrows(IllegalStateException.class,
+        assertThrows(RestApiException.class,
                      () -> AuthUtil.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_EXPIRED,
                                                                   SAMPLE_AUD,
                                                                   SAMPLE_ISS),
-                     "토큰이 만료되었습니다.");
+                     FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
     @Test
     @DisplayName("[FAIL] 잘못된 signature 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromIllegalSignatureTokenTest() {
-        assertThrows(RuntimeException.class,
+        assertThrows(RestApiException.class,
                      () -> AuthUtil.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
                                                                   SAMPLE_AUD,
                                                                   SAMPLE_ISS),
-                     "잘못된 서명입니다.");
+                     FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
     @Test
     @DisplayName("[FAIL] 잘못된 format 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromMalformedTokenTest() {
-        assertThrows(RuntimeException.class,
+        assertThrows(RestApiException.class,
                      () -> AuthUtil.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_MALFORMED,
                                                                   SAMPLE_AUD,
                                                                   SAMPLE_ISS),
-                     "Token을 파싱하는 도중 에러가 밣생했습니다.");
+                     FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
     @Test
     @DisplayName("[FAIL] 만료된 ID token 검증 시도")
     void verifyExpiredTokenTest() {
-        assertThrows(RuntimeException.class,
+        assertThrows(RestApiException.class,
                      () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_EXPIRED,
                                                     SAMPLE_MOD,
                                                     SAMPLE_EXPONENT),
-                     "만료된 토큰입니다.");
+                     FailResponseStatus.TOKEN_EXPIRED.getMessage());
     }
     
     @Test
     @DisplayName("[FAIL] 잘못된 signature 가지는 ID token 검증 시도")
     void verifyIllegalSignatureTokenTest() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(RestApiException.class,
                      () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
                                                     SAMPLE_MOD,
-                                                    SAMPLE_EXPONENT));
+                                                    SAMPLE_EXPONENT),
+                     FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
     @Test
     @DisplayName("[FAIL] 잘못된 format 가지는 ID token 검증 시도")
     void verifyMalformedTokenTest() {
-        assertThrows(RuntimeException.class,
+        assertThrows(RestApiException.class,
                      () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_MALFORMED,
                                                     SAMPLE_MOD,
-                                                    SAMPLE_EXPONENT));
+                                                    SAMPLE_EXPONENT),
+                     FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
     @Test
     @DisplayName("[FAIL] 잘못된 RSA Key로 ID token 검증 시도")
     void verifyTokenWithInvalidKeyTest() {
-        assertThrows(RuntimeException.class,
+        assertThrows(RestApiException.class,
                      () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_NORMAL,
                                                     "SAMPLE_MOD",
-                                                    "SAMPLE_EXPONENT"));
+                                                    "SAMPLE_EXPONENT"),
+                     FailResponseStatus.INVALID_TOKEN.getMessage());
     }
 }
