@@ -17,7 +17,7 @@ public class KakaoAuthClient implements AuthClient {
     private final WebClient webClient;
     
     @Override
-    @Cacheable(key = "'publicKey-Mono'")
+    @Cacheable(key = "'AuthPublicKey-Kakao'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
         return webClient.get()
                         .uri("https://kauth.kakao.com/.well-known/jwks.json")
