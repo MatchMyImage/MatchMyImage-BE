@@ -37,13 +37,13 @@ public class AuthService {
     
     private final MemberService memberService;
     
-    @Value("${oidc.aud.kakao}")
+    @Value("${auth.oidc.aud.kakao}")
     private String KAKAO_AUD;
     
-    @Value("${oidc.aud.google}")
+    @Value("${auth.oidc.aud.google}")
     private String GOOGLE_AUD;
     
-    @Value("${oidc.aud.apple}")
+    @Value("${auth.oidc.aud.apple}")
     private String APPLE_AUD;
     
     public CreateTokenRefreshResDto createTokenRefresh(String accessToken,
