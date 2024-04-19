@@ -9,8 +9,6 @@ import com.LetMeDoWith.LetMeDoWith.service.AuthService;
 import com.LetMeDoWith.LetMeDoWith.service.Member.MemberService;
 import com.LetMeDoWith.LetMeDoWith.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.util.ResponseUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +39,6 @@ public class AuthController {
     
     @PostMapping("/token")
     public ResponseEntity createAccessToken(@RequestBody createAccessTokenReqDto createAccessTokenReqDto) {
-        Jws<Claims> verifiedIdToken = authService.getVerifiedOidcIdToken(createAccessTokenReqDto.provider(),
-                                                                         createAccessTokenReqDto.idToken());
-        
         Optional<AccessTokenVO> tokenRequestResult = authService.createToken(
             createAccessTokenReqDto);
         

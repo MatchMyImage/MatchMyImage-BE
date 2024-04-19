@@ -21,7 +21,7 @@ public class MemberService {
      *
      * @param provider
      * @param email
-     * @return 기 가입된 계정. 가입된 계정이 없으면 null을 리턴한다.
+     * @return 기 가입된 계정. Optional 타입을 리턴한다..
      */
     public Optional<Member> getRegisteredMember(SocialProvider provider, String email) {
         return memberRepository.findByProviderAndEmail(provider, email);

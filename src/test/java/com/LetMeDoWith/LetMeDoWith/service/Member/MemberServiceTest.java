@@ -49,7 +49,7 @@ class MemberServiceTest {
         
         MemberSocialAccount memberSocialAccountKaKao = MemberSocialAccount.builder()
                                                                           .member(testMemberObj)
-                                                                          .type(SocialProvider.KAKAO)
+                                                                          .provider(SocialProvider.KAKAO)
                                                                           .build();
         
         when(memberRepository.findByProviderAndEmail(any(SocialProvider.class), anyString()))

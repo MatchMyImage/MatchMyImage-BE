@@ -3,9 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.service;
 import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.createAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
-import com.LetMeDoWith.LetMeDoWith.dto.responseDto.OidcPublicKeyResDto;
+import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto;
+import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto.OidcPublicKeyVO;
 import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
-import com.LetMeDoWith.LetMeDoWith.dto.valueObject.OidcPublicKeyVO;
 import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
@@ -84,31 +84,14 @@ public class AuthService {
         
     }
     
-    
     /**
-     * Signature 검증이 완료돤 ID Token을 얻는다.
+     * 회원가입 여부를 판단하여 ATK를 발급한다.
+     * <p>
+     * 입력으로 받은 DTO의 정보를 통해 기 가입 여부를 판단하여, 이미 가입된 유저가 발급을 요청하는 경우 ATK를 발급하고, 아닌 경우 회원가입 프로세스를 진행한다.
      *
-     * @param token    검증하려는 인코딩된 ID token
-     * @param provider 자격증명 제공자
-     * @return 서명을 검증 완료한 ID Token.
+     * @param createAccessTokenReqDto 발급 요청자의 Provider, 이메일 정보
+     * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
-    public Jws<Claims> getVerifiedOidcIdToken(SocialProvider provider, String token) {
-        AuthClient client = socialProviderAuthFactoryService.getClient(provider);
-        
-        Mono<OidcPublicKeyResDto> publicKeyListInMono = client.getPublicKeyList();
-        OidcPublicKeyResDto publicKeyList = publicKeyListInMono.block();
-        String aud = getAudValueForProvider(provider);
-        
-        String kid = AuthUtil.getKidFromUnsignedTokenHeader(token, aud, provider.getIssUrl());
-        
-        OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
-                                             .filter(key -> key.kid().equals(kid))
-                                             .findFirst()
-                                             .orElseThrow(IllegalArgumentException::new);
-        
-        return AuthUtil.verifyOidcToken(token, keyVO.n(), keyVO.e());
-    }
-    
     public Optional<AccessTokenVO> createToken(createAccessTokenReqDto createAccessTokenReqDto) {
         Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(createAccessTokenReqDto.provider(),
                                                              createAccessTokenReqDto.idToken());
@@ -131,6 +114,30 @@ public class AuthService {
         }
     }
     
+    /**
+     * Signature 검증이 완료돤 ID Token을 얻는다.
+     *
+     * @param token    검증하려는 인코딩된 ID token
+     * @param provider 자격증명 제공자
+     * @return 서명을 검증 완료한 ID Token.
+     */
+    private Jws<Claims> getVerifiedOidcIdToken(SocialProvider provider, String token) {
+        AuthClient client = socialProviderAuthFactoryService.getClient(provider);
+        
+        Mono<OidcPublicKeyResDto> publicKeyListInMono = client.getPublicKeyList();
+        OidcPublicKeyResDto publicKeyList = publicKeyListInMono.block();
+        String aud = getAudValueForProvider(provider);
+        
+        String kid = AuthUtil.getKidFromUnsignedTokenHeader(token, aud, provider.getIssUrl());
+        
+        OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
+                                             .filter(key -> key.kid().equals(kid))
+                                             .findFirst()
+                                             .orElseThrow(IllegalArgumentException::new);
+        
+        return AuthUtil.verifyOidcToken(token, keyVO.n(), keyVO.e());
+    }
+    
     
     /**
      * 로그인, 즉 access token을 발급한다.
@@ -138,7 +145,7 @@ public class AuthService {
      * @param member
      * @return access token
      */
-    public AccessTokenVO login(Member member) {
+    private AccessTokenVO login(Member member) {
         return authTokenProvider.createAccessToken(member.getId());
     }
     
@@ -149,7 +156,7 @@ public class AuthService {
      *
      * @param createAccessTokenReqDto
      */
-    public void proceedToSignup(createAccessTokenReqDto createAccessTokenReqDto) {
+    private void proceedToSignup(createAccessTokenReqDto createAccessTokenReqDto) {
         // some processes.
         log.info("Not registered user!");
     }

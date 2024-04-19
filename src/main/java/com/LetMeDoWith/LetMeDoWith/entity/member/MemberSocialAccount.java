@@ -34,7 +34,7 @@ public class MemberSocialAccount extends BaseAuditEntity {
     
     @Convert(converter = SocialProviderConverter.class)
     @Column(name = "provider", nullable = false)
-    private SocialProvider type;
+    private SocialProvider provider;
     
     public void addMember(Member member) {
         this.member = member;

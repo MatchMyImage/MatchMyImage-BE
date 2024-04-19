@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberSocialAccountRepository extends JpaRepository<MemberSocialAccount, Long> {
     
-    Optional<MemberSocialAccount> findByMemberAndType(Member member, SocialProvider type);
+    Optional<MemberSocialAccount> findByMemberAndProvider(Member member, SocialProvider provider);
 }

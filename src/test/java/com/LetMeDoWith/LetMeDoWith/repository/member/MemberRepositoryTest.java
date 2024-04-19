@@ -134,7 +134,7 @@ class MemberRepositoryTest {
         Member member = memberRepository.save(testMemberObj);
         
         MemberSocialAccount memberSocialAccount = MemberSocialAccount.builder()
-                                                                     .type(SocialProvider.KAKAO)
+                                                                     .provider(SocialProvider.KAKAO)
                                                                      .member(member)
                                                                      .build();
         

@@ -57,22 +57,22 @@ class MemberSocialAccountRepositoryTest {
         
         MemberSocialAccount memberSocialAccountKaKao = MemberSocialAccount.builder()
                                                                           .member(member)
-                                                                          .type(SocialProvider.KAKAO)
+                                                                          .provider(SocialProvider.KAKAO)
                                                                           .build();
         
         MemberSocialAccount memberSocialAccountGoogle = MemberSocialAccount.builder()
                                                                            .member(member)
-                                                                           .type(SocialProvider.GOOGLE)
+                                                                           .provider(SocialProvider.GOOGLE)
                                                                            .build();
         
         memberSocialAccountRepository.save(memberSocialAccountKaKao);
         memberSocialAccountRepository.save(memberSocialAccountGoogle);
         
-        Optional<MemberSocialAccount> kakaoAccount = memberSocialAccountRepository.findByMemberAndType(
+        Optional<MemberSocialAccount> kakaoAccount = memberSocialAccountRepository.findByMemberAndProvider(
             member,
             SocialProvider.KAKAO);
         
-        Optional<MemberSocialAccount> googleAccount = memberSocialAccountRepository.findByMemberAndType(
+        Optional<MemberSocialAccount> googleAccount = memberSocialAccountRepository.findByMemberAndProvider(
             member,
             SocialProvider.GOOGLE);
         
