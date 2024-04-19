@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.service.Member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,25 +52,23 @@ class MemberServiceTest {
                                                                           .type(SocialProvider.KAKAO)
                                                                           .build();
         
-        when(memberRepository.findByEmail(any())).thenReturn(Optional.of(testMemberObj));
-        when(memberSocialAccountRepository
-                 .findByMemberAndType(any(Member.class),
-                                      any(SocialProvider.class)))
-            .thenReturn(Optional.of(memberSocialAccountKaKao));
+        when(memberRepository.findByProviderAndEmail(any(SocialProvider.class), anyString()))
+            .thenReturn(Optional.of(testMemberObj));
         
-        Member registeredMember = memberService.getRegisteredMember(SocialProvider.KAKAO,
-                                                                    "test@email.com");
+        Optional<Member> registeredMember = memberService.getRegisteredMember(SocialProvider.KAKAO,
+                                                                              "test@email.com");
         
-        assertNotNull(registeredMember);
-        assertEquals(registeredMember.getNickname(), "nickname");
+        assertTrue(registeredMember.isPresent());
+        assertEquals(registeredMember.get().getNickname(), "nickname");
     }
     
     @Test
     @DisplayName("[FAIL] 유저 자체가 존재하지 않는 경우")
     void findNotRegisteredMemberTest() {
-        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(memberRepository.findByProviderAndEmail(any(SocialProvider.class), anyString()))
+            .thenReturn(Optional.empty());
         
-        assertNull(memberService.getRegisteredMember(SocialProvider.GOOGLE, "email"));
+        assertFalse(memberService.getRegisteredMember(SocialProvider.GOOGLE, "email").isPresent());
     }
     
     @Test
@@ -85,12 +83,18 @@ class MemberServiceTest {
                                      .profileImageUrl("image.jpeg")
                                      .build();
         
-        when(memberRepository.findByEmail(eq("test@email.com")))
+        when(memberRepository.findByProviderAndEmail(eq(SocialProvider.KAKAO),
+                                                     eq("test@email.com")))
             .thenReturn(Optional.of(testMemberObj));
-        when(memberSocialAccountRepository.findByMemberAndType(eq(testMemberObj),
-                                                               any(SocialProvider.class)))
+        when(memberRepository.findByProviderAndEmail(eq(SocialProvider.GOOGLE),
+                                                     eq("test@email.com")))
             .thenReturn(Optional.empty());
         
-        assertNull(memberService.getRegisteredMember(SocialProvider.KAKAO, "test@email.com"));
+        assertTrue(memberService.getRegisteredMember(SocialProvider.KAKAO, "test@email.com")
+                                .isPresent());
+        assertFalse(memberService.getRegisteredMember(SocialProvider.GOOGLE, "test@email.com")
+                                 .isPresent());
+        
+        
     }
 }
