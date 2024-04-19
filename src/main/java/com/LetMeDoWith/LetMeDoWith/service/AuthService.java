@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.service;
 
 import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.AccessTokenReqDto;
+import com.LetMeDoWith.LetMeDoWith.dto.requestDto.createAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
@@ -13,9 +13,11 @@ import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
+import com.LetMeDoWith.LetMeDoWith.service.Member.MemberService;
 import com.LetMeDoWith.LetMeDoWith.util.AuthUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,8 @@ public class AuthService {
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     
     private final SocialProviderAuthFactoryService socialProviderAuthFactoryService;
+    
+    private final MemberService memberService;
     
     @Value("${oidc.aud.kakao}")
     private String KAKAO_AUD;
@@ -105,6 +109,29 @@ public class AuthService {
         return AuthUtil.verifyOidcToken(token, keyVO.n(), keyVO.e());
     }
     
+    public Optional<AccessTokenVO> createToken(createAccessTokenReqDto createAccessTokenReqDto) {
+        Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(createAccessTokenReqDto.provider(),
+                                                             createAccessTokenReqDto.idToken());
+        
+        Claims body = verifiedIdToken.getBody();
+        String email = body.get("email", String.class);
+        
+        Optional<Member> optionalMember = memberService.getRegisteredMember(
+            createAccessTokenReqDto.provider(),
+            email);
+        
+        if (optionalMember.isPresent()) {
+            // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
+            return Optional.of(login(optionalMember.get()));
+        } else {
+            // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
+            proceedToSignup(createAccessTokenReqDto);
+            
+            return Optional.empty();
+        }
+    }
+    
+    
     /**
      * 로그인, 즉 access token을 발급한다.
      *
@@ -120,9 +147,9 @@ public class AuthService {
      * <p>
      * 이후 회원가입이 완료될 때 Client에서 넘어오는 정보를 가지고 임시 Member를 업데이트한다.
      *
-     * @param accessTokenReqDto
+     * @param createAccessTokenReqDto
      */
-    public void proceedToSignup(AccessTokenReqDto accessTokenReqDto) {
+    public void proceedToSignup(createAccessTokenReqDto createAccessTokenReqDto) {
         // some processes.
         log.info("Not registered user!");
     }
@@ -141,9 +168,7 @@ public class AuthService {
                 return KAKAO_AUD;
             }
             
-            default -> {
-                throw new RuntimeException();
-            }
+            default -> throw new RuntimeException();
         }
     }
     
