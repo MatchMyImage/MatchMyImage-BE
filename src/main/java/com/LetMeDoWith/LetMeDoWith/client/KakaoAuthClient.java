@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.client;
 
-import com.LetMeDoWith.LetMeDoWith.dto.responseDto.OidcPublicKeyResDto;
+import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
