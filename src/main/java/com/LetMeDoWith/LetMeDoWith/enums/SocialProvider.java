@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.enums;
 
+import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +30,7 @@ public enum SocialProvider implements BaseEnum {
         return Arrays.stream(SocialProvider.values())
                      .filter(socialProvider -> socialProvider.getIssUrl().equals(issUrl))
                      .findFirst()
-                     .orElseThrow(IllegalArgumentException::new);
+                     .orElseThrow(() -> new RestApiException(FailResponseStatus.MANDATORY_PARAM_ERROR_PROVIDER));
     }
     
 }
