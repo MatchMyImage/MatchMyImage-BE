@@ -10,6 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
@@ -22,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -123,19 +123,27 @@ public class AuthService {
      */
     private Jws<Claims> getVerifiedOidcIdToken(SocialProvider provider, String token) {
         AuthClient client = socialProviderAuthFactoryService.getClient(provider);
-        
-        Mono<OidcPublicKeyResDto> publicKeyListInMono = client.getPublicKeyList();
-        OidcPublicKeyResDto publicKeyList = publicKeyListInMono.block();
+        OidcPublicKeyResDto publicKeyList = client.getPublicKeyList().block();
         String aud = getAudValueForProvider(provider);
-        
         String kid = AuthUtil.getKidFromUnsignedTokenHeader(token, aud, provider.getIssUrl());
         
-        OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
-                                             .filter(key -> key.kid().equals(kid))
-                                             .findFirst()
-                                             .orElseThrow(IllegalArgumentException::new);
-        
-        return AuthUtil.verifyOidcToken(token, keyVO.n(), keyVO.e());
+        try {
+            
+            OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
+                                                 .filter(key -> key.kid().equals(kid))
+                                                 .findFirst()
+                                                 .orElseThrow(OidcIdTokenPublicKeyNotFoundException::new);
+            
+            return AuthUtil.verifyOidcToken(token, keyVO.n(), keyVO.e());
+            
+        } catch (OidcIdTokenPublicKeyNotFoundException e) {
+            log.error("일치하는 OIDC ID Token 공개키 API가 없습니다. Cache를 갱신합니다.");
+            // TODO: add method invalidates cache for public key.
+            // invalidateCache()
+            
+            // Cache를 무효화 한 후, 공개키를 다시 조회한다.
+            return getVerifiedOidcIdToken(provider, token);
+        }
     }
     
     

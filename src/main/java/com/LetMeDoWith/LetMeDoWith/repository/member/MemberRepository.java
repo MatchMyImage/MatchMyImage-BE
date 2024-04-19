@@ -23,6 +23,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return
      */
     @Query("SELECT m from Member m left join member_social_account s on s.member = m "
-        + "where s.type = :provider and m.email = :email")
+        + "where s.provider = :provider and m.email = :email")
     Optional<Member> findByProviderAndEmail(SocialProvider provider, String email);
 }
