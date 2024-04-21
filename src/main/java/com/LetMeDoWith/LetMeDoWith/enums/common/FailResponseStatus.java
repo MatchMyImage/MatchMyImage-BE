@@ -47,6 +47,10 @@ public enum FailResponseStatus {
                                       "E305",
                                       HttpStatus.UNAUTHORIZED,
                                       "Token is not valid"),
+    OIDC_ID_TOKEN_PUBKEY_NOT_FOUND("OIDC_ID_TOKEN_PUBKEY_NOT_FOUND",
+                                   "E306",
+                                   HttpStatus.UNAUTHORIZED,
+                                   "OpenID Connect ID Token의 공개키를 찾을 수 없습니다."),
     
     /**
      * 500 Interal Server Error 서버 내부 오류 및 서버 관리자의 조치로 인한 오류

@@ -142,7 +142,21 @@ public class AuthService {
             // invalidateCache()
             
             // Cache를 무효화 한 후, 공개키를 다시 조회한다.
-            return getVerifiedOidcIdToken(provider, token);
+            try {
+                publicKeyList = client.getPublicKeyList().block();
+                
+                OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
+                                                     .filter(key -> key.kid().equals(kid))
+                                                     .findFirst()
+                                                     .orElseThrow(
+                                                         OidcIdTokenPublicKeyNotFoundException::new);
+                
+                return AuthUtil.verifyOidcToken(token, keyVO.n(), keyVO.e());
+            } catch (OidcIdTokenPublicKeyNotFoundException exception) {
+                log.error("OIDC ID Token 공개키 갱신 실패. {} 공개키 서버의 문제일 수 있습니다.",
+                          provider.getDescription());
+                throw new RestApiException(FailResponseStatus.OIDC_ID_TOKEN_PUBKEY_NOT_FOUND);
+            }
         }
     }
     
