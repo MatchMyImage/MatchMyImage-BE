@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.service;
 
 import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.createAccessTokenReqDto;
+import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto.OidcPublicKeyVO;
@@ -92,7 +92,7 @@ public class AuthService {
      * @param createAccessTokenReqDto 발급 요청자의 Provider, 이메일 정보
      * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
-    public Optional<AccessTokenVO> createToken(createAccessTokenReqDto createAccessTokenReqDto) {
+    public Optional<AccessTokenVO> createToken(CreateAccessTokenReqDto createAccessTokenReqDto) {
         Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(createAccessTokenReqDto.provider(),
                                                              createAccessTokenReqDto.idToken());
         
@@ -164,7 +164,7 @@ public class AuthService {
      *
      * @param createAccessTokenReqDto
      */
-    private void proceedToSignup(createAccessTokenReqDto createAccessTokenReqDto) {
+    private void proceedToSignup(CreateAccessTokenReqDto createAccessTokenReqDto) {
         // some processes.
         log.info("Not registered user!");
     }

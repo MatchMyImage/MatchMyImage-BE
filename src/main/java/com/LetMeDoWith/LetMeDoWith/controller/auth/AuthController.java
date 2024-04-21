@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.controller.auth;
 
+import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateTokenRefreshReqDto;
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.createAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
 import com.LetMeDoWith.LetMeDoWith.enums.common.SuccessResponseStatus;
@@ -38,7 +38,7 @@ public class AuthController {
     }
     
     @PostMapping("/token")
-    public ResponseEntity createAccessToken(@RequestBody createAccessTokenReqDto createAccessTokenReqDto) {
+    public ResponseEntity createToken(@RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
         Optional<AccessTokenVO> tokenRequestResult = authService.createToken(
             createAccessTokenReqDto);
         
