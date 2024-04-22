@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.provider;
 
-import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AuthTokenVO;
 import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
@@ -24,6 +24,7 @@ import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,7 +66,7 @@ public class AuthTokenProvider {
      * @param memberId
      * @return
      */
-    public AccessTokenVO createAccessToken(Long memberId) {
+    public AuthTokenVO createAccessToken(Long memberId) {
         
         Date nowDate = new Date();
         
@@ -82,9 +83,9 @@ public class AuthTokenProvider {
                                  .signWith(secretKey)
                                  .compact();
         
-        return new AccessTokenVO(accessToken,
-                                 LocalDateTime.ofInstant(expireAt.toInstant(),
-                                                         ZoneId.systemDefault()));
+        return new AuthTokenVO(accessToken,
+                               LocalDateTime.ofInstant(expireAt.toInstant(),
+                                                       ZoneId.systemDefault()));
         
     }
     
@@ -122,6 +123,34 @@ public class AuthTokenProvider {
                                                                 rtkDurationDay * 24 * 60 * 60)
                                                             .build());
     }
+    
+    /**
+     * Signup token 생성. /token 엔드포인트의 응답으로 memberId를 응답한다.
+     * <p>
+     * 이후 회원가입 완료 시점에 본 메서드의 JWT를 포함하여 요청하여 회원가입 요청을 인증한다.
+     *
+     * @param memberId 회원가입을 계속해서 진행할 member의 id.
+     * @return
+     */
+    public AuthTokenVO createSignupToken(Long memberId) {
+        Date nowDate = new Date();
+        Date expireAt = new Date(nowDate.getTime() + TokenType.SIGNUP.expireTime);
+        
+        String signupToken = Jwts.builder()
+                                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                                 .setIssuer(this.issuer)
+                                 .setIssuedAt(nowDate)
+                                 .setExpiration(expireAt)
+                                 .setSubject(TokenType.SIGNUP.name())
+                                 .claim("memberId", memberId)
+                                 .signWith(secretKey)
+                                 .compact();
+        
+        return new AuthTokenVO(signupToken,
+                               LocalDateTime.ofInstant(expireAt.toInstant(),
+                                                       ZoneId.systemDefault()));
+    }
+    
     
     /**
      * Token payload 추출
@@ -256,8 +285,13 @@ public class AuthTokenProvider {
         return keyFactory.generatePublic(keySpec);
     }
     
+    @AllArgsConstructor
     public enum TokenType {
-        ATK, RTK
+        ATK(60 * 1000L),
+        RTK(60 * 60 * 24 * 1000L),
+        SIGNUP(10L);
+        
+        final Long expireTime;
     }
     
 }

@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto.OidcPublicKeyVO;
-import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AuthTokenVO;
 import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
@@ -68,19 +68,19 @@ public class AuthService {
         }
         
         // 신규 ATK 발급
-        AccessTokenVO accessTokenVO = authTokenProvider.createAccessToken(memberId);
+        AuthTokenVO authTokenVO = authTokenProvider.createAccessToken(memberId);
         
         // 신규 RTK 발급
         RefreshToken newRefreshToken = authTokenProvider.createRefreshToken(memberId,
-                                                                            accessTokenVO.token(),
+                                                                            authTokenVO.token(),
                                                                             userAgent);
         
         // 기존 RTK info Redis에서 삭제
         refreshTokenRedisRepository.delete(savedRefreshToken);
         
         return CreateTokenRefreshResDto.builder()
-                                       .accessToken(accessTokenVO.token())
-                                       .accessTokenExpireAt(accessTokenVO.expireAt())
+                                       .accessToken(authTokenVO.token())
+                                       .accessTokenExpireAt(authTokenVO.expireAt())
                                        .refreshToken(newRefreshToken.getToken())
                                        .build();
         
@@ -94,26 +94,19 @@ public class AuthService {
      * @param createAccessTokenReqDto 발급 요청자의 Provider, 이메일 정보
      * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
-    public Optional<AccessTokenVO> createToken(CreateAccessTokenReqDto createAccessTokenReqDto) {
-        Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(createAccessTokenReqDto.provider(),
+    public AuthTokenVO createToken(CreateAccessTokenReqDto createAccessTokenReqDto) {
+        SocialProvider provider = createAccessTokenReqDto.provider();
+        Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(provider,
                                                              createAccessTokenReqDto.idToken());
         
         Claims body = verifiedIdToken.getBody();
         String email = body.get("email", String.class);
         
-        Optional<Member> optionalMember = memberService.getRegisteredMember(
-            createAccessTokenReqDto.provider(),
-            email);
+        Optional<Member> optionalMember = memberService.getRegisteredMember(provider, email);
         
-        if (optionalMember.isPresent()) {
-            // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
-            return Optional.of(login(optionalMember.get()));
-        } else {
-            // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
-            proceedToSignup(createAccessTokenReqDto);
-            
-            return Optional.empty();
-        }
+        // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
+        // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
+        return optionalMember.map(this::login).orElseGet(() -> proceedToSignup(provider, email));
     }
     
     /**
@@ -179,7 +172,7 @@ public class AuthService {
      * @param member
      * @return access token
      */
-    private AccessTokenVO login(Member member) {
+    private AuthTokenVO login(Member member) {
         return authTokenProvider.createAccessToken(member.getId());
     }
     
@@ -187,12 +180,13 @@ public class AuthService {
      * 최초 소셜 로그인 시도시 회원가입 단계를 진행하기 위해 임시 Member를 생성한다. 생성된 임시 Member는 필요한 정보가 들어있지 않은 상태이다.
      * <p>
      * 이후 회원가입이 완료될 때 Client에서 넘어오는 정보를 가지고 임시 Member를 업데이트한다.
-     *
-     * @param createAccessTokenReqDto
      */
-    private void proceedToSignup(CreateAccessTokenReqDto createAccessTokenReqDto) {
-        // some processes.
+    private AuthTokenVO proceedToSignup(SocialProvider provider, String email) {
         log.info("Not registered user!");
+        Member member = memberService.createSocialAuthenticatedMember(provider,
+                                                                      email);
+        
+        return authTokenProvider.createSignupToken(member.getId());
     }
     
     private String getAudValueForProvider(SocialProvider provider) {

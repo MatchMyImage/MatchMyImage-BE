@@ -36,7 +36,18 @@ public class MemberSocialAccount extends BaseAuditEntity {
     @Column(name = "provider", nullable = false)
     private SocialProvider provider;
     
-    public void addMember(Member member) {
+    public static MemberSocialAccount createSocialAccount(Member member, SocialProvider provider) {
+        MemberSocialAccount socialAccount = MemberSocialAccount.builder()
+                                                               .member(member)
+                                                               .provider(provider)
+                                                               .build();
+        
+        socialAccount.linkWith(member);
+        
+        return socialAccount;
+    }
+    
+    public void linkWith(Member member) {
         this.member = member;
         member.getSocialAccountList().add(this);
     }

@@ -3,13 +3,10 @@ package com.LetMeDoWith.LetMeDoWith.controller.auth;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateTokenRefreshReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
-import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
-import com.LetMeDoWith.LetMeDoWith.enums.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AuthTokenVO;
 import com.LetMeDoWith.LetMeDoWith.service.AuthService;
-import com.LetMeDoWith.LetMeDoWith.service.Member.MemberService;
 import com.LetMeDoWith.LetMeDoWith.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.util.ResponseUtil;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     
     private final AuthService authService;
-    private final MemberService memberService;
     
     @PostMapping("/token/refresh")
     public ResponseEntity createTokenRefresh(@RequestBody CreateTokenRefreshReqDto requestBody) {
@@ -39,12 +35,8 @@ public class AuthController {
     
     @PostMapping("/token")
     public ResponseEntity createToken(@RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
-        Optional<AccessTokenVO> tokenRequestResult = authService.createToken(
-            createAccessTokenReqDto);
+        AuthTokenVO tokenRequestResult = authService.createToken(createAccessTokenReqDto);
         
-        return ResponseUtil.createSuccessResponse(
-            tokenRequestResult.isPresent()
-                ? tokenRequestResult.get()
-                : SuccessResponseStatus.OK);
+        return ResponseUtil.createSuccessResponse(tokenRequestResult);
     }
 }

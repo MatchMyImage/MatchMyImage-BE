@@ -41,7 +41,7 @@ public class Member extends BaseAuditEntity {
     @Column(nullable = false)
     private MemberStatus status;
     
-    @Column(nullable = false)
+    @Column
     private String nickname;
     
     @Column(name = "self_description")
@@ -53,4 +53,21 @@ public class Member extends BaseAuditEntity {
     
     @Column(name = "profile_image_url")
     private String profileImageUrl;
+    
+    
+    /**
+     * 소셜 인증되었을 때, 임시 회원 객체를 생성한다.
+     * <p>
+     * 이후 유저가 회원가입 프로세스를 완료할 때 임시 회원 객체의 나머지 컬럼의 데이터가 업데이트된다.
+     *
+     * @param email 임시 회원의 이메일
+     * @return 임시 회원 객체
+     */
+    public static Member createTemporalMember(String email) {
+        return Member.builder()
+                     .email(email)
+                     .type(MemberType.USER)
+                     .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                     .build();
+    }
 }
