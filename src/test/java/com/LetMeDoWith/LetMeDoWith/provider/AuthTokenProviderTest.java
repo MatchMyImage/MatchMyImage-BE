@@ -1,20 +1,30 @@
-package com.LetMeDoWith.LetMeDoWith.util;
+package com.LetMeDoWith.LetMeDoWith.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import java.math.BigInteger;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.time.Instant;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @Slf4j
-class AuthUtilTest {
+@ExtendWith(MockitoExtension.class)
+class AuthTokenProviderTest {
     
     /*
      * Sample OIDC ID Tokens for test.
@@ -33,13 +43,24 @@ class AuthUtilTest {
     
     public final String SAMPLE_MOD = "zhMyuF42t7vy2VjnXj2pI2kssakfgaNJqtBqKkh_IBidqKTIM2mEejJ-b0HUwgQ0YzyZGA1OixLxvWuRTrY3j9RXPg0wj7J7e7TkPqZ83sMQ7lUqfzHfR4mMJQ9Si33CFSm8pBkJt38QS9ciLb-uf2cg9N-GSo1e6YAiywlc-w5UOW9Ur_2N5OeHQAWJM1V7LxSbJEakGJG_ivrghrLfh9h-VaYcvfyCJnbkcHGtpubH7LSo5a80_-S9hkvoHuhow27w9mxLm0K4IR1N8BmJbIBc19pMm8i-BQouHL0tbOr0-843GpoidCsXsk-jL9Egqmp9W3qA_WDU6Ra_SFJzFmbC6lqWveUYcKIh7h-qjpkwWrU_88kO5WuX0QiyV4VDj_uRhbtkMxzKWC-QVFGOhG5h2FJnC1lL1lQaIPa5KfxcxpptThLho1NKkgQoblItidMb3rxHdxMrWHVMkvgPhbN2Z5Yb3zo0Yxa9Svbh0n73iTB2GNrdM8q8EC12abHZ";
     public final String SAMPLE_EXPONENT = "AQAB";
+    // meaningless value only for test
+    private final String SAMPLE_SECRET_KEY = "KHoPuJp/vfpbVThjaRjlN6W4MGXk/zMSaLeqoRXd4EepsPT7W4KGCPwLYyfxAFX3Y3sFjp4Nu55piQGj5t1GHA==";
+    public Key pubKey;
+    @Mock
+    RefreshTokenRedisRepository refreshTokenRedisRepository;
+    AuthTokenProvider authTokenProvider = new AuthTokenProvider(SAMPLE_SECRET_KEY,
+                                                                refreshTokenRedisRepository);
+    
+    public AuthTokenProviderTest() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        pubKey = authTokenProvider.getRSAPublicKey(SAMPLE_MOD, SAMPLE_EXPONENT);
+    }
     
     @Test
     @DisplayName("[SUCCESS] Token signature 추출 테스트")
     void extractSignatureFromNormalTokenTest() {
-        String kid = AuthUtil.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_NORMAL,
-                                                            SAMPLE_AUD,
-                                                            SAMPLE_ISS);
+        String kid = authTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_NORMAL,
+                                                                     SAMPLE_AUD,
+                                                                     SAMPLE_ISS);
         
         assertEquals(kid, SAMPLE_KID);
     }
@@ -47,9 +68,7 @@ class AuthUtilTest {
     @Test
     @DisplayName("[SUCCESS] ID token 검증 테스트")
     void verifyNormalTokenTest() {
-        Jws<Claims> oidcToken = AuthUtil.verifyOidcToken(SAMPLE_TOKEN_NORMAL,
-                                                         SAMPLE_MOD,
-                                                         SAMPLE_EXPONENT);
+        Jws<Claims> oidcToken = authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_NORMAL, pubKey);
         
         assertEquals(oidcToken.getBody().getIssuer(), SAMPLE_ISS);
         assertEquals(oidcToken.getBody().getExpiration(),
@@ -60,9 +79,9 @@ class AuthUtilTest {
     @DisplayName("[FAIL] 만료된 token에서 signature 추출 시도 ")
     void extractSignatureFromExpiredTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> AuthUtil.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_EXPIRED,
-                                                                  SAMPLE_AUD,
-                                                                  SAMPLE_ISS),
+                     () -> authTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_EXPIRED,
+                                                                           SAMPLE_AUD,
+                                                                           SAMPLE_ISS),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -70,9 +89,10 @@ class AuthUtilTest {
     @DisplayName("[FAIL] 잘못된 signature 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromIllegalSignatureTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> AuthUtil.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
-                                                                  SAMPLE_AUD,
-                                                                  SAMPLE_ISS),
+                     () -> authTokenProvider.getKidFromUnsignedTokenHeader(
+                         SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
+                         SAMPLE_AUD,
+                         SAMPLE_ISS),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -80,9 +100,9 @@ class AuthUtilTest {
     @DisplayName("[FAIL] 잘못된 format 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromMalformedTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> AuthUtil.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_MALFORMED,
-                                                                  SAMPLE_AUD,
-                                                                  SAMPLE_ISS),
+                     () -> authTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_MALFORMED,
+                                                                           SAMPLE_AUD,
+                                                                           SAMPLE_ISS),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -90,9 +110,7 @@ class AuthUtilTest {
     @DisplayName("[FAIL] 만료된 ID token 검증 시도")
     void verifyExpiredTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_EXPIRED,
-                                                    SAMPLE_MOD,
-                                                    SAMPLE_EXPONENT),
+                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_EXPIRED, pubKey),
                      FailResponseStatus.TOKEN_EXPIRED.getMessage());
     }
     
@@ -100,9 +118,8 @@ class AuthUtilTest {
     @DisplayName("[FAIL] 잘못된 signature 가지는 ID token 검증 시도")
     void verifyIllegalSignatureTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
-                                                    SAMPLE_MOD,
-                                                    SAMPLE_EXPONENT),
+                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
+                                                             pubKey),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -110,9 +127,7 @@ class AuthUtilTest {
     @DisplayName("[FAIL] 잘못된 format 가지는 ID token 검증 시도")
     void verifyMalformedTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_MALFORMED,
-                                                    SAMPLE_MOD,
-                                                    SAMPLE_EXPONENT),
+                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_MALFORMED, pubKey),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -120,9 +135,33 @@ class AuthUtilTest {
     @DisplayName("[FAIL] 잘못된 RSA Key로 ID token 검증 시도")
     void verifyTokenWithInvalidKeyTest() {
         assertThrows(RestApiException.class,
-                     () -> AuthUtil.verifyOidcToken(SAMPLE_TOKEN_NORMAL,
-                                                    "SAMPLE_MOD",
-                                                    "SAMPLE_EXPONENT"),
+                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
+                                                             new RSAPublicKey() {
+                                                                 @Override
+                                                                 public BigInteger getPublicExponent() {
+                                                                     return null;
+                                                                 }
+            
+                                                                 @Override
+                                                                 public String getAlgorithm() {
+                                                                     return null;
+                                                                 }
+            
+                                                                 @Override
+                                                                 public String getFormat() {
+                                                                     return null;
+                                                                 }
+            
+                                                                 @Override
+                                                                 public byte[] getEncoded() {
+                                                                     return new byte[0];
+                                                                 }
+            
+                                                                 @Override
+                                                                 public BigInteger getModulus() {
+                                                                     return null;
+                                                                 }
+                                                             }),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
 }
