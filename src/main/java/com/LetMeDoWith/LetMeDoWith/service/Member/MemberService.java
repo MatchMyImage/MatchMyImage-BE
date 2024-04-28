@@ -4,6 +4,8 @@ package com.LetMeDoWith.LetMeDoWith.service.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberSocialAccountRepository;
 import java.util.Optional;
@@ -38,12 +40,19 @@ public class MemberService {
      */
     @Transactional
     public Member createSocialAuthenticatedMember(SocialProvider provider, String email) {
-        Member temporalMember = memberRepository.save(Member.createTemporalMember(email));
-        MemberSocialAccount memberSocialAccount = MemberSocialAccount.createSocialAccount(
-            temporalMember,
-            provider);
+        Member temporalMember = memberRepository.save(Member.builder()
+                                                            .email(email)
+                                                            .type(MemberType.USER)
+                                                            .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                                                            .build());
         
-        memberSocialAccountRepository.save(memberSocialAccount);
+        MemberSocialAccount socialAccount = MemberSocialAccount.builder()
+                                                               .member(temporalMember)
+                                                               .provider(provider)
+                                                               .build();
+        // 양방향 연관관계 매핑
+        temporalMember.getSocialAccountList().add(socialAccount);
+        memberSocialAccountRepository.save(socialAccount);
         
         return temporalMember;
     }
