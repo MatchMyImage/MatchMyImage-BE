@@ -1,9 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.LetMeDoWith.LetMeDoWith.enums.converter.member.FollowTypeConverter;
 import com.LetMeDoWith.LetMeDoWith.interceptor.AuthenticateInterceptor;
 import lombok.RequiredArgsConstructor;
 
@@ -24,5 +26,10 @@ public class WebConfig implements WebMvcConfigurer {
 				);
 			// TODO - 운영 반영 시 주석 해제
 			// .excludePathPatterns("/**"); // 개발 시, 테스트를 위해 actvice
+	}
+
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addConverter(new FollowTypeConverter());
 	}
 }

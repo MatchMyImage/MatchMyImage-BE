@@ -15,19 +15,17 @@ public enum FailResponseStatus {
      */
     BAD_REQUEST("BAD_REQUEST", "E200", HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_PARAM_ERROR("INVALID_PARAM_ERROR", "E201", HttpStatus.BAD_REQUEST, "요청 파라미터가 잘못되었습니다."),
-    MANDATORY_PARAM_ERROR_NAME("MANDATORY_PARAM_ERROR_NAME",
-                               "E211",
-                               HttpStatus.BAD_REQUEST,
-                               "이름이 잘못되었습니다."),
-    MANDATORY_PARAM_ERROR_EMAIL("MANDATORY_PARAM_ERROR_EMAIL",
-                                "E210",
-                                HttpStatus.BAD_REQUEST,
-                                "이메일이 잘못되었습니다."),
-    MANDATORY_PARAM_ERROR_PROVIDER("MANDATORY_PARAM_ERROR_PROVIDER",
-                                   "E212",
-                                   HttpStatus.BAD_REQUEST,
-                                   "잘못된 Provider 입니다."),
+
+    // Member 도메인 관련 Exception - E21X
+    MANDATORY_PARAM_ERROR_NAME("MANDATORY_PARAM_ERROR_NAME", "E211", HttpStatus.BAD_REQUEST, "이름이 잘못되었습니다."),
+    MANDATORY_PARAM_ERROR_EMAIL("MANDATORY_PARAM_ERROR_EMAIL", "E210", HttpStatus.BAD_REQUEST, "이메일이 잘못되었습니다."),
+    MANDATORY_PARAM_ERROR_PROVIDER("MANDATORY_PARAM_ERROR_PROVIDER", "E211", HttpStatus.BAD_REQUEST, "잘못된 Social Provider 입니다."),
+    INVALID_FOLLOWER_MEMBER("INVALID_FOLLOWER_MEMBER", "E212", HttpStatus.BAD_REQUEST, "팔로워 회윈이 유효하지 않습니다."),
+    INVALID_FOLLOWING_MEMBER("INVALID_FOLLOW_MEMBER", "E213", HttpStatus.BAD_REQUEST, "팔로잉 가능한 유효 회원이 아닙니다."),
+    MEMBER_FOLLOW_NOT_EXIST("MEMBER_FOLLOW_NOT_EXIST", "E214", HttpStatus.BAD_REQUEST, "존재하지 않는 팔로우 이력입니다."),
+
     
+
     /**
      * 401 UnAuthorized Error 인증 관련 오류
      */

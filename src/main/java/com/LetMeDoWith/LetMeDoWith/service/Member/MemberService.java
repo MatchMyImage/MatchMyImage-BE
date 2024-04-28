@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.service.Member;
+package com.LetMeDoWith.LetMeDoWith.service.member;
 
 
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;

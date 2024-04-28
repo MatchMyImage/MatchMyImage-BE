@@ -27,9 +27,9 @@ public class MemberFollow extends BaseAuditEntity {
     
     @ManyToOne
     @JoinColumn(name = "follower_id", nullable = false)
-    private Member followingMember;
+    private Member followerMember;
     
     @ManyToOne
-    @JoinColumn(name = "followed_id", nullable = false)
-    private Member followedMember;
+    @JoinColumn(name = "following_id", nullable = false)
+    private Member followingMember;
 }

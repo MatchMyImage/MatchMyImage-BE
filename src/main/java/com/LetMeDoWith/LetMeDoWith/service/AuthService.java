@@ -14,7 +14,7 @@ import com.LetMeDoWith.LetMeDoWith.exception.OidcIdTokenPublicKeyNotFoundExcepti
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
-import com.LetMeDoWith.LetMeDoWith.service.Member.MemberService;
+import com.LetMeDoWith.LetMeDoWith.service.member.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.security.Key;
