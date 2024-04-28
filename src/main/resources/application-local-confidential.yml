@@ -15,3 +15,9 @@ auth:
     secret: c2lsdmVycmluZycmluZy1TEST3dC10dXRvcmlhbC1zZWNyZXTESTp1bmluZS10ZWNoLXNwib290LWTESTlsdmVybmluZS10ZWNoLXNw3dCTESTRvcmlhbC1zZWNyZXQK
     atk-duration-min: 1 # 개발 및 테스트 용으로 180분 설정
     rtk-duration-day: 1 # 개발 및 테스트 용으로 1일 설정
+
+  oidc:
+    aud:
+      kakao: kakao
+      google: google
+      apple: apple
