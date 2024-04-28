@@ -15,6 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberSocialAccountRepository;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,47 @@ class MemberServiceTest {
         
         assertTrue(registeredMember.isPresent());
         assertEquals(registeredMember.get().getNickname(), "nickname");
+    }
+    
+    @Test
+    @DisplayName("[SUCCESS] 임시 멤버 생성")
+    void createSocialAuthenticatedMemberTest() {
+        Member temporalMember = Member.builder()
+                                      .email("test@email.com")
+                                      .type(MemberType.USER)
+                                      .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                                      .build();
+        
+        MemberSocialAccount temporalSocialAccount = MemberSocialAccount.builder()
+                                                                       .member(temporalMember)
+                                                                       .provider(SocialProvider.KAKAO)
+                                                                       .build();
+        
+        when(memberRepository.save(any(Member.class)))
+            .thenReturn(Member.builder()
+                              .id(1L)
+                              .email("test@email.com")
+                              .type(MemberType.USER)
+                              .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                              .socialAccountList(new ArrayList<>())
+                              .statusHistoryList(new ArrayList<>())
+                              .selfDescription("")
+                              .profileImageUrl("")
+                              .build());
+        
+        Member createdTemporalMember = memberService.createSocialAuthenticatedMember(
+            SocialProvider.KAKAO,
+            "test@email.com");
+        
+        assertEquals(createdTemporalMember.getEmail(), "test@email.com");
+        assertEquals(createdTemporalMember.getStatus(), MemberStatus.SOCIAL_AUTHENTICATED);
+        
+        assertTrue(
+            createdTemporalMember.getSocialAccountList()
+                                 .stream()
+                                 .allMatch(account -> account.getProvider()
+                                                             .equals(SocialProvider.KAKAO))
+        );
     }
     
     @Test
