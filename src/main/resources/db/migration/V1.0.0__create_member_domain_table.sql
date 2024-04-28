@@ -1,4 +1,4 @@
-CREATE TABLE member
+CREATE TABLE IF NOT EXISTS member
 (
     member_id               BIGINT AUTO_INCREMENT NOT NULL,
     create_at               datetime              NULL,
@@ -15,7 +15,7 @@ CREATE TABLE member
     CONSTRAINT pk_member PRIMARY KEY (member_id)
 );
 
-CREATE TABLE member_follow
+CREATE TABLE IF NOT EXISTS member_follow
 (
     member_follow_id BIGINT AUTO_INCREMENT NOT NULL,
     create_at        datetime              NULL,
@@ -23,11 +23,11 @@ CREATE TABLE member_follow
     created_by       VARCHAR(255)          NULL,
     updated_by       VARCHAR(255)          NULL,
     follower_id      BIGINT                NOT NULL,
-    followed_id      BIGINT                NOT NULL,
+    following_id      BIGINT                NOT NULL,
     CONSTRAINT pk_member_follow PRIMARY KEY (member_follow_id)
 );
 
-CREATE TABLE member_push_setting
+CREATE TABLE IF NOT EXISTS member_push_setting
 (
     member_push_setting_id BIGINT AUTO_INCREMENT NOT NULL,
     create_at              datetime              NULL,
@@ -42,7 +42,7 @@ CREATE TABLE member_push_setting
     CONSTRAINT pk_member_push_setting PRIMARY KEY (member_push_setting_id)
 );
 
-CREATE TABLE member_social_account
+CREATE TABLE IF NOT EXISTS member_social_account
 (
     member_social_account_id BIGINT AUTO_INCREMENT NOT NULL,
     create_at                datetime              NULL,
@@ -54,7 +54,7 @@ CREATE TABLE member_social_account
     CONSTRAINT pk_member_social_account PRIMARY KEY (member_social_account_id)
 );
 
-CREATE TABLE member_status_history
+CREATE TABLE IF NOT EXISTS member_status_history
 (
     member_status_history_id BIGINT AUTO_INCREMENT NOT NULL,
     create_at                datetime              NULL,
@@ -68,17 +68,17 @@ CREATE TABLE member_status_history
     CONSTRAINT pk_member_status_history PRIMARY KEY (member_status_history_id)
 );
 
-ALTER TABLE member_follow
-    ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWED FOREIGN KEY (followed_id) REFERENCES member (member_id);
-
-ALTER TABLE member_follow
-    ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWER FOREIGN KEY (follower_id) REFERENCES member (member_id);
-
-ALTER TABLE member_push_setting
-    ADD CONSTRAINT FK_MEMBER_PUSH_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
-
-ALTER TABLE member_social_account
-    ADD CONSTRAINT FK_MEMBER_SOCIAL_ACCOUNT_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
-
-ALTER TABLE member_status_history
-    ADD CONSTRAINT FK_MEMBER_STATUS_HISTORY_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
+-- ALTER TABLE member_follow
+--     ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWED FOREIGN KEY (followed_id) REFERENCES member (member_id);
+--
+-- ALTER TABLE member_follow
+--     ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWER FOREIGN KEY (follower_id) REFERENCES member (member_id);
+--
+-- ALTER TABLE member_push_setting
+--     ADD CONSTRAINT FK_MEMBER_PUSH_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
+--
+-- ALTER TABLE member_social_account
+--     ADD CONSTRAINT FK_MEMBER_SOCIAL_ACCOUNT_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
+--
+-- ALTER TABLE member_status_history
+--     ADD CONSTRAINT FK_MEMBER_STATUS_HISTORY_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
