@@ -30,14 +30,18 @@ public class MemberPushSetting extends BaseAuditEntity {
     private Member member;
     
     @Column(nullable = false)
+    @Builder.Default
     private boolean basePushYn = true;
     
     @Column(nullable = false)
+    @Builder.Default
     private boolean todoBotYn = true;
     
     @Column(nullable = false)
+    @Builder.Default
     private boolean feedbackYn = true;
     
     @Column(nullable = false)
+    @Builder.Default
     private boolean marketingYn = true;
 }
