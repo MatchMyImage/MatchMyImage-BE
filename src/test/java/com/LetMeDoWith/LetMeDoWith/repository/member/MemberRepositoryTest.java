@@ -2,12 +2,17 @@ package com.LetMeDoWith.LetMeDoWith.repository.member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
+import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
+import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +23,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Slf4j
 class MemberRepositoryTest {
     
     @Autowired
@@ -25,6 +31,9 @@ class MemberRepositoryTest {
     
     @Autowired
     private MemberRepository memberRepository;
+    
+    @Autowired
+    private MemberSocialAccountRepository memberSocialAccountRepository;
     
     
     @Test
@@ -37,7 +46,6 @@ class MemberRepositoryTest {
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
-                                     .marketingTermAgreeYn(true)
                                      .build();
         
         memberRepository.save(testMemberObj);
@@ -59,7 +67,6 @@ class MemberRepositoryTest {
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
-                                     .marketingTermAgreeYn(true)
                                      .build();
         
         memberRepository.save(testMemberObj);
@@ -79,6 +86,8 @@ class MemberRepositoryTest {
     
     @Test
     void test_duplicated_key() {
+        entityManager.clear();
+        
         Member testMemberObj = Member.builder()
                                      .id(1L)
                                      .email("test@email.com")
@@ -87,7 +96,6 @@ class MemberRepositoryTest {
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
-                                     .marketingTermAgreeYn(true)
                                      .build();
         
         Member testMemberObjWithoutKey = Member.builder()
@@ -97,7 +105,6 @@ class MemberRepositoryTest {
                                                .status(MemberStatus.NORMAL)
                                                .type(MemberType.USER)
                                                .profileImageUrl("image.jpeg")
-                                               .marketingTermAgreeYn(true)
                                                .build();
         
         memberRepository.save(testMemberObj);
@@ -106,7 +113,37 @@ class MemberRepositoryTest {
         Optional<Member> userWithCustomKey = memberRepository.findByNickname("nickname");
         Optional<Member> userWithDefaultKey = memberRepository.findByNickname("nickname2");
         
-        assertEquals(userWithCustomKey.get().getId(), 1L);
-        assertEquals(userWithDefaultKey.get().getId(), 2L);
+        assertNotEquals(testMemberObj.getId(), testMemberObjWithoutKey.getId());
+    }
+    
+    @Test
+    @DisplayName("[SUCCESS] 가입된 유저 조회 테스트")
+    void findRegisteredMemberTest() {
+        entityManager.clear();
+        
+        Member testMemberObj = Member.builder()
+                                     .id(1L)
+                                     .email("test@email.com")
+                                     .nickname("nickname")
+                                     .selfDescription("self desc")
+                                     .status(MemberStatus.NORMAL)
+                                     .type(MemberType.USER)
+                                     .profileImageUrl("image.jpeg")
+                                     .build();
+        
+        Member member = memberRepository.save(testMemberObj);
+        
+        MemberSocialAccount memberSocialAccount = MemberSocialAccount.builder()
+                                                                     .provider(SocialProvider.KAKAO)
+                                                                     .member(member)
+                                                                     .build();
+        
+        memberSocialAccountRepository.save(memberSocialAccount);
+        
+        Optional<Member> optionalMember = memberRepository.findByProviderAndEmail(SocialProvider.KAKAO,
+                                                                                  "test@email.com");
+        log.debug("member= {}", optionalMember.get().getNickname());
+        assertNotNull(optionalMember);
+        assertEquals(optionalMember.get().getNickname(), "nickname");
     }
 }

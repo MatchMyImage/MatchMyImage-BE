@@ -41,7 +41,8 @@ public class FollowService {
 						e.getFollowerMember().getSelfDescription(),
 						e.getFollowerMember().getProfileImageUrl()
 					))
-					.toList()).build();
+					.toList())
+					.build();
 			}
 			case FOLLOWING -> {
 				List<MemberFollow> memberFollows = memberFollowRepository.findAllFollowingsByFollowerMemberFetchJoinMember(member, pageable);

@@ -1,5 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.enums.member;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.LetMeDoWith.LetMeDoWith.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,4 +18,12 @@ public enum FollowType implements BaseEnum {
 
 	private final String code;
 	private final String description;
+
+	private static final Map<String, FollowType> CODE_MAP =
+		Stream.of(values()).collect(Collectors.toMap(FollowType::getCode, e->e));
+
+	private static FollowType getEnum(String code) {
+		return CODE_MAP.get(code);
+	}
+
 }

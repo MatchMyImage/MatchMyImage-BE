@@ -1,9 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.util;
 
+import com.LetMeDoWith.LetMeDoWith.dto.common.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.common.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.dto.common.ResponseDto;
 import lombok.experimental.UtilityClass;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -38,11 +41,33 @@ public class ResponseUtil {
 		return new ResponseEntity<>(dto, SuccessResponseStatus.OK.getHttpStatusCode());
 	}
 
+	public static <T> ResponseEntity<ResponsePageDto<T>> createSuccessResponse(T data, Pageable pageable) {
+		ResponsePageDto<T> dto = ResponsePageDto.<T>builder()
+			.statusCode(SuccessResponseStatus.OK.getStatusCode())
+			.message(SuccessResponseStatus.OK.getMessage())
+			.data(data)
+			.page(pageable.getOffset())
+			.size(pageable.getPageSize())
+			.build();
+		return new ResponseEntity<>(dto, SuccessResponseStatus.OK.getHttpStatusCode());
+	}
+
 	public static <T> ResponseEntity<ResponseDto<T>> createSuccessResponse(T data, HttpHeaders httpHeaders) {
 		ResponseDto<T> dto = ResponseDto.<T>builder()
 			.statusCode(SuccessResponseStatus.OK.getStatusCode())
 			.message(SuccessResponseStatus.OK.getMessage())
 			.data(data)
+			.build();
+		return new ResponseEntity<>(dto, httpHeaders, SuccessResponseStatus.OK.getHttpStatusCode());
+	}
+
+	public static <T> ResponseEntity<ResponsePageDto<T>> createSuccessResponse(T data, HttpHeaders httpHeaders, Pageable pageable) {
+		ResponsePageDto<T> dto = ResponsePageDto.<T>builder()
+			.statusCode(SuccessResponseStatus.OK.getStatusCode())
+			.message(SuccessResponseStatus.OK.getMessage())
+			.data(data)
+			.page(pageable.getOffset())
+			.size(pageable.getPageSize())
 			.build();
 		return new ResponseEntity<>(dto, httpHeaders, SuccessResponseStatus.OK.getHttpStatusCode());
 	}

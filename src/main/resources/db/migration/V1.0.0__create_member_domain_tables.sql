@@ -1,17 +1,16 @@
 CREATE TABLE IF NOT EXISTS member
 (
-    member_id               BIGINT AUTO_INCREMENT NOT NULL,
-    create_at               datetime              NULL,
-    updated_at              datetime              NULL,
-    created_by              VARCHAR(255)          NULL,
-    updated_by              VARCHAR(255)          NULL,
-    email                   VARCHAR(255)          NULL,
-    status                  VARCHAR(255)          NOT NULL,
-    nickname                VARCHAR(255)          NOT NULL,
-    self_description        VARCHAR(255)          NULL,
-    type                    VARCHAR(255)          NOT NULL,
-    profile_image_url       VARCHAR(255)          NULL,
-    marketing_term_agree_yn BIT(1)                NOT NULL,
+    member_id         BIGINT AUTO_INCREMENT NOT NULL,
+    create_at         datetime              NULL,
+    updated_at        datetime              NULL,
+    created_by        VARCHAR(255)          NULL,
+    updated_by        VARCHAR(255)          NULL,
+    email             VARCHAR(255)          NULL,
+    status            VARCHAR(255)          NOT NULL,
+    nickname          VARCHAR(255)          NOT NULL,
+    self_description  VARCHAR(255)          NULL,
+    type              VARCHAR(255)          NOT NULL,
+    profile_image_url VARCHAR(255)          NULL,
     CONSTRAINT pk_member PRIMARY KEY (member_id)
 );
 
@@ -50,7 +49,7 @@ CREATE TABLE IF NOT EXISTS member_social_account
     created_by               VARCHAR(255)          NULL,
     updated_by               VARCHAR(255)          NULL,
     member_id                BIGINT                NOT NULL,
-    `column`                 VARCHAR(255)          NOT NULL,
+    provider                 VARCHAR(255)          NOT NULL,
     CONSTRAINT pk_member_social_account PRIMARY KEY (member_social_account_id)
 );
 

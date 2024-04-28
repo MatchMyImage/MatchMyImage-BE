@@ -10,7 +10,9 @@ public enum MemberStatus implements BaseEnum {
     
     NORMAL("NORMAL", "일반"),
     SUSPENDED("SUSPENDED", "일시정지"),
-    WITHDRAWN("WITHDRAWN", "탈퇴");
+    WITHDRAWN("WITHDRAWN", "탈퇴"),
+    // 소셜 인증 이후 회원가입 완료 이전의 상태.
+    SOCIAL_AUTHENTICATED("SOCIAL_AUTHENTICATED", "소셜 인증됨");
     
     
     private final String code;
