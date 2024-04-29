@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.service;
 import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
+import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto.OidcPublicKeyVO;
 import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AuthTokenVO;
@@ -15,6 +16,7 @@ import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
 import com.LetMeDoWith.LetMeDoWith.service.Member.MemberService;
+import com.LetMeDoWith.LetMeDoWith.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.security.Key;
@@ -94,7 +96,7 @@ public class AuthService {
      * @param createAccessTokenReqDto 발급 요청자의 Provider, 이메일 정보
      * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
-    public AuthTokenVO createToken(CreateAccessTokenReqDto createAccessTokenReqDto) {
+    public CreateTokenResDto createToken(CreateAccessTokenReqDto createAccessTokenReqDto) {
         SocialProvider provider = createAccessTokenReqDto.provider();
         Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(provider,
                                                              createAccessTokenReqDto.idToken());
@@ -167,13 +169,24 @@ public class AuthService {
     
     
     /**
-     * 로그인, 즉 access token을 발급한다.
+     * 로그인, 즉 access token과 refresh token을 발급한다.
      *
      * @param member
      * @return access token
      */
-    private AuthTokenVO login(Member member) {
-        return authTokenProvider.createAccessToken(member.getId());
+    private CreateTokenResDto login(Member member) {
+        
+        AuthTokenVO accessToken = authTokenProvider.createAccessToken(member.getId());
+        RefreshToken refreshToken = authTokenProvider.createRefreshToken(member.getId(),
+                                                                         accessToken.token(),
+                                                                         HeaderUtil.getUserAgent());
+        
+        return CreateTokenResDto.builder()
+                                .atk(accessToken)
+                                .rtk(refreshToken)
+                                .build();
+        
+        
     }
     
     /**
@@ -181,12 +194,14 @@ public class AuthService {
      * <p>
      * 이후 회원가입이 완료될 때 Client에서 넘어오는 정보를 가지고 임시 Member를 업데이트한다.
      */
-    private AuthTokenVO proceedToSignup(SocialProvider provider, String email) {
+    private CreateTokenResDto proceedToSignup(SocialProvider provider, String email) {
         log.info("Not registered user!");
         Member member = memberService.createSocialAuthenticatedMember(provider,
                                                                       email);
         
-        return authTokenProvider.createSignupToken(member.getId());
+        return CreateTokenResDto.builder()
+                                .signupToken(authTokenProvider.createSignupToken(member.getId()))
+                                .build();
     }
     
     private String getAudValueForProvider(SocialProvider provider) {
