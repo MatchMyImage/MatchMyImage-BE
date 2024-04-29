@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.entity.member;
 
 import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.enums.converter.member.MemberStatusConverter;
-import com.LetMeDoWith.LetMeDoWith.enums.converter.member.MemberTypeConverter;
+import com.LetMeDoWith.LetMeDoWith.enums.attributeConverter.member.MemberStatusConverter;
+import com.LetMeDoWith.LetMeDoWith.enums.attributeConverter.member.MemberTypeConverter;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import jakarta.persistence.Column;
@@ -33,7 +33,13 @@ public class Member extends BaseAuditEntity {
     @OneToMany(mappedBy = "member")
     @Builder.Default
     List<MemberStatusHistory> statusHistoryList = new ArrayList<>();
-    
+
+    @OneToMany(mappedBy = "followerMember")
+    List<MemberFollow> followingMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followingMember")
+    List<MemberFollow> followerMembers = new ArrayList<>();
+
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +48,7 @@ public class Member extends BaseAuditEntity {
     
     @Column
     private String email;
-    
-    @Convert(converter = MemberStatusConverter.class)
+
     @Column(nullable = false)
     private MemberStatus status;
     
@@ -52,8 +57,7 @@ public class Member extends BaseAuditEntity {
     
     @Column(name = "self_description")
     private String selfDescription;
-    
-    @Convert(converter = MemberTypeConverter.class)
+
     @Column(nullable = false)
     private MemberType type;
     

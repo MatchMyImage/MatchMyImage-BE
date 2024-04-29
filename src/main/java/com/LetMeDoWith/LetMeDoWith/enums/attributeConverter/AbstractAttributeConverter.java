@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.enums.converter;
+package com.LetMeDoWith.LetMeDoWith.enums.attributeConverter;
 
 import com.LetMeDoWith.LetMeDoWith.enums.BaseEnum;
 import com.LetMeDoWith.LetMeDoWith.util.EnumUtil;
@@ -14,9 +14,13 @@ import jakarta.persistence.AttributeConverter;
 
 public class AbstractAttributeConverter<T extends BaseEnum> implements
     AttributeConverter<T, String> {
-    
+
     private Class<T> targetClass;
-    
+
+    public AbstractAttributeConverter(Class<T> targetClass) {
+        this.targetClass = targetClass;
+    }
+
     @Override
     public String convertToDatabaseColumn(T attribute) {
         return attribute.getCode();
