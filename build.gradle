@@ -3,7 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
     id "org.flywaydb.flyway" version "10.9.0"
-    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+//    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.LetMeDoWith'
@@ -17,6 +17,8 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+
+
 }
 
 repositories {
@@ -67,20 +69,4 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
-
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
-}
-sourceSets {
-    main.java.srcDir querydslDir
-}
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
 }

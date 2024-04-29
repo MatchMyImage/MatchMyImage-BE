@@ -11,6 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
@@ -176,16 +177,19 @@ public class AuthService {
      */
     private CreateTokenResDto login(Member member) {
         
-        AuthTokenVO accessToken = authTokenProvider.createAccessToken(member.getId());
-        RefreshToken refreshToken = authTokenProvider.createRefreshToken(member.getId(),
-                                                                         accessToken.token(),
-                                                                         HeaderUtil.getUserAgent());
-        
-        return CreateTokenResDto.builder()
-                                .atk(accessToken)
-                                .rtk(refreshToken)
-                                .build();
-        
+        if (member.getStatus().equals(MemberStatus.NORMAL)) {
+            AuthTokenVO accessToken = authTokenProvider.createAccessToken(member.getId());
+            RefreshToken refreshToken = authTokenProvider.createRefreshToken(member.getId(),
+                                                                             accessToken.token(),
+                                                                             HeaderUtil.getUserAgent());
+            
+            return CreateTokenResDto.builder()
+                                    .atk(accessToken)
+                                    .rtk(refreshToken)
+                                    .build();
+        } else {
+            throw new RestApiException(member.getStatus().getApiResponseStatus());
+        }
         
     }
     
