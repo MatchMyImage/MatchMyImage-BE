@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
@@ -14,16 +15,19 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Slf4j
+@Import(TestQueryDslConfig.class)
 class MemberRepositoryTest {
     
     @Autowired
@@ -34,6 +38,11 @@ class MemberRepositoryTest {
     
     @Autowired
     private MemberSocialAccountRepository memberSocialAccountRepository;
+    
+    @BeforeEach
+    void beforeEach() {
+        entityManager.clear();
+    }
     
     
     @Test
@@ -70,6 +79,7 @@ class MemberRepositoryTest {
                                      .build();
         
         memberRepository.save(testMemberObj);
+        memberRepository.flush();
         
         Optional<Member> user = memberRepository.findByNickname("nickname");
         
@@ -86,7 +96,6 @@ class MemberRepositoryTest {
     
     @Test
     void test_duplicated_key() {
-        entityManager.clear();
         
         Member testMemberObj = Member.builder()
                                      .id(1L)
@@ -119,7 +128,6 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("[SUCCESS] 가입된 유저 조회 테스트")
     void findRegisteredMemberTest() {
-        entityManager.clear();
         
         Member testMemberObj = Member.builder()
                                      .id(1L)
