@@ -3,7 +3,8 @@ package com.LetMeDoWith.LetMeDoWith.controller.auth;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateTokenRefreshReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
-import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AuthTokenVO;
+import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenResDto;
+import com.LetMeDoWith.LetMeDoWith.enums.common.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.service.AuthService;
 import com.LetMeDoWith.LetMeDoWith.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.util.ResponseUtil;
@@ -35,8 +36,12 @@ public class AuthController {
     
     @PostMapping("/token")
     public ResponseEntity createToken(@RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
-        AuthTokenVO tokenRequestResult = authService.createToken(createAccessTokenReqDto);
+        CreateTokenResDto tokenRequestResult = authService.createToken(createAccessTokenReqDto);
         
-        return ResponseUtil.createSuccessResponse(tokenRequestResult);
+        return ResponseUtil.createSuccessResponse(
+            tokenRequestResult.signupToken() == null
+                ? SuccessResponseStatus.LOGIN_SUCCESS
+                : SuccessResponseStatus.PROCEED_TO_SIGNUP
+            , tokenRequestResult);
     }
 }

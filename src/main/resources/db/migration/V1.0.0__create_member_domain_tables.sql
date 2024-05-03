@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS member
     updated_by        VARCHAR(255)          NULL,
     email             VARCHAR(255)          NULL,
     status            VARCHAR(255)          NOT NULL,
-    nickname          VARCHAR(255)          NOT NULL,
+    nickname          VARCHAR(255)          NULL,
     self_description  VARCHAR(255)          NULL,
     type              VARCHAR(255)          NOT NULL,
     profile_image_url VARCHAR(255)          NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS member_follow
     created_by       VARCHAR(255)          NULL,
     updated_by       VARCHAR(255)          NULL,
     follower_id      BIGINT                NOT NULL,
-    following_id      BIGINT                NOT NULL,
+    following_id     BIGINT                NOT NULL,
     CONSTRAINT pk_member_follow PRIMARY KEY (member_follow_id)
 );
 

@@ -27,9 +27,11 @@ import lombok.NoArgsConstructor;
 public class Member extends BaseAuditEntity {
     
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     List<MemberSocialAccount> socialAccountList = new ArrayList<>();
     
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     List<MemberStatusHistory> statusHistoryList = new ArrayList<>();
 
     @OneToMany(mappedBy = "followerMember")

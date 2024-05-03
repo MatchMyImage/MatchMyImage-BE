@@ -287,9 +287,9 @@ public class AuthTokenProvider {
     
     @AllArgsConstructor
     public enum TokenType {
-        ATK(60 * 1000L),
-        RTK(60 * 60 * 24 * 1000L),
-        SIGNUP(10L);
+        ATK(1000 * 60 * 1000L),
+        RTK(1000 * 60 * 60 * 24 * 1000L),
+        SIGNUP(1000 * 60 * 10L);
         
         final Long expireTime;
     }
