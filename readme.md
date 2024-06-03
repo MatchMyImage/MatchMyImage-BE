@@ -28,7 +28,7 @@ OpenJDK 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
 
 ### 2. Docker 구성
 
-프로젝트 루트 디렉토리에서 아래의 명령어 실행
+`docker/local` 디렉토리에서 아래의 명령어 실행
 
 ```text
 >>> docker compose up -d
