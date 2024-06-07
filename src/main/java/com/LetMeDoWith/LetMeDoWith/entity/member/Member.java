@@ -1,8 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.entity.member;
 
 import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.enums.BaseEnum;
-import com.LetMeDoWith.LetMeDoWith.enums.converter.AbstractConverter;
+import com.LetMeDoWith.LetMeDoWith.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import jakarta.persistence.Column;
@@ -76,21 +75,5 @@ public class Member extends BaseAuditEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
     
-    
-    // Member에서만 사용되기 때문에 내부에 열거형 및 converter 정의함.
-    @AllArgsConstructor
-    @Getter
-    public enum Gender implements BaseEnum {
-        MALE("M", "남성"),
-        FEMAIL("F", "여성");
-        
-        public final String code;
-        public final String description;
-    }
-    
-    public class GenderConverter extends AbstractConverter<Gender> {
-        
-        public GenderConverter() {super(Gender.class);}
-    }
     
 }
