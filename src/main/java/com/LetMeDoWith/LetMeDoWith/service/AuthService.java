@@ -175,7 +175,7 @@ public class AuthService {
      * @param member
      * @return access token
      */
-    private CreateTokenResDto login(Member member) {
+    public CreateTokenResDto login(Member member) {
         
         if (member.getStatus().equals(MemberStatus.NORMAL)) {
             AuthTokenVO accessToken = authTokenProvider.createAccessToken(member.getId());
