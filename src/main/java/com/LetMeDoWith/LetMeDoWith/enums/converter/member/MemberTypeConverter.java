@@ -1,15 +1,16 @@
 package com.LetMeDoWith.LetMeDoWith.enums.converter.member;
 
-import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.converter.AbstractCombinedConverter;
+import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import jakarta.persistence.Converter;
 import org.springframework.stereotype.Component;
 
 @Converter(autoApply = true)
 @Component
-public class SocialProviderConverter extends AbstractCombinedConverter<SocialProvider> {
+public class MemberTypeConverter extends AbstractCombinedConverter<MemberType> {
     
-    public SocialProviderConverter() {
-        super(SocialProvider.class);
+    public MemberTypeConverter() {
+        super(MemberType.class);
     }
+    
 }

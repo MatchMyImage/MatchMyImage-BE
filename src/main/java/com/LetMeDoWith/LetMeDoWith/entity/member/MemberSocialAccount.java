@@ -2,9 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.entity.member;
 
 import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.enums.attributeConverter.member.SocialProviderConverter;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +29,7 @@ public class MemberSocialAccount extends BaseAuditEntity {
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-
+    
     @Column(name = "provider", nullable = false)
     private SocialProvider provider;
     
