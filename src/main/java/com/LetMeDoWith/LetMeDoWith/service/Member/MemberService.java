@@ -1,9 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.service.Member;
 
 
+import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateMemberTermAgreeReq;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.SignupCompleteReq;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
+import com.LetMeDoWith.LetMeDoWith.entity.member.MemberTermAgree;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
@@ -13,6 +15,8 @@ import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider.TokenType;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberSocialAccountRepository;
+import com.LetMeDoWith.LetMeDoWith.repository.member.MemberTermAgreeRepository;
+import com.LetMeDoWith.LetMeDoWith.util.AuthUtil;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ public class MemberService {
     
     private final MemberRepository memberRepository;
     private final MemberSocialAccountRepository memberSocialAccountRepository;
+    private final MemberTermAgreeRepository memberTermAgreeRepository;
     private final AuthTokenProvider authTokenProvider;
     
     /**
@@ -83,5 +88,45 @@ public class MemberService {
             // 수정된 멤버를 저장하고 반환
             return memberRepository.save(member);
         }).orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_TOKEN));
+    }
+    
+    /**
+     * 회원의 약관 동의 정보를 생성한다.
+     *
+     * @param createMemberTermAgreeReq 회원의 약관 동의 정보를 담은 요청 객체
+     * @throws RestApiException 필수 동의 항목이 false이거나, 회원이 존재하지 않을 경우
+     */
+    public void createMemberTermAgree(CreateMemberTermAgreeReq createMemberTermAgreeReq) {
+        Long memberId = AuthUtil.getMemberId();
+        
+        Boolean termsOfAgree = createMemberTermAgreeReq.termsOfAgree();
+        Boolean privacy = createMemberTermAgreeReq.privacy();
+        Boolean advertisement = createMemberTermAgreeReq.advertisement();
+        
+        // 필수 동의항목 (이용약관동의, 개인정보)가 false인 경우 exception
+        if (!termsOfAgree || !privacy) {
+            throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
+        }
+        
+        memberRepository
+            .findById(memberId)
+            .ifPresentOrElse(member -> {
+                                 MemberTermAgree memberTermAgree = MemberTermAgree.builder()
+                                                                                  .termsOfAgree(termsOfAgree)
+                                                                                  .privacy(privacy)
+                                                                                  .advertisement(advertisement)
+                                                                                  .member(member)
+                                                                                  .build();
+                
+                                 member.setTermAgree(memberTermAgree);
+                
+                                 memberTermAgreeRepository.save(memberTermAgree);
+                                 memberRepository.save(member);
+                             }
+                , () -> {
+                    // memberId가 존재하지 않아도 exception
+                    throw new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST);
+                }
+            );
     }
 }
