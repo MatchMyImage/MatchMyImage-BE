@@ -31,9 +31,11 @@ public class MemberTermAgree extends BaseAuditEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
     
+    @Builder.Default
     @Column(name = "terms_of_agree", nullable = false)
     private boolean termsOfAgree = true;
     
+    @Builder.Default
     @Column(nullable = false)
     private boolean privacy = true;
     

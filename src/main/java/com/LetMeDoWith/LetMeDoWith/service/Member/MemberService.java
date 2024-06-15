@@ -85,6 +85,8 @@ public class MemberService {
             member.setDateOfBirth(signupCompleteReq.dateOfBirth());
             member.setGender(signupCompleteReq.gender());
             
+            member.setStatus(MemberStatus.NORMAL);
+            
             // 수정된 멤버를 저장하고 반환
             return memberRepository.save(member);
         }).orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_TOKEN));
@@ -96,37 +98,26 @@ public class MemberService {
      * @param createMemberTermAgreeReq 회원의 약관 동의 정보를 담은 요청 객체
      * @throws RestApiException 필수 동의 항목이 false이거나, 회원이 존재하지 않을 경우
      */
+    @Transactional
     public void createMemberTermAgree(CreateMemberTermAgreeReq createMemberTermAgreeReq) {
         Long memberId = AuthUtil.getMemberId();
         
-        Boolean termsOfAgree = createMemberTermAgreeReq.termsOfAgree();
-        Boolean privacy = createMemberTermAgreeReq.privacy();
-        Boolean advertisement = createMemberTermAgreeReq.advertisement();
-        
-        // 필수 동의항목 (이용약관동의, 개인정보)가 false인 경우 exception
-        if (!termsOfAgree || !privacy) {
-            throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
-        }
-        
-        memberRepository
-            .findById(memberId)
-            .ifPresentOrElse(member -> {
-                                 MemberTermAgree memberTermAgree = MemberTermAgree.builder()
-                                                                                  .termsOfAgree(termsOfAgree)
-                                                                                  .privacy(privacy)
-                                                                                  .advertisement(advertisement)
-                                                                                  .member(member)
-                                                                                  .build();
-                
-                                 member.setTermAgree(memberTermAgree);
-                
-                                 memberTermAgreeRepository.save(memberTermAgree);
-                                 memberRepository.save(member);
-                             }
-                , () -> {
-                    // memberId가 존재하지 않아도 exception
-                    throw new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST);
-                }
-            );
+        memberRepository.findById(memberId).ifPresentOrElse(member -> {
+            if (!createMemberTermAgreeReq.termsOfAgree() || !createMemberTermAgreeReq.privacy()) {
+                throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
+            }
+            
+            MemberTermAgree memberTermAgree = MemberTermAgree.builder()
+                                                             .advertisement(createMemberTermAgreeReq.advertisement())
+                                                             .member(member)
+                                                             .build();
+            
+            member.setTermAgree(memberTermAgree);
+            memberTermAgreeRepository.save(memberTermAgree);
+            memberRepository.save(member);
+            
+        }, () -> {
+            throw new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST);
+        });
     }
 }
