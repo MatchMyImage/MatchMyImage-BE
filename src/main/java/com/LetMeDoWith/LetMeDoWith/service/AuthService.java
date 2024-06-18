@@ -103,13 +103,13 @@ public class AuthService {
                                                              createAccessTokenReqDto.idToken());
         
         Claims body = verifiedIdToken.getBody();
-        String email = body.get("email", String.class);
+        String sub = body.get("sub", String.class);
         
-        Optional<Member> optionalMember = memberService.getRegisteredMember(provider, email);
+        Optional<Member> optionalMember = memberService.getRegisteredMember(provider, sub);
         
         // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
         // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
-        return optionalMember.map(this::login).orElseGet(() -> proceedToSignup(provider, email));
+        return optionalMember.map(this::login).orElseGet(() -> proceedToSignup(provider, sub));
     }
     
     /**
@@ -198,10 +198,10 @@ public class AuthService {
      * <p>
      * 이후 회원가입이 완료될 때 Client에서 넘어오는 정보를 가지고 임시 Member를 업데이트한다.
      */
-    private CreateTokenResDto proceedToSignup(SocialProvider provider, String email) {
+    private CreateTokenResDto proceedToSignup(SocialProvider provider, String subject) {
         log.info("Not registered user!");
         Member member = memberService.createSocialAuthenticatedMember(provider,
-                                                                      email);
+                                                                      subject);
         
         return CreateTokenResDto.builder()
                                 .signupToken(authTokenProvider.createSignupToken(member.getId()))

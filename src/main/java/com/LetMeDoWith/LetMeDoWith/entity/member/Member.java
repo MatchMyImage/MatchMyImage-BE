@@ -51,8 +51,10 @@ public class Member extends BaseAuditEntity {
     private Long id;
     
     
+    // OpenID Connect id token의 sub 필드와 동일
+    // (sub, provider) 조합으로 uniqueness 판단함.
     @Column
-    private String email;
+    private String subject;
     
     @Column(nullable = false)
     private MemberStatus status;

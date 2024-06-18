@@ -31,7 +31,7 @@ public class MemberController {
      * @return 로그인 결과. 액세스 트큰과, refresh 토큰
      */
     @PostMapping("")
-    public ResponseEntity completeSignup(SignupCompleteReq signupCompleteReq) {
+    public ResponseEntity completeSignup(@RequestBody SignupCompleteReq signupCompleteReq) {
         
         Member signupCompletedMember = memberService.createSignupCompletedMember(signupCompleteReq);
         CreateTokenResDto token = authService.login(signupCompletedMember);
