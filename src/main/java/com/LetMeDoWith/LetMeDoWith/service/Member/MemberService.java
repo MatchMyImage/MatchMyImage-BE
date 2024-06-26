@@ -81,6 +81,10 @@ public class MemberService {
                                                         TokenType.SIGNUP);
         
         return memberRepository.findById(memberId).map(member -> {
+            if (checkNickname(signupCompleteReq.nickname())) {
+                throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
+            }
+            
             member.setNickname(signupCompleteReq.nickname());
             member.setDateOfBirth(signupCompleteReq.dateOfBirth());
             member.setGender(signupCompleteReq.gender());
@@ -119,5 +123,19 @@ public class MemberService {
         }, () -> {
             throw new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST);
         });
+    }
+    
+    /**
+     * 닉네임의 중복 여부를 확인한다.
+     *
+     * @param nickname 중복여부를 확인하려는 닉네임
+     * @return 닉네임의 중복 여부
+     */
+    public boolean checkNickname(String nickname) {
+        if (nickname.trim().isEmpty()) {
+            throw new RestApiException(FailResponseStatus.MANDATORY_PARAM_ERROR_NAME);
+        }
+        
+        return memberRepository.findByNickname(nickname.trim()).isPresent();
     }
 }

@@ -213,6 +213,24 @@ class MemberServiceTest {
     }
     
     @Test
+    @DisplayName("[SUCCESS] 사용 가능한 닉네임")
+    public void checkNicknameAvailableTest() {
+        when(memberRepository.findByNickname("availableNickname")).thenReturn(Optional.empty());
+        
+        boolean result = memberService.checkNickname("availableNickname");
+        assertFalse(result);
+    }
+    
+    @Test
+    @DisplayName("[SUCCESS] 닉네임 앞뒤에 공백 포함")
+    public void checkNicknameTrimmedAvailableTest() {
+        when(memberRepository.findByNickname("trimmedNickname")).thenReturn(Optional.empty());
+        
+        boolean result = memberService.checkNickname("  trimmedNickname  ");
+        assertFalse(result);
+    }
+    
+    @Test
     @DisplayName("[FAIL] 유저 자체가 존재하지 않는 경우")
     void findNotRegisteredMemberTest() {
         when(memberRepository.findByProviderAndSubject(any(SocialProvider.class), anyString()))
@@ -298,6 +316,33 @@ class MemberServiceTest {
     }
     
     @Test
+    @DisplayName("[FAIL] 중복된 닉네임으로 회원가입 완료 요청")
+    public void createSignupCompletedMemberDuplicateNicknameTest() {
+        SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
+                                                               .signupToken("validSignupToken")
+                                                               .nickname("duplicateNickname")
+                                                               .dateOfBirth(LocalDate.of(1990,
+                                                                                         1,
+                                                                                         1))
+                                                               .gender(Gender.MALE)
+                                                               .build();
+        
+        when(authTokenProvider.validateToken("validSignupToken", TokenType.SIGNUP)).thenReturn(1L);
+        Member mockMember = new Member();
+        mockMember.setId(1L);
+        mockMember.setStatus(MemberStatus.SOCIAL_AUTHENTICATED);
+        
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(mockMember));
+        when(memberRepository.findByNickname("duplicateNickname")).thenReturn(Optional.of(new Member()));
+        
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            memberService.createSignupCompletedMember(signupCompleteReq);
+        });
+        
+        assertEquals(FailResponseStatus.DUPLICATE_NICKNAME, exception.getStatus());
+    }
+    
+    @Test
     @DisplayName("[FAIL] 필수 동의 항목이 false인 경우 예외 발생")
     void createMemberTermAgreeFailDueToInvalidParamsTest() {
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
@@ -359,5 +404,35 @@ class MemberServiceTest {
             // 검증: save가 호출되지 않았는지 확인
             verify(memberTermAgreeRepository, never()).save(any(MemberTermAgree.class));
         }
+    }
+    
+    @Test
+    @DisplayName("[FAIL] 이미 사용중인 닉네임")
+    public void checkNicknameTakenTest() {
+        when(memberRepository.findByNickname("takenNickname")).thenReturn(Optional.of(new Member()));
+        
+        boolean result = memberService.checkNickname("takenNickname");
+        assertTrue(result);
+    }
+    
+    @Test
+    @DisplayName("[FAIL] 닉네임 앞뒤에 공백 포함된 이미 사용중인 닉네임")
+    public void checkNicknameTrimmedTakenTest() {
+        when(memberRepository.findByNickname("trimmedNickname")).thenReturn(Optional.of(new Member()));
+        
+        boolean result = memberService.checkNickname("  trimmedNickname  ");
+        assertTrue(result);
+    }
+    
+    @Test
+    @DisplayName("[FAIL] 닉네임이 비어있거나 공백으로만 이루어짐")
+    public void checkNicknameBlankOrWhitespaceTest() {
+        assertThrows(RestApiException.class, () -> {
+            memberService.checkNickname("");
+        });
+        
+        assertThrows(RestApiException.class, () -> {
+            memberService.checkNickname("   ");
+        });
     }
 }

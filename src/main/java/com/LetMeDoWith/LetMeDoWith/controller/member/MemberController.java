@@ -4,7 +4,9 @@ import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateMemberTermAgreeReq;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.SignupCompleteReq;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
+import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.service.AuthService;
 import com.LetMeDoWith.LetMeDoWith.service.Member.MemberService;
 import com.LetMeDoWith.LetMeDoWith.util.ResponseUtil;
@@ -54,5 +56,20 @@ public class MemberController {
         memberService.createMemberTermAgree(createMemberTermAgreeReq);
         
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK_WITHOUT_DATA);
+    }
+    
+    /**
+     * 닉네임의 중복 여부를 검증한다. 닉네임은 공백일 수 없다.
+     *
+     * @param nickname 중복 여부를 검증하려는 닉네임
+     * @return 닉네임의 검증 결과
+     */
+    @PostMapping("/nickname")
+    public ResponseEntity checkNickname(@RequestBody String nickname) {
+        if (memberService.checkNickname(nickname)) {
+            return ResponseUtil.createSuccessResponse("사용 가능한 닉네임입니다.");
+        } else {
+            throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
+        }
     }
 }

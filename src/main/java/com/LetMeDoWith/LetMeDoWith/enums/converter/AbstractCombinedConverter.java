@@ -58,12 +58,12 @@ public abstract class AbstractCombinedConverter<T extends BaseEnum> extends Json
     
     @Override
     public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String code = p.getText();
-        
         try {
+            String code = p.getText();
+            
             return EnumUtil.getEnum(targetClass, code);
         } catch (Exception e) {
-            throw new RestApiException(FailResponseStatus.BAD_REQUEST);
+            throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
     }
     
