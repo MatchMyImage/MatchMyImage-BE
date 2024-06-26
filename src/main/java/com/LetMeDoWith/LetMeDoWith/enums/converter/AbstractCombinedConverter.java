@@ -4,17 +4,24 @@ import com.LetMeDoWith.LetMeDoWith.enums.BaseEnum;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.util.EnumUtil;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import jakarta.persistence.AttributeConverter;
+import java.io.IOException;
 import org.springframework.core.convert.converter.Converter;
 
 /**
- * HTTP 요청을 변환하기 위한 Converter와, JPA의 AttributeConverter를 통합한 형태의 Converter.
+ * Enum에 대해 HTTP 요청, DB의 입출력 요청을 변환하는 클래스
+ * 이 클래스를 상속하는 것 만으로 아래의 3개를 모두 구현한다
  * <p>
- * 이 클래스를 상속하는 것으로 두개의 Converter를 동시에 구현할 수 있다.
+ * 1. HTTP RequestParam을 변환하는 Converter
+ * 2. HTTP Request 내 Json을 변환하는 Deserializer
+ * 3. DB 입출력을 변환하는 JPA AttributeConverter
  *
  * @param <T> Converter가 필요한 Enum
  */
-public abstract class AbstractCombinedConverter<T extends BaseEnum>
+public abstract class AbstractCombinedConverter<T extends BaseEnum> extends JsonDeserializer<T>
     implements Converter<String, T>, AttributeConverter<T, String> {
     
     private final Class<T> targetClass;
@@ -48,4 +55,17 @@ public abstract class AbstractCombinedConverter<T extends BaseEnum>
             throw new RuntimeException(e);
         }
     }
+    
+    @Override
+    public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        String code = p.getText();
+        
+        try {
+            return EnumUtil.getEnum(targetClass, code);
+        } catch (Exception e) {
+            throw new RestApiException(FailResponseStatus.BAD_REQUEST);
+        }
+    }
+    
+    
 }

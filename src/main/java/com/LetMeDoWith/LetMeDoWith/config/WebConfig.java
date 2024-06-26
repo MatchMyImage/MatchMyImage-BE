@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
 import com.LetMeDoWith.LetMeDoWith.enums.converter.member.FollowTypeConverter;
+import com.LetMeDoWith.LetMeDoWith.enums.converter.member.GenderConverter;
 import com.LetMeDoWith.LetMeDoWith.interceptor.AuthenticateInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -31,5 +32,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new FollowTypeConverter());
+        registry.addConverter(new GenderConverter());
     }
 }

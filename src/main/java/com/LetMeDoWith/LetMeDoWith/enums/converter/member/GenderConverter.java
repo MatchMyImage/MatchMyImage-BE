@@ -13,6 +13,8 @@ public class GenderConverter extends AbstractCombinedConverter<Gender> {
         super(Gender.class);
     }
     
+    // TODO: @RequestBody에서는 Converter를 못쓰고, Deserializer 써야 하니 이거 구현.
+    
     // Gender는 Member의 nullable 필드이기 때문에,
     // Gender 없이 Member를 save 시도하는 경우 AttributeConverter에서 NPE가 발생할 수 있어 AttributeConverter를 재정의한다.
     
