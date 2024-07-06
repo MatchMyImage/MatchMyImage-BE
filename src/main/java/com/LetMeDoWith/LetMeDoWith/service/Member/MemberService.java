@@ -81,7 +81,7 @@ public class MemberService {
                                                         TokenType.SIGNUP);
         
         return memberRepository.findById(memberId).map(member -> {
-            if (checkNickname(signupCompleteReq.nickname())) {
+            if (isExistingNickname(signupCompleteReq.nickname())) {
                 throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
             }
             
@@ -131,7 +131,7 @@ public class MemberService {
      * @param nickname 중복여부를 확인하려는 닉네임
      * @return 닉네임의 중복 여부
      */
-    public boolean checkNickname(String nickname) {
+    public boolean isExistingNickname(String nickname) {
         if (nickname.trim().isEmpty()) {
             throw new RestApiException(FailResponseStatus.MANDATORY_PARAM_ERROR_NAME);
         }

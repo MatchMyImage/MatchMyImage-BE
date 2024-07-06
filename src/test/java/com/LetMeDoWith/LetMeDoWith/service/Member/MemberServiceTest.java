@@ -214,19 +214,19 @@ class MemberServiceTest {
     
     @Test
     @DisplayName("[SUCCESS] 사용 가능한 닉네임")
-    public void checkNicknameAvailableTest() {
+    public void isAvailableNicknameExistingTest() {
         when(memberRepository.findByNickname("availableNickname")).thenReturn(Optional.empty());
         
-        boolean result = memberService.checkNickname("availableNickname");
+        boolean result = memberService.isExistingNickname("availableNickname");
         assertFalse(result);
     }
     
     @Test
     @DisplayName("[SUCCESS] 닉네임 앞뒤에 공백 포함")
-    public void checkNicknameTrimmedAvailableTest() {
+    public void isAvailableNicknameTrimmedExistingTest() {
         when(memberRepository.findByNickname("trimmedNickname")).thenReturn(Optional.empty());
         
-        boolean result = memberService.checkNickname("  trimmedNickname  ");
+        boolean result = memberService.isExistingNickname("  trimmedNickname  ");
         assertFalse(result);
     }
     
@@ -408,31 +408,31 @@ class MemberServiceTest {
     
     @Test
     @DisplayName("[FAIL] 이미 사용중인 닉네임")
-    public void checkNicknameTakenTest() {
+    public void isExistingNicknameTakenTest() {
         when(memberRepository.findByNickname("takenNickname")).thenReturn(Optional.of(new Member()));
         
-        boolean result = memberService.checkNickname("takenNickname");
+        boolean result = memberService.isExistingNickname("takenNickname");
         assertTrue(result);
     }
     
     @Test
     @DisplayName("[FAIL] 닉네임 앞뒤에 공백 포함된 이미 사용중인 닉네임")
-    public void checkNicknameTrimmedTakenTest() {
+    public void isExistingNicknameTrimmedTakenTest() {
         when(memberRepository.findByNickname("trimmedNickname")).thenReturn(Optional.of(new Member()));
         
-        boolean result = memberService.checkNickname("  trimmedNickname  ");
+        boolean result = memberService.isExistingNickname("  trimmedNickname  ");
         assertTrue(result);
     }
     
     @Test
     @DisplayName("[FAIL] 닉네임이 비어있거나 공백으로만 이루어짐")
-    public void checkNicknameBlankOrWhitespaceTest() {
+    public void isExistingNicknameBlankOrWhitespaceTest() {
         assertThrows(RestApiException.class, () -> {
-            memberService.checkNickname("");
+            memberService.isExistingNickname("");
         });
         
         assertThrows(RestApiException.class, () -> {
-            memberService.checkNickname("   ");
+            memberService.isExistingNickname("   ");
         });
     }
 }

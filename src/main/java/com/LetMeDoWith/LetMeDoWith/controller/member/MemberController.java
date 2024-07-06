@@ -66,10 +66,10 @@ public class MemberController {
      */
     @PostMapping("/nickname")
     public ResponseEntity checkNickname(@RequestBody String nickname) {
-        if (memberService.checkNickname(nickname)) {
-            return ResponseUtil.createSuccessResponse("사용 가능한 닉네임입니다.");
-        } else {
+        if (memberService.isExistingNickname(nickname)) {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
+        } else {
+            return ResponseUtil.createSuccessResponse("사용 가능한 닉네임입니다.");
         }
     }
 }
