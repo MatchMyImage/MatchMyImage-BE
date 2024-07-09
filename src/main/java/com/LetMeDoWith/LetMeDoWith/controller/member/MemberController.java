@@ -33,7 +33,7 @@ public class MemberController {
      * @param signupCompleteReq 회원가입을 완료하려는 멤버의 추가 정보
      * @return 로그인 결과. 액세스 트큰과, refresh 토큰
      */
-    @PutMapping("/")
+    @PutMapping("")
     public ResponseEntity completeSignup(@RequestBody SignupCompleteReq signupCompleteReq) {
         
         Member signupCompletedMember = memberService.createSignupCompletedMember(signupCompleteReq);

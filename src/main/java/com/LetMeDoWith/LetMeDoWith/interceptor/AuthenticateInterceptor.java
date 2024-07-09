@@ -19,8 +19,8 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     
     @Override
     public boolean preHandle(HttpServletRequest request,
-        HttpServletResponse response,
-        Object handler)
+                             HttpServletResponse response,
+                             Object handler)
         throws Exception {
         String SIGNUP_COMPLETE_API_URI = "/api/v1/member";
         String SIGNUP_COMPLETE_API_METHOD = "PUT";
@@ -38,7 +38,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
             uri.equals(SIGNUP_COMPLETE_API_URI) && method.equals(SIGNUP_COMPLETE_API_METHOD);
         
         String tokenToBeValidated =
-            isSignupCompleteReq ? AuthUtil.getAccessToken() : AuthUtil.getSignupToken();
+            isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
         TokenType tokenType = isSignupCompleteReq ? TokenType.SIGNUP : TokenType.ATK;
         
         Long memberId = authTokenProvider.validateToken(tokenToBeValidated, tokenType);

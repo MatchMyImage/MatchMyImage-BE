@@ -26,7 +26,6 @@ import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider.TokenType;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberSocialAccountRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberTermAgreeRepository;
@@ -131,7 +130,6 @@ class MemberServiceTest {
     @DisplayName("[SUCCESS] 회원가입 완료 멤버 업데이트")
     void createSignupCompletedMemberTest() {
         SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .signupToken("validSignupToken")
                                                                .nickname("newNickname")
                                                                .dateOfBirth(LocalDate.of(1990,
                                                                                          1,
@@ -149,25 +147,26 @@ class MemberServiceTest {
                                       .profileImageUrl("image.jpeg")
                                       .build();
         
-        when(authTokenProvider.validateToken("validSignupToken", TokenType.SIGNUP))
-            .thenReturn(1L);
-        
-        when(memberRepository.findById(1L))
-            .thenReturn(Optional.of(existingMember));
-        
-        when(memberRepository.save(any(Member.class)))
-            .thenAnswer(invocation -> invocation.getArgument(0));
-        
-        Member updatedMember = memberService.createSignupCompletedMember(signupCompleteReq);
-        
-        assertNotNull(updatedMember);
-        assertEquals("newNickname", updatedMember.getNickname());
-        assertEquals(LocalDate.of(1990, 1, 1), updatedMember.getDateOfBirth());
-        assertEquals(Gender.MALE, updatedMember.getGender());
-        assertEquals(MemberStatus.NORMAL, updatedMember.getStatus());
-        assertEquals("self desc", updatedMember.getSelfDescription());
-        assertEquals(MemberType.USER, updatedMember.getType());
-        assertEquals("image.jpeg", updatedMember.getProfileImageUrl());
+        try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(memberId);
+            
+            when(memberRepository.findById(1L))
+                .thenReturn(Optional.of(existingMember));
+            
+            when(memberRepository.save(any(Member.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+            
+            Member updatedMember = memberService.createSignupCompletedMember(signupCompleteReq);
+            
+            assertNotNull(updatedMember);
+            assertEquals("newNickname", updatedMember.getNickname());
+            assertEquals(LocalDate.of(1990, 1, 1), updatedMember.getDateOfBirth());
+            assertEquals(Gender.MALE, updatedMember.getGender());
+            assertEquals(MemberStatus.NORMAL, updatedMember.getStatus());
+            assertEquals("self desc", updatedMember.getSelfDescription());
+            assertEquals(MemberType.USER, updatedMember.getType());
+            assertEquals("image.jpeg", updatedMember.getProfileImageUrl());
+        }
     }
     
     
@@ -270,7 +269,6 @@ class MemberServiceTest {
     @DisplayName("[FAIL] 유효하지 않은 토큰으로 회원가입 완료 요청")
     void createSignupCompletedMemberInvalidTokenTest() {
         SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .signupToken("invalidSignupToken")
                                                                .nickname("newNickname")
                                                                .dateOfBirth(LocalDate.of(1990,
                                                                                          1,
@@ -278,48 +276,48 @@ class MemberServiceTest {
                                                                .gender(Gender.MALE)
                                                                .build();
         
-        when(authTokenProvider.validateToken("invalidSignupToken", TokenType.SIGNUP))
-            .thenThrow(new RestApiException(FailResponseStatus.INVALID_TOKEN));
-        
-        RestApiException exception = assertThrows(
-            RestApiException.class,
-            () -> memberService.createSignupCompletedMember(signupCompleteReq)
-        );
-        
-        assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
+        try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(AuthUtil::getMemberId)
+                          .thenThrow(new RestApiException(FailResponseStatus.INVALID_TOKEN));
+            
+            RestApiException exception = assertThrows(
+                RestApiException.class,
+                () -> memberService.createSignupCompletedMember(signupCompleteReq)
+            );
+            
+            assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
+        }
     }
     
     @Test
     @DisplayName("[FAIL] 유효하지 않은 멤버 ID로 회원가입 완료 요청")
     void createSignupCompletedMemberInvalidMemberIdTest() {
         SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .signupToken("validSignupToken")
                                                                .nickname("newNickname")
                                                                .dateOfBirth(LocalDate.of(1990,
                                                                                          1,
                                                                                          1))
                                                                .gender(Gender.MALE)
                                                                .build();
-        
-        when(authTokenProvider.validateToken("validSignupToken", TokenType.SIGNUP))
-            .thenReturn(1L);
-        
-        when(memberRepository.findById(1L))
-            .thenReturn(Optional.empty());
-        
-        RestApiException exception = assertThrows(
-            RestApiException.class,
-            () -> memberService.createSignupCompletedMember(signupCompleteReq)
-        );
-        
-        assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
+        try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
+            
+            when(memberRepository.findById(1L))
+                .thenReturn(Optional.empty());
+            
+            RestApiException exception = assertThrows(
+                RestApiException.class,
+                () -> memberService.createSignupCompletedMember(signupCompleteReq)
+            );
+            
+            assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
+        }
     }
     
     @Test
     @DisplayName("[FAIL] 중복된 닉네임으로 회원가입 완료 요청")
     public void createSignupCompletedMemberDuplicateNicknameTest() {
         SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .signupToken("validSignupToken")
                                                                .nickname("duplicateNickname")
                                                                .dateOfBirth(LocalDate.of(1990,
                                                                                          1,
@@ -327,19 +325,21 @@ class MemberServiceTest {
                                                                .gender(Gender.MALE)
                                                                .build();
         
-        when(authTokenProvider.validateToken("validSignupToken", TokenType.SIGNUP)).thenReturn(1L);
-        Member mockMember = new Member();
-        mockMember.setId(1L);
-        mockMember.setStatus(MemberStatus.SOCIAL_AUTHENTICATED);
-        
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(mockMember));
-        when(memberRepository.findByNickname("duplicateNickname")).thenReturn(Optional.of(new Member()));
-        
-        RestApiException exception = assertThrows(RestApiException.class, () -> {
-            memberService.createSignupCompletedMember(signupCompleteReq);
-        });
-        
-        assertEquals(FailResponseStatus.DUPLICATE_NICKNAME, exception.getStatus());
+        try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
+            mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
+            Member mockMember = new Member();
+            mockMember.setId(1L);
+            mockMember.setStatus(MemberStatus.SOCIAL_AUTHENTICATED);
+            
+            when(memberRepository.findById(1L)).thenReturn(Optional.of(mockMember));
+            when(memberRepository.findByNickname("duplicateNickname")).thenReturn(Optional.of(new Member()));
+            
+            RestApiException exception = assertThrows(RestApiException.class, () -> {
+                memberService.createSignupCompletedMember(signupCompleteReq);
+            });
+            
+            assertEquals(FailResponseStatus.DUPLICATE_NICKNAME, exception.getStatus());
+        }
     }
     
     @Test

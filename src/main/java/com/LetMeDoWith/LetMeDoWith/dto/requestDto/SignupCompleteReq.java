@@ -5,9 +5,6 @@ import java.time.LocalDate;
 import lombok.Builder;
 
 @Builder
-public record SignupCompleteReq(String signupToken,
-                                String nickname,
-                                LocalDate dateOfBirth,
-                                Gender gender) {
+public record SignupCompleteReq(String nickname, LocalDate dateOfBirth, Gender gender) {
     
 }

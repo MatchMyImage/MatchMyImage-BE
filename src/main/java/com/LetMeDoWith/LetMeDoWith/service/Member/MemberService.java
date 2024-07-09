@@ -12,7 +12,6 @@ import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider.TokenType;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberSocialAccountRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberTermAgreeRepository;
@@ -77,8 +76,7 @@ public class MemberService {
      */
     @Transactional
     public Member createSignupCompletedMember(SignupCompleteReq signupCompleteReq) {
-        Long memberId = authTokenProvider.validateToken(signupCompleteReq.signupToken(),
-                                                        TokenType.SIGNUP);
+        Long memberId = AuthUtil.getMemberId();
         
         return memberRepository.findById(memberId).map(member -> {
             if (isExistingNickname(signupCompleteReq.nickname())) {
