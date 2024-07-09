@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +33,7 @@ public class MemberController {
      * @param signupCompleteReq 회원가입을 완료하려는 멤버의 추가 정보
      * @return 로그인 결과. 액세스 트큰과, refresh 토큰
      */
-    @PostMapping("")
+    @PutMapping("/")
     public ResponseEntity completeSignup(@RequestBody SignupCompleteReq signupCompleteReq) {
         
         Member signupCompletedMember = memberService.createSignupCompletedMember(signupCompleteReq);
