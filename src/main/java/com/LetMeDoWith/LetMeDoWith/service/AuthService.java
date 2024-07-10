@@ -1,31 +1,24 @@
 package com.LetMeDoWith.LetMeDoWith.service;
 
-import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenResDto;
-import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto;
-import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto.OidcPublicKeyVO;
 import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AuthTokenVO;
 import com.LetMeDoWith.LetMeDoWith.entity.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
-import com.LetMeDoWith.LetMeDoWith.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.provider.OidcIdTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.repository.auth.RefreshTokenRedisRepository;
 import com.LetMeDoWith.LetMeDoWith.service.Member.MemberService;
 import com.LetMeDoWith.LetMeDoWith.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -41,14 +34,7 @@ public class AuthService {
     
     private final MemberService memberService;
     
-    @Value("${auth.oidc.aud.kakao}")
-    private String KAKAO_AUD;
-    
-    @Value("${auth.oidc.aud.google}")
-    private String GOOGLE_AUD;
-    
-    @Value("${auth.oidc.aud.apple}")
-    private String APPLE_AUD;
+    private final OidcIdTokenProvider oidcIdTokenProvider;
     
     public CreateTokenRefreshResDto createTokenRefresh(String accessToken,
                                                        String refreshToken,
@@ -98,7 +84,8 @@ public class AuthService {
      * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
     public CreateTokenResDto createToken(SocialProvider socialProvider, String idToken) {
-        Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(socialProvider, idToken);
+        Jws<Claims> verifiedIdToken = oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider,
+                                                                                 idToken);
         
         Claims body = verifiedIdToken.getBody();
         String sub = body.get("sub", String.class);
@@ -109,62 +96,6 @@ public class AuthService {
         // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
         return optionalMember.map(this::getToken)
                              .orElseGet(() -> createTemporalMember(socialProvider, sub));
-    }
-    
-    /**
-     * Signature 검증이 완료된 ID Token을 얻는다.
-     *
-     * @param token    검증하려는 인코딩된 ID token
-     * @param provider 자격증명 제공자
-     * @return 서명을 검증 완료한 ID Token.
-     */
-    private Jws<Claims> getVerifiedOidcIdToken(SocialProvider provider, String token) {
-        AuthClient client = socialProviderAuthFactoryService.getClient(provider);
-        OidcPublicKeyResDto publicKeyList = client.getPublicKeyList().block();
-        String aud = getAudValueForProvider(provider);
-        String kid = authTokenProvider.getKidFromUnsignedTokenHeader(token,
-                                                                     aud,
-                                                                     provider.getIssUrl());
-        
-        try {
-            
-            OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
-                                                 .filter(key -> key.kid().equals(kid))
-                                                 .findFirst()
-                                                 .orElseThrow(OidcIdTokenPublicKeyNotFoundException::new);
-            
-            Key publicKey = authTokenProvider.getRSAPublicKey(keyVO.n(), keyVO.e());
-            
-            return authTokenProvider.parseTokenToJws(token, publicKey);
-            
-        } catch (OidcIdTokenPublicKeyNotFoundException |
-                 NoSuchAlgorithmException |
-                 InvalidKeySpecException e) {
-            log.error("일치하는 OIDC ID Token 공개키가 없습니다. API 응답 Cache를 갱신합니다.");
-            // TODO: add method invalidates cache for public key.
-            // invalidateCache()
-            
-            // Cache를 무효화 한 후, 공개키를 다시 조회한다.
-            try {
-                publicKeyList = client.getPublicKeyList().block();
-                
-                OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
-                                                     .filter(key -> key.kid().equals(kid))
-                                                     .findFirst()
-                                                     .orElseThrow(
-                                                         OidcIdTokenPublicKeyNotFoundException::new);
-                
-                Key publicKey = authTokenProvider.getRSAPublicKey(keyVO.n(), keyVO.e());
-                
-                return authTokenProvider.parseTokenToJws(token, publicKey);
-            } catch (OidcIdTokenPublicKeyNotFoundException |
-                     NoSuchAlgorithmException |
-                     InvalidKeySpecException ex) {
-                log.error("OIDC ID Token 공개키 갱신 실패. {} 공개키 서버의 문제일 수 있습니다.",
-                          provider.getCode());
-                throw new RestApiException(FailResponseStatus.OIDC_ID_TOKEN_PUBKEY_NOT_FOUND);
-            }
-        }
     }
     
     
@@ -207,22 +138,5 @@ public class AuthService {
                                 .build();
     }
     
-    private String getAudValueForProvider(SocialProvider provider) {
-        switch (provider) {
-            case APPLE -> {
-                return APPLE_AUD;
-            }
-            
-            case GOOGLE -> {
-                return GOOGLE_AUD;
-            }
-            
-            case KAKAO -> {
-                return KAKAO_AUD;
-            }
-            
-            default -> throw new RuntimeException();
-        }
-    }
     
 }
