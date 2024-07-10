@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.controller.member;
 
+import com.LetMeDoWith.LetMeDoWith.dto.command.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateMemberTermAgreeReq;
 import com.LetMeDoWith.LetMeDoWith.dto.requestDto.SignupCompleteReq;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenResDto;
@@ -30,17 +31,24 @@ public class MemberController {
     /**
      * 회원가입을 완료한다. 회원가입이 완료되면 로그인한다.
      *
-     * @param signupCompleteReq 회원가입을 완료하려는 멤버의 추가 정보
+     * @param signupCompleteReq 회원가입을 완료하려는 멤버의 추가 정보 및 약관 동의 정보
      * @return 로그인 결과. 액세스 트큰과, refresh 토큰
      */
     @PutMapping("")
     public ResponseEntity completeSignup(@RequestBody SignupCompleteReq signupCompleteReq) {
+        CreateSignupCompletedMemberCommand command =
+            CreateSignupCompletedMemberCommand.builder()
+                                              .nickname(signupCompleteReq.nickname())
+                                              .dateOfBirth(signupCompleteReq.dateOfBirth())
+                                              .gender(signupCompleteReq.gender())
+                                              .isTerms(signupCompleteReq.agreements()
+                                                                        .termsOfAgree())
+                                              .isPrivacy(signupCompleteReq.agreements().privacy())
+                                              .isAdvertisement(signupCompleteReq.agreements()
+                                                                                .advertisement())
+                                              .build();
         
-        Member signupCompletedMember = memberService.createSignupCompletedMember(
-            signupCompleteReq.nickname(),
-            signupCompleteReq.dateOfBirth(),
-            signupCompleteReq.gender()
-        );
+        Member signupCompletedMember = memberService.createSignupCompletedMember(command);
         CreateTokenResDto token = authService.getToken(signupCompletedMember);
         
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.LOGIN_SUCCESS, token);

@@ -1,12 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.service.Member;
 
 
+import com.LetMeDoWith.LetMeDoWith.dto.command.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberTermAgree;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
@@ -15,7 +15,6 @@ import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberSocialAccountRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberTermAgreeRepository;
 import com.LetMeDoWith.LetMeDoWith.util.AuthUtil;
-import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,32 +69,35 @@ public class MemberService {
     /**
      * 회원가입 완료 요청을 처리하여 Member 정보를 업데이트한다.
      *
-     * @param nickname
-     * @param dateOfBirth
-     * @param gender
+     * @param command 회원가입 완료 요청
      * @return 업데이트된 멤버 객체
      * @throws RestApiException 유효하지 않은 토큰이거나, memberId가 유효하지 않은 경우
      */
     @Transactional
-    public Member createSignupCompletedMember(String nickname,
-                                              LocalDate dateOfBirth,
-                                              Gender gender) {
+    public Member createSignupCompletedMember(CreateSignupCompletedMemberCommand command) {
         Long memberId = AuthUtil.getMemberId();
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
         
-        return memberRepository.findById(memberId).map(member -> {
-            if (isExistingNickname(nickname)) {
+        if (optionalMember.isPresent()) {
+            if (isExistingNickname(command.nickname())) {
                 throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
             }
             
-            member.setNickname(nickname);
-            member.setDateOfBirth(dateOfBirth);
-            member.setGender(gender);
+            Member member = optionalMember.get();
             
+            member.setNickname(command.nickname());
+            member.setDateOfBirth(command.dateOfBirth());
+            member.setGender(command.gender());
             member.setStatus(MemberStatus.NORMAL);
             
-            // 수정된 멤버를 저장하고 반환
+            createMemberTermAgree(command.isTerms(),
+                                  command.isPrivacy(),
+                                  command.isAdvertisement());
+            
             return memberRepository.save(member);
-        }).orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_TOKEN));
+        } else {
+            throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
+        }
     }
     
     /**

@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.LetMeDoWith.LetMeDoWith.dto.command.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberTermAgree;
@@ -130,6 +131,19 @@ class MemberServiceTest {
         String nickname = "newNickname";
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
         Gender gender = Gender.MALE;
+        boolean isTerms = true;
+        boolean isPrivacy = true;
+        boolean isAdvertisement = true;
+        
+        CreateSignupCompletedMemberCommand command =
+            CreateSignupCompletedMemberCommand.builder()
+                                              .nickname(nickname)
+                                              .dateOfBirth(dateOfBirth)
+                                              .gender(gender)
+                                              .isTerms(isTerms)
+                                              .isPrivacy(isPrivacy)
+                                              .isAdvertisement(isAdvertisement)
+                                              .build();
         
         Member existingMember = Member.builder()
                                       .id(1L)
@@ -150,9 +164,7 @@ class MemberServiceTest {
             when(memberRepository.save(any(Member.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
             
-            Member updatedMember = memberService.createSignupCompletedMember(nickname,
-                                                                             dateOfBirth,
-                                                                             gender);
+            Member updatedMember = memberService.createSignupCompletedMember(command);
             
             assertNotNull(updatedMember);
             assertEquals("newNickname", updatedMember.getNickname());
@@ -264,6 +276,19 @@ class MemberServiceTest {
         String nickname = "newNickname";
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
         Gender gender = Gender.MALE;
+        boolean isTerms = true;
+        boolean isPrivacy = true;
+        boolean isAdvertisement = true;
+        
+        CreateSignupCompletedMemberCommand command =
+            CreateSignupCompletedMemberCommand.builder()
+                                              .nickname(nickname)
+                                              .dateOfBirth(dateOfBirth)
+                                              .gender(gender)
+                                              .isTerms(isTerms)
+                                              .isPrivacy(isPrivacy)
+                                              .isAdvertisement(isAdvertisement)
+                                              .build();
         
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId)
@@ -271,7 +296,7 @@ class MemberServiceTest {
             
             RestApiException exception = assertThrows(
                 RestApiException.class,
-                () -> memberService.createSignupCompletedMember(nickname, dateOfBirth, gender)
+                () -> memberService.createSignupCompletedMember(command)
             );
             
             assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
@@ -284,6 +309,19 @@ class MemberServiceTest {
         String nickname = "newNickname";
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
         Gender gender = Gender.MALE;
+        boolean isTerms = true;
+        boolean isPrivacy = true;
+        boolean isAdvertisement = true;
+        
+        CreateSignupCompletedMemberCommand command =
+            CreateSignupCompletedMemberCommand.builder()
+                                              .nickname(nickname)
+                                              .dateOfBirth(dateOfBirth)
+                                              .gender(gender)
+                                              .isTerms(isTerms)
+                                              .isPrivacy(isPrivacy)
+                                              .isAdvertisement(isAdvertisement)
+                                              .build();
         
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
@@ -293,7 +331,7 @@ class MemberServiceTest {
             
             RestApiException exception = assertThrows(
                 RestApiException.class,
-                () -> memberService.createSignupCompletedMember(nickname, dateOfBirth, gender)
+                () -> memberService.createSignupCompletedMember(command)
             );
             
             assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
@@ -306,6 +344,19 @@ class MemberServiceTest {
         String nickname = "duplicateNickname";
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
         Gender gender = Gender.MALE;
+        boolean isTerms = true;
+        boolean isPrivacy = true;
+        boolean isAdvertisement = true;
+        
+        CreateSignupCompletedMemberCommand command =
+            CreateSignupCompletedMemberCommand.builder()
+                                              .nickname(nickname)
+                                              .dateOfBirth(dateOfBirth)
+                                              .gender(gender)
+                                              .isTerms(isTerms)
+                                              .isPrivacy(isPrivacy)
+                                              .isAdvertisement(isAdvertisement)
+                                              .build();
         
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
@@ -317,7 +368,7 @@ class MemberServiceTest {
             when(memberRepository.findByNickname("duplicateNickname")).thenReturn(Optional.of(new Member()));
             
             RestApiException exception = assertThrows(RestApiException.class, () -> {
-                memberService.createSignupCompletedMember(nickname, dateOfBirth, gender);
+                memberService.createSignupCompletedMember(command);
             });
             
             assertEquals(FailResponseStatus.DUPLICATE_NICKNAME, exception.getStatus());
