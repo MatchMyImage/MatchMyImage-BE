@@ -1,13 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.service.Member;
 
 
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateMemberTermAgreeReq;
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.SignupCompleteReq;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberTermAgree;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
@@ -16,6 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberSocialAccountRepository;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberTermAgreeRepository;
 import com.LetMeDoWith.LetMeDoWith.util.AuthUtil;
+import java.time.LocalDate;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,22 +70,26 @@ public class MemberService {
     /**
      * 회원가입 완료 요청을 처리하여 Member 정보를 업데이트한다.
      *
-     * @param signupCompleteReq 회원가입을 완료하려는 회원의 나머지 추가 정보
+     * @param nickname
+     * @param dateOfBirth
+     * @param gender
      * @return 업데이트된 멤버 객체
      * @throws RestApiException 유효하지 않은 토큰이거나, memberId가 유효하지 않은 경우
      */
     @Transactional
-    public Member createSignupCompletedMember(SignupCompleteReq signupCompleteReq) {
+    public Member createSignupCompletedMember(String nickname,
+                                              LocalDate dateOfBirth,
+                                              Gender gender) {
         Long memberId = AuthUtil.getMemberId();
         
         return memberRepository.findById(memberId).map(member -> {
-            if (isExistingNickname(signupCompleteReq.nickname())) {
+            if (isExistingNickname(nickname)) {
                 throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
             }
             
-            member.setNickname(signupCompleteReq.nickname());
-            member.setDateOfBirth(signupCompleteReq.dateOfBirth());
-            member.setGender(signupCompleteReq.gender());
+            member.setNickname(nickname);
+            member.setDateOfBirth(dateOfBirth);
+            member.setGender(gender);
             
             member.setStatus(MemberStatus.NORMAL);
             
@@ -97,20 +101,22 @@ public class MemberService {
     /**
      * 회원의 약관 동의 정보를 생성한다.
      *
-     * @param createMemberTermAgreeReq 회원의 약관 동의 정보를 담은 요청 객체
+     * @param isTerms
+     * @param isPrivacy
+     * @param isAdvertisement
      * @throws RestApiException 필수 동의 항목이 false이거나, 회원이 존재하지 않을 경우
      */
     @Transactional
-    public void createMemberTermAgree(CreateMemberTermAgreeReq createMemberTermAgreeReq) {
+    public void createMemberTermAgree(boolean isTerms, boolean isPrivacy, boolean isAdvertisement) {
         Long memberId = AuthUtil.getMemberId();
         
         memberRepository.findById(memberId).ifPresentOrElse(member -> {
-            if (!createMemberTermAgreeReq.termsOfAgree() || !createMemberTermAgreeReq.privacy()) {
+            if (!isTerms || !isPrivacy) {
                 throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
             }
             
             MemberTermAgree memberTermAgree = MemberTermAgree.builder()
-                                                             .advertisement(createMemberTermAgreeReq.advertisement())
+                                                             .advertisement(isAdvertisement)
                                                              .member(member)
                                                              .build();
             

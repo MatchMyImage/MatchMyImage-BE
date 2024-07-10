@@ -1,7 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.service;
 
 import com.LetMeDoWith.LetMeDoWith.client.AuthClient;
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.dto.responseDto.client.OidcPublicKeyResDto;
@@ -52,8 +51,8 @@ public class AuthService {
     private String APPLE_AUD;
     
     public CreateTokenRefreshResDto createTokenRefresh(String accessToken,
-        String refreshToken,
-        String userAgent) {
+                                                       String refreshToken,
+                                                       String userAgent) {
         
         Long memberId = authTokenProvider.validateToken(refreshToken,
                                                         AuthTokenProvider.TokenType.RTK);
@@ -94,22 +93,22 @@ public class AuthService {
      * <p>
      * 입력으로 받은 DTO의 정보를 통해 기 가입 여부를 판단하여, 이미 가입된 유저가 발급을 요청하는 경우 ATK를 발급하고, 아닌 경우 회원가입 프로세스를 진행한다.
      *
-     * @param createAccessTokenReqDto 발급 요청자의 Provider, 이메일 정보
+     * @param socialProvider
+     * @param idToken
      * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
-    public CreateTokenResDto createToken(CreateAccessTokenReqDto createAccessTokenReqDto) {
-        SocialProvider provider = createAccessTokenReqDto.provider();
-        Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(provider,
-                                                             createAccessTokenReqDto.idToken());
+    public CreateTokenResDto createToken(SocialProvider socialProvider, String idToken) {
+        Jws<Claims> verifiedIdToken = getVerifiedOidcIdToken(socialProvider, idToken);
         
         Claims body = verifiedIdToken.getBody();
         String sub = body.get("sub", String.class);
         
-        Optional<Member> optionalMember = memberService.getRegisteredMember(provider, sub);
+        Optional<Member> optionalMember = memberService.getRegisteredMember(socialProvider, sub);
         
         // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
         // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
-        return optionalMember.map(this::login).orElseGet(() -> proceedToSignup(provider, sub));
+        return optionalMember.map(this::getToken)
+                             .orElseGet(() -> createTemporalMember(socialProvider, sub));
     }
     
     /**
@@ -170,12 +169,12 @@ public class AuthService {
     
     
     /**
-     * 로그인, 즉 access token과 refresh token을 발급한다.
+     * access token과 refresh token을 발급, 즉 로그인한다.
      *
-     * @param member
-     * @return access token
+     * @param member 토큰을 발급하려는 (로그인하려는) 멤버
+     * @return access token 및 refresh token.
      */
-    public CreateTokenResDto login(Member member) {
+    public CreateTokenResDto getToken(Member member) {
         
         if (member.getStatus().equals(MemberStatus.NORMAL)) {
             AuthTokenVO accessToken = authTokenProvider.createAccessToken(member.getId());
@@ -198,7 +197,7 @@ public class AuthService {
      * <p>
      * 이후 회원가입이 완료될 때 Client에서 넘어오는 정보를 가지고 임시 Member를 업데이트한다.
      */
-    private CreateTokenResDto proceedToSignup(SocialProvider provider, String subject) {
+    private CreateTokenResDto createTemporalMember(SocialProvider provider, String subject) {
         log.info("Not registered user!");
         Member member = memberService.createSocialAuthenticatedMember(provider,
                                                                       subject);

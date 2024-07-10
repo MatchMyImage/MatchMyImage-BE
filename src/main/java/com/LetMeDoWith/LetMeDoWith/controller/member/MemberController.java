@@ -36,8 +36,12 @@ public class MemberController {
     @PutMapping("")
     public ResponseEntity completeSignup(@RequestBody SignupCompleteReq signupCompleteReq) {
         
-        Member signupCompletedMember = memberService.createSignupCompletedMember(signupCompleteReq);
-        CreateTokenResDto token = authService.login(signupCompletedMember);
+        Member signupCompletedMember = memberService.createSignupCompletedMember(
+            signupCompleteReq.nickname(),
+            signupCompleteReq.dateOfBirth(),
+            signupCompleteReq.gender()
+        );
+        CreateTokenResDto token = authService.getToken(signupCompletedMember);
         
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.LOGIN_SUCCESS, token);
     }
@@ -54,7 +58,11 @@ public class MemberController {
         @PathVariable Long memberId,
         @RequestBody CreateMemberTermAgreeReq createMemberTermAgreeReq) {
         
-        memberService.createMemberTermAgree(createMemberTermAgreeReq);
+        memberService.createMemberTermAgree(
+            createMemberTermAgreeReq.termsOfAgree(),
+            createMemberTermAgreeReq.privacy(),
+            createMemberTermAgreeReq.advertisement()
+        );
         
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK_WITHOUT_DATA);
     }

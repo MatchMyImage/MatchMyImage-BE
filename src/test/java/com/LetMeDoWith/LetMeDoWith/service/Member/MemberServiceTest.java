@@ -14,8 +14,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.CreateMemberTermAgreeReq;
-import com.LetMeDoWith.LetMeDoWith.dto.requestDto.SignupCompleteReq;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberTermAgree;
@@ -129,13 +127,9 @@ class MemberServiceTest {
     @Test
     @DisplayName("[SUCCESS] 회원가입 완료 멤버 업데이트")
     void createSignupCompletedMemberTest() {
-        SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .nickname("newNickname")
-                                                               .dateOfBirth(LocalDate.of(1990,
-                                                                                         1,
-                                                                                         1))
-                                                               .gender(Gender.MALE)
-                                                               .build();
+        String nickname = "newNickname";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Gender gender = Gender.MALE;
         
         Member existingMember = Member.builder()
                                       .id(1L)
@@ -156,7 +150,9 @@ class MemberServiceTest {
             when(memberRepository.save(any(Member.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
             
-            Member updatedMember = memberService.createSignupCompletedMember(signupCompleteReq);
+            Member updatedMember = memberService.createSignupCompletedMember(nickname,
+                                                                             dateOfBirth,
+                                                                             gender);
             
             assertNotNull(updatedMember);
             assertEquals("newNickname", updatedMember.getNickname());
@@ -176,12 +172,9 @@ class MemberServiceTest {
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(memberId);
             
-            CreateMemberTermAgreeReq createMemberTermAgreeReq =
-                CreateMemberTermAgreeReq.builder()
-                                        .termsOfAgree(true)
-                                        .privacy(true)
-                                        .advertisement(true)
-                                        .build();
+            boolean isTerms = true;
+            boolean isPrivacy = true;
+            boolean isAdvertisement = true;
             
             Member existingMember = Member.builder()
                                           .id(memberId)
@@ -195,7 +188,7 @@ class MemberServiceTest {
             
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(existingMember));
             
-            memberService.createMemberTermAgree(createMemberTermAgreeReq);
+            memberService.createMemberTermAgree(isTerms, isPrivacy, isAdvertisement);
             
             // 메서드 호출 검증
             verify(memberRepository, times(1)).findById(memberId);
@@ -268,13 +261,9 @@ class MemberServiceTest {
     @Test
     @DisplayName("[FAIL] 유효하지 않은 토큰으로 회원가입 완료 요청")
     void createSignupCompletedMemberInvalidTokenTest() {
-        SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .nickname("newNickname")
-                                                               .dateOfBirth(LocalDate.of(1990,
-                                                                                         1,
-                                                                                         1))
-                                                               .gender(Gender.MALE)
-                                                               .build();
+        String nickname = "newNickname";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Gender gender = Gender.MALE;
         
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId)
@@ -282,7 +271,7 @@ class MemberServiceTest {
             
             RestApiException exception = assertThrows(
                 RestApiException.class,
-                () -> memberService.createSignupCompletedMember(signupCompleteReq)
+                () -> memberService.createSignupCompletedMember(nickname, dateOfBirth, gender)
             );
             
             assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
@@ -292,13 +281,10 @@ class MemberServiceTest {
     @Test
     @DisplayName("[FAIL] 유효하지 않은 멤버 ID로 회원가입 완료 요청")
     void createSignupCompletedMemberInvalidMemberIdTest() {
-        SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .nickname("newNickname")
-                                                               .dateOfBirth(LocalDate.of(1990,
-                                                                                         1,
-                                                                                         1))
-                                                               .gender(Gender.MALE)
-                                                               .build();
+        String nickname = "newNickname";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Gender gender = Gender.MALE;
+        
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
             
@@ -307,7 +293,7 @@ class MemberServiceTest {
             
             RestApiException exception = assertThrows(
                 RestApiException.class,
-                () -> memberService.createSignupCompletedMember(signupCompleteReq)
+                () -> memberService.createSignupCompletedMember(nickname, dateOfBirth, gender)
             );
             
             assertEquals(FailResponseStatus.INVALID_TOKEN, exception.getStatus());
@@ -317,13 +303,9 @@ class MemberServiceTest {
     @Test
     @DisplayName("[FAIL] 중복된 닉네임으로 회원가입 완료 요청")
     public void createSignupCompletedMemberDuplicateNicknameTest() {
-        SignupCompleteReq signupCompleteReq = SignupCompleteReq.builder()
-                                                               .nickname("duplicateNickname")
-                                                               .dateOfBirth(LocalDate.of(1990,
-                                                                                         1,
-                                                                                         1))
-                                                               .gender(Gender.MALE)
-                                                               .build();
+        String nickname = "duplicateNickname";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Gender gender = Gender.MALE;
         
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
@@ -335,7 +317,7 @@ class MemberServiceTest {
             when(memberRepository.findByNickname("duplicateNickname")).thenReturn(Optional.of(new Member()));
             
             RestApiException exception = assertThrows(RestApiException.class, () -> {
-                memberService.createSignupCompletedMember(signupCompleteReq);
+                memberService.createSignupCompletedMember(nickname, dateOfBirth, gender);
             });
             
             assertEquals(FailResponseStatus.DUPLICATE_NICKNAME, exception.getStatus());
@@ -348,12 +330,9 @@ class MemberServiceTest {
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(memberId);
             
-            CreateMemberTermAgreeReq createMemberTermAgreeReq =
-                CreateMemberTermAgreeReq.builder()
-                                        .termsOfAgree(false)
-                                        .privacy(true)
-                                        .advertisement(true)
-                                        .build();
+            boolean isTerms = false;
+            boolean isPrivacy = true;
+            boolean isAdvertisement = true;
             
             Member existingMember = Member.builder()
                                           .id(memberId)
@@ -369,7 +348,7 @@ class MemberServiceTest {
             
             RestApiException exception = assertThrows(
                 RestApiException.class,
-                () -> memberService.createMemberTermAgree(createMemberTermAgreeReq)
+                () -> memberService.createMemberTermAgree(isTerms, isPrivacy, isAdvertisement)
             );
             
             assertEquals(FailResponseStatus.INVALID_PARAM_ERROR, exception.getStatus());
@@ -385,18 +364,15 @@ class MemberServiceTest {
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(memberId);
             
-            CreateMemberTermAgreeReq createMemberTermAgreeReq =
-                CreateMemberTermAgreeReq.builder()
-                                        .termsOfAgree(false)
-                                        .privacy(true)
-                                        .advertisement(true)
-                                        .build();
+            boolean isTerms = false;
+            boolean isPrivacy = true;
+            boolean isAdvertisement = true;
             
             when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
             
             RestApiException exception = assertThrows(
                 RestApiException.class,
-                () -> memberService.createMemberTermAgree(createMemberTermAgreeReq)
+                () -> memberService.createMemberTermAgree(isTerms, isPrivacy, isAdvertisement)
             );
             
             assertEquals(FailResponseStatus.MEMBER_NOT_EXIST, exception.getStatus());

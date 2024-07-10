@@ -35,8 +35,13 @@ public class AuthController {
     }
     
     @PostMapping("/token")
-    public ResponseEntity createToken(@RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
-        CreateTokenResDto tokenRequestResult = authService.createToken(createAccessTokenReqDto);
+    public ResponseEntity createToken(
+        @RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
+        
+        CreateTokenResDto tokenRequestResult = authService.createToken(
+            createAccessTokenReqDto.provider(),
+            createAccessTokenReqDto.idToken()
+        );
         
         return ResponseUtil.createSuccessResponse(
             tokenRequestResult.signupToken() == null
