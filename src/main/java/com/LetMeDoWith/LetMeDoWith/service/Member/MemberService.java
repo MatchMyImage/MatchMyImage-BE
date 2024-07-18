@@ -111,24 +111,29 @@ public class MemberService {
     @Transactional
     public void createMemberTermAgree(boolean isTerms, boolean isPrivacy, boolean isAdvertisement) {
         Long memberId = AuthUtil.getMemberId();
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
         
-        memberRepository.findById(memberId).ifPresentOrElse(member -> {
+        if (optionalMember.isPresent()) {
             if (!isTerms || !isPrivacy) {
                 throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
             }
             
-            MemberTermAgree memberTermAgree = MemberTermAgree.builder()
-                                                             .advertisement(isAdvertisement)
-                                                             .member(member)
-                                                             .build();
+            Member member = optionalMember.get();
+            
+            MemberTermAgree memberTermAgree = memberTermAgreeRepository.save(
+                MemberTermAgree.builder()
+                               .termsOfAgree(isTerms)
+                               .privacy(isPrivacy)
+                               .advertisement(isAdvertisement)
+                               .member(member)
+                               .build()
+            );
             
             member.setTermAgree(memberTermAgree);
-            memberTermAgreeRepository.save(memberTermAgree);
             memberRepository.save(member);
-            
-        }, () -> {
+        } else {
             throw new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST);
-        });
+        }
     }
     
     /**
