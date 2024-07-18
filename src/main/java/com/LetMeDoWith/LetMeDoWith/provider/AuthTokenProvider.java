@@ -9,7 +9,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -36,7 +35,6 @@ public class AuthTokenProvider {
     
     private final SecretKey secretKey;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    private final String KID = "kid";
     @Value("${auth.jwt.atk-duration-min}")
     private Long atkDurationMin;
     @Value("${auth.jwt.rtk-duration-day}")
@@ -48,7 +46,7 @@ public class AuthTokenProvider {
     
     @Autowired
     public AuthTokenProvider(@Value("${auth.jwt.secret}") String secret,
-        RefreshTokenRedisRepository refreshTokenRedisRepository) {
+                             RefreshTokenRedisRepository refreshTokenRedisRepository) {
         
         // plain secret Base64로 인코딩
         String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
@@ -208,59 +206,6 @@ public class AuthTokenProvider {
         }
     }
     
-    /**
-     * Unsigned token에서 kid를 가져온다,
-     *
-     * @param token Unsigned ID token
-     * @param aud   자격증명 제공자에서 발급한 어플리케이션 아이디
-     * @param iss   자걱증명 제공자의 url
-     * @return ID token의 kid 값
-     */
-    public String getKidFromUnsignedTokenHeader(String token, String aud, String iss) {
-        return (String) getUnsignedTokenClaims(token, aud, iss).getHeader().get(KID);
-    }
-    
-    /**
-     * Encoding된 Signed-token 에서 signature를 분리한다.
-     *
-     * @param signedToken signature를 포함하는 token 전문
-     * @return signature가 제거된 token
-     */
-    
-    private String getUnsignedToken(String signedToken) {
-        String[] splitToken = signedToken.split("\\.");
-        
-        if (splitToken.length != 3) {
-            throw new IllegalArgumentException("올바르지 않은 Token입니다!");
-        }
-        
-        return splitToken[0] + '.' + splitToken[1] + '.';
-    }
-    
-    /**
-     * OIDC ID Token의 iss, aud, 만료일자를 검증하고, parse한다.
-     *
-     * @param token ID Token. Signature가 제거되있어야 한다.
-     * @param aud   자격증명 제공자에서 발급한 어플리케이션 아이디
-     * @param iss   자걱증명 제공자의 url
-     * @return parsing된 ID Token.
-     */
-    private Jwt<Header, Claims> getUnsignedTokenClaims(String token, String aud, String iss) {
-        try {
-            return Jwts.parserBuilder()
-                       .requireAudience(aud)  // aud(provider에 지정한 어플리케이션 아이디) 가 같은지 확인
-                       .requireIssuer(iss) // iss(issuer)가 알맞은 provider인지 확인
-                       .build()
-                       .parseClaimsJwt(getUnsignedToken(token));
-        } catch (ExpiredJwtException e) { // 파싱하면서 만료된 토큰인지 확인.
-            throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED, e);
-        } catch (SignatureException e) {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
-        } catch (Exception e) {
-            log.error(e.toString());
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
-        }
-    }
     
     /**
      * n, e로 public key를 계산한다.
