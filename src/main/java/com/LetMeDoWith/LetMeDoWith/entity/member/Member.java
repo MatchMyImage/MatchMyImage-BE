@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.entity.member;
 
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.MemberPersonalInfoVO;
 import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
@@ -18,11 +19,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -77,5 +76,40 @@ public class Member extends BaseAuditEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
     
+    public Member updatePersonalInfo(MemberPersonalInfoVO personalInfo) {
+        if (personalInfo != null) {
+            if (!personalInfo.nickname().trim().isEmpty()) {
+                this.nickname = personalInfo.nickname();
+            }
+            
+            if (!personalInfo.profileImageUrl().trim().isEmpty()) {
+                this.profileImageUrl = personalInfo.profileImageUrl();
+            }
+            
+            if (!personalInfo.selfDescription().trim().isEmpty()) {
+                this.selfDescription = personalInfo.selfDescription();
+            }
+            
+            if (!personalInfo.dateOfBirth().isEqual(null)) {
+                this.dateOfBirth = personalInfo.dateOfBirth();
+            }
+            
+            this.gender = personalInfo.gender();
+        }
+        
+        return this;
+    }
+    
+    public Member changeStatusTo(MemberStatus status) {
+        this.status = status;
+        
+        return this;
+    }
+    
+    public Member linkTermAgree(MemberTermAgree termAgree) {
+        this.termAgree = termAgree;
+        
+        return this;
+    }
     
 }

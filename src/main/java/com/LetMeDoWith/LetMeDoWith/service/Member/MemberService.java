@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.service.Member;
 
 
 import com.LetMeDoWith.LetMeDoWith.dto.command.CreateSignupCompletedMemberCommand;
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.MemberPersonalInfoVO;
 import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberTermAgree;
@@ -85,10 +86,14 @@ public class MemberService {
             
             Member member = optionalMember.get();
             
-            member.setNickname(command.nickname());
-            member.setDateOfBirth(command.dateOfBirth());
-            member.setGender(command.gender());
-            member.setStatus(MemberStatus.NORMAL);
+            MemberPersonalInfoVO personalInfo = MemberPersonalInfoVO.builder()
+                                                                    .nickname(command.nickname())
+                                                                    .dateOfBirth(command.dateOfBirth())
+                                                                    .gender(command.gender())
+                                                                    .build();
+            
+            member.updatePersonalInfo(personalInfo)
+                  .changeStatusTo(MemberStatus.NORMAL);
             
             createMemberTermAgree(command.isTerms(),
                                   command.isPrivacy(),
@@ -129,7 +134,7 @@ public class MemberService {
                                .build()
             );
             
-            member.setTermAgree(memberTermAgree);
+            member.linkTermAgree(memberTermAgree);
             memberRepository.save(member);
         } else {
             throw new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST);
