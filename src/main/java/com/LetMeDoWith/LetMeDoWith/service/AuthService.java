@@ -30,7 +30,7 @@ public class AuthService {
     
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     
-    private final SocialProviderAuthFactoryService socialProviderAuthFactoryService;
+    private final SocialProviderAuthFactory socialProviderAuthFactory;
     
     private final MemberService memberService;
     

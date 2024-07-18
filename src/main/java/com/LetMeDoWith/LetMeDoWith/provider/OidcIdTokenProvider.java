@@ -7,7 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.service.SocialProviderAuthFactoryService;
+import com.LetMeDoWith.LetMeDoWith.service.SocialProviderAuthFactory;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.security.Key;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OidcIdTokenProvider {
     
-    private final SocialProviderAuthFactoryService socialProviderAuthFactoryService;
+    private final SocialProviderAuthFactory socialProviderAuthFactory;
     private final AuthTokenProvider authTokenProvider;
     
     @Value("${auth.oidc.aud.kakao}")
@@ -46,7 +46,7 @@ public class OidcIdTokenProvider {
      * @return 서명을 검증 완료한 ID Token.
      */
     public Jws<Claims> getVerifiedOidcIdToken(SocialProvider provider, String token) {
-        AuthClient client = socialProviderAuthFactoryService.getClient(provider);
+        AuthClient client = socialProviderAuthFactory.getClient(provider);
         OidcPublicKeyResDto publicKeyList = client.getPublicKeyList().block();
         String aud = getAudValueForProvider(provider);
         String kid = authTokenProvider.getKidFromUnsignedTokenHeader(token,
