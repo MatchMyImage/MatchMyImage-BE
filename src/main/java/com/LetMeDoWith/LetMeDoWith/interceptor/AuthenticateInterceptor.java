@@ -17,13 +17,14 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     
     private final AuthTokenProvider authTokenProvider;
     
+    private final String SIGNUP_COMPLETE_API_URI = "/api/v1/member";
+    private final String SIGNUP_COMPLETE_API_METHOD = "PUT";
+    
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler)
         throws Exception {
-        String SIGNUP_COMPLETE_API_URI = "/api/v1/member";
-        String SIGNUP_COMPLETE_API_METHOD = "PUT";
         
         String uri = request.getRequestURI();
         String method = request.getMethod();
