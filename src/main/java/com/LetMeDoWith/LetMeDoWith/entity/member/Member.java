@@ -76,21 +76,43 @@ public class Member extends BaseAuditEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
     
+    /**
+     * 소셜 로그인이 완료된 직후 상태(초기 상태)의 Member를 생성한다.
+     *
+     * @param subject OIDC id token에서 추출한 회원 구분 번호.
+     * @return 초기회된 멤버 객체
+     */
+    public static Member initialize(String subject) {
+        return Member.builder()
+                     .subject(subject)
+                     .type(MemberType.USER)
+                     .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                     .build();
+    }
+    
+    /**
+     * Member의 개인정보를 업데이트 한다.
+     *
+     * @param personalInfo 멤버의 개인 정보. 닉테임, 프로필 사진, 상태 메세지, 생년월일. 필요시 성별
+     * @return 싱태가 업데이트 된 멤버 객체
+     */
     public Member updatePersonalInfo(MemberPersonalInfoVO personalInfo) {
         if (personalInfo != null) {
             if (!personalInfo.nickname().trim().isEmpty()) {
                 this.nickname = personalInfo.nickname();
             }
             
-            if (!personalInfo.profileImageUrl().trim().isEmpty()) {
+            if (personalInfo.profileImageUrl() != null &&
+                !personalInfo.profileImageUrl().isEmpty()) {
                 this.profileImageUrl = personalInfo.profileImageUrl();
             }
             
-            if (!personalInfo.selfDescription().trim().isEmpty()) {
+            if (personalInfo.selfDescription() != null &&
+                !personalInfo.selfDescription().isEmpty()) {
                 this.selfDescription = personalInfo.selfDescription();
             }
             
-            if (!personalInfo.dateOfBirth().isEqual(null)) {
+            if (personalInfo.dateOfBirth() != null) {
                 this.dateOfBirth = personalInfo.dateOfBirth();
             }
             
@@ -100,7 +122,18 @@ public class Member extends BaseAuditEntity {
         return this;
     }
     
-    public Member changeStatusTo(MemberStatus status) {
+    /**
+     * 회원 가입을 완료하는 Member의 개인정보를 업데이트 하고, 회원 가입 완료 상태로 변경한다.
+     *
+     * @param personalInfoVO 회원의 개인 정보.
+     * @return 개인정보가 입력되고 회원가입 완료 상태로 변경된 회원 객체
+     */
+    public Member updatePersonalInfoAfterCompleteSignUp(MemberPersonalInfoVO personalInfoVO) {
+        return this.updatePersonalInfo(personalInfoVO)
+                   .changeStatusTo(MemberStatus.NORMAL);
+    }
+    
+    private Member changeStatusTo(MemberStatus status) {
         this.status = status;
         
         return this;
@@ -108,6 +141,12 @@ public class Member extends BaseAuditEntity {
     
     public Member linkTermAgree(MemberTermAgree termAgree) {
         this.termAgree = termAgree;
+        
+        return this;
+    }
+    
+    public Member addSocialAccount(MemberSocialAccount memberSocialAccount) {
+        this.socialAccountList.add(memberSocialAccount);
         
         return this;
     }

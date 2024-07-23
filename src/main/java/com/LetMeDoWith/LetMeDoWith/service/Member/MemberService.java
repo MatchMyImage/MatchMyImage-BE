@@ -8,8 +8,6 @@ import com.LetMeDoWith.LetMeDoWith.entity.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.entity.member.MemberTermAgree;
 import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
-import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.repository.member.MemberRepository;
@@ -50,19 +48,11 @@ public class MemberService {
      */
     @Transactional
     public Member createSocialAuthenticatedMember(SocialProvider provider, String subject) {
-        Member temporalMember = memberRepository.save(Member.builder()
-                                                            .subject(subject)
-                                                            .type(MemberType.USER)
-                                                            .status(MemberStatus.SOCIAL_AUTHENTICATED)
-                                                            .build());
+        Member temporalMember = memberRepository.save(Member.initialize(subject));
         
-        MemberSocialAccount socialAccount = MemberSocialAccount.builder()
-                                                               .member(temporalMember)
-                                                               .provider(provider)
-                                                               .build();
-        // 양방향 연관관계 매핑
-        temporalMember.getSocialAccountList().add(socialAccount);
-        memberSocialAccountRepository.save(socialAccount);
+        memberSocialAccountRepository.save(
+            MemberSocialAccount.initialize(temporalMember, provider)
+        );
         
         return temporalMember;
     }
@@ -92,8 +82,7 @@ public class MemberService {
                                                                     .gender(command.gender())
                                                                     .build();
             
-            member.updatePersonalInfo(personalInfo)
-                  .changeStatusTo(MemberStatus.NORMAL);
+            member.updatePersonalInfoAfterCompleteSignUp(personalInfo);
             
             createMemberTermAgree(command.isTerms(),
                                   command.isPrivacy(),
@@ -125,16 +114,10 @@ public class MemberService {
             
             Member member = optionalMember.get();
             
-            MemberTermAgree memberTermAgree = memberTermAgreeRepository.save(
-                MemberTermAgree.builder()
-                               .termsOfAgree(isTerms)
-                               .privacy(isPrivacy)
-                               .advertisement(isAdvertisement)
-                               .member(member)
-                               .build()
+            memberTermAgreeRepository.save(
+                MemberTermAgree.initialize(member, isTerms, isPrivacy, isAdvertisement)
             );
             
-            member.linkTermAgree(memberTermAgree);
             memberRepository.save(member);
         } else {
             throw new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST);

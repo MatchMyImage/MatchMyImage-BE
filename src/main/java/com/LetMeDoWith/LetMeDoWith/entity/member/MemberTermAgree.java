@@ -41,4 +41,20 @@ public class MemberTermAgree extends BaseAuditEntity {
     
     @Column(nullable = false)
     private boolean advertisement;
+    
+    public static MemberTermAgree initialize(Member member,
+                                             boolean termsOfAgree,
+                                             boolean privacy,
+                                             boolean advertisement) {
+        MemberTermAgree memberTermAgree = MemberTermAgree.builder()
+                                                         .member(member)
+                                                         .termsOfAgree(termsOfAgree)
+                                                         .privacy(privacy)
+                                                         .advertisement(advertisement)
+                                                         .build();
+        
+        member.linkTermAgree(memberTermAgree);
+        
+        return memberTermAgree;
+    }
 }

@@ -33,4 +33,14 @@ public class MemberSocialAccount extends BaseAuditEntity {
     @Column(name = "provider", nullable = false)
     private SocialProvider provider;
     
+    public static MemberSocialAccount initialize(Member member, SocialProvider provider) {
+        MemberSocialAccount socialAccount = MemberSocialAccount.builder()
+                                                               .member(member)
+                                                               .provider(provider)
+                                                               .build();
+        
+        member.addSocialAccount(socialAccount);
+        return socialAccount;
+    }
+    
 }

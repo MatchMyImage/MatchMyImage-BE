@@ -360,9 +360,7 @@ class MemberServiceTest {
         
         try (MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class)) {
             mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
-            Member mockMember = new Member();
-            mockMember.setId(1L);
-            mockMember.setStatus(MemberStatus.SOCIAL_AUTHENTICATED);
+            Member mockMember = Member.initialize("sampleSubject");
             
             when(memberRepository.findById(1L)).thenReturn(Optional.of(mockMember));
             when(memberRepository.findByNickname("duplicateNickname")).thenReturn(Optional.of(new Member()));
