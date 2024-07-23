@@ -21,10 +21,10 @@ public class QMemberRepositoryImpl implements QMemberRepository {
     @Override
     public Optional<Member> findByProviderAndSubject(SocialProvider provider, String subject) {
         return Optional.ofNullable(
-            jpaQueryFactory.select(qMember)
-                           .from(qMember)
+            jpaQueryFactory.selectFrom(qMember)
                            .leftJoin(qMemberSocialAccount)
                            .on(qMember.eq(qMemberSocialAccount.member))
+                           .fetchJoin()
                            .where(qMember.subject.eq(subject)
                                                  .and(qMemberSocialAccount.provider.eq(provider)))
                            .fetchOne());
@@ -32,13 +32,13 @@ public class QMemberRepositoryImpl implements QMemberRepository {
     
     @Override
     public Optional<Member> findByProviderAndSubjectAndStatus(SocialProvider provider,
-        String subject,
-        MemberStatus status) {
+                                                              String subject,
+                                                              MemberStatus status) {
         return Optional.ofNullable(
-            jpaQueryFactory.select(qMember)
-                           .from(qMember)
+            jpaQueryFactory.selectFrom(qMember)
                            .leftJoin(qMemberSocialAccount)
                            .on(qMember.eq(qMemberSocialAccount.member))
+                           .fetchJoin()
                            .where(qMember.subject.eq(subject)
                                                  .and(qMemberSocialAccount.provider.eq(provider))
                                                  .and(qMember.status.eq(status)))
