@@ -39,7 +39,7 @@ class MemberSocialAccountRepositoryTest {
         entityManager.clear();
         
         Member testMemberObj = Member.builder()
-                                     .email("test@email.com")
+                                     .subject("test@email.com")
                                      .nickname("nickname")
                                      .selfDescription("self desc")
                                      .status(MemberStatus.NORMAL)
@@ -53,7 +53,7 @@ class MemberSocialAccountRepositoryTest {
     @Test
     @DisplayName("[SUCCESS] MemberSocialAccount 생성 및 조회")
     void InsertNewMemberSocialAccountEntityTest() {
-        Optional<Member> memberOptional = memberRepository.findByEmail("test@email.com");
+        Optional<Member> memberOptional = memberRepository.findBySubject("test@email.com");
         Member member = memberOptional.get();
         
         MemberSocialAccount memberSocialAccountKaKao = MemberSocialAccount.builder()

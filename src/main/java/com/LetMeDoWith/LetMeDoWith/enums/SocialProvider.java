@@ -1,13 +1,16 @@
 package com.LetMeDoWith.LetMeDoWith.enums;
 
 import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.enums.converter.member.SocialProviderConverter;
 import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+@JsonDeserialize(using = SocialProviderConverter.class)
 public enum SocialProvider implements BaseEnum {
     
     KAKAO("KAKAO", "카카오", "https://kauth.kakao.com"),

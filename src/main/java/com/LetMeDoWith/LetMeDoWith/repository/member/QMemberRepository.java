@@ -8,10 +8,10 @@ import java.util.Optional;
 public interface QMemberRepository {
     
     
-    Optional<Member> findByProviderAndEmail(SocialProvider provider, String email);
+    Optional<Member> findByProviderAndSubject(SocialProvider provider, String subject);
     
-    Optional<Member> findByProviderAndEmailAndStatus(SocialProvider provider,
-        String email,
+    Optional<Member> findByProviderAndSubjectAndStatus(SocialProvider provider,
+        String subject,
         MemberStatus status);
     
     

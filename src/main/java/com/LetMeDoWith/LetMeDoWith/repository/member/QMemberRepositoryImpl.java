@@ -19,29 +19,29 @@ public class QMemberRepositoryImpl implements QMemberRepository {
     private final QMemberSocialAccount qMemberSocialAccount = QMemberSocialAccount.memberSocialAccount;
     
     @Override
-    public Optional<Member> findByProviderAndEmail(SocialProvider provider, String email) {
+    public Optional<Member> findByProviderAndSubject(SocialProvider provider, String subject) {
         return Optional.ofNullable(
-            jpaQueryFactory.select(qMember)
-                           .from(qMember)
+            jpaQueryFactory.selectFrom(qMember)
                            .leftJoin(qMemberSocialAccount)
                            .on(qMember.eq(qMemberSocialAccount.member))
-                           .where(qMember.email.eq(email)
-                                               .and(qMemberSocialAccount.provider.eq(provider)))
+                           .fetchJoin()
+                           .where(qMember.subject.eq(subject)
+                                                 .and(qMemberSocialAccount.provider.eq(provider)))
                            .fetchOne());
     }
     
     @Override
-    public Optional<Member> findByProviderAndEmailAndStatus(SocialProvider provider,
-        String email,
-        MemberStatus status) {
+    public Optional<Member> findByProviderAndSubjectAndStatus(SocialProvider provider,
+                                                              String subject,
+                                                              MemberStatus status) {
         return Optional.ofNullable(
-            jpaQueryFactory.select(qMember)
-                           .from(qMember)
+            jpaQueryFactory.selectFrom(qMember)
                            .leftJoin(qMemberSocialAccount)
                            .on(qMember.eq(qMemberSocialAccount.member))
-                           .where(qMember.email.eq(email)
-                                               .and(qMemberSocialAccount.provider.eq(provider))
-                                               .and(qMember.status.eq(status)))
+                           .fetchJoin()
+                           .where(qMember.subject.eq(subject)
+                                                 .and(qMemberSocialAccount.provider.eq(provider))
+                                                 .and(qMember.status.eq(status)))
                            .fetchOne());
     }
 }

@@ -12,7 +12,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, QMemberRe
     
     Optional<Member> findByIdAndStatus(Long id, MemberStatus status);
     
-    Optional<Member> findByEmail(String email);
+    Optional<Member> findBySubject(String subject);
     
     
 }

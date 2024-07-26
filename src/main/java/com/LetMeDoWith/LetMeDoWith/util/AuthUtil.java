@@ -31,6 +31,20 @@ public class AuthUtil {
         }
     }
     
+    /**
+     * Request 에서 Signup Token을 가져온다.
+     *
+     * TODO: Signup Token임을 구별할 수 있는 접두어가 필요할 것으로 보임.
+     *
+     * @return
+     */
+    public String getSignupToken() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String authorizationHeader = request.getHeader(AUTHORIZATION_KEY);
+        
+        return authorizationHeader;
+    }
+    
     public Long getMemberId() {
         
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();

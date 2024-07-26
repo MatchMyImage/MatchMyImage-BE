@@ -50,6 +50,9 @@ class authTokenProviderTest {
     @Autowired
     AuthTokenProvider authTokenProvider;
     
+    @Autowired
+    OidcIdTokenProvider oidcIdTokenProvider;
+    
     @BeforeEach
     void beforeEach() throws NoSuchAlgorithmException, InvalidKeySpecException {
         SAMPLE_RSA_PUBKEY = authTokenProvider.getRSAPublicKey(SAMPLE_MOD, SAMPLE_EXPONENT);
@@ -58,9 +61,9 @@ class authTokenProviderTest {
     @Test
     @DisplayName("[SUCCESS] Token signature 추출 테스트")
     void extractSignatureFromNormalTokenTest() {
-        String kid = authTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_NORMAL,
-                                                                     SAMPLE_AUD,
-                                                                     SAMPLE_ISS);
+        String kid = oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_NORMAL,
+                                                                       SAMPLE_AUD,
+                                                                       SAMPLE_ISS);
         
         assertEquals(kid, SAMPLE_KID);
     }
@@ -97,9 +100,9 @@ class authTokenProviderTest {
     @DisplayName("[FAIL] 만료된 token에서 signature 추출 시도 ")
     void extractSignatureFromExpiredTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> authTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_EXPIRED,
-                                                                           SAMPLE_AUD,
-                                                                           SAMPLE_ISS),
+                     () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_EXPIRED,
+                                                                             SAMPLE_AUD,
+                                                                             SAMPLE_ISS),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -107,7 +110,7 @@ class authTokenProviderTest {
     @DisplayName("[FAIL] 잘못된 signature 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromIllegalSignatureTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> authTokenProvider.getKidFromUnsignedTokenHeader(
+                     () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(
                          SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
                          SAMPLE_AUD,
                          SAMPLE_ISS),
@@ -118,9 +121,9 @@ class authTokenProviderTest {
     @DisplayName("[FAIL] 잘못된 format 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromMalformedTokenTest() {
         assertThrows(RestApiException.class,
-                     () -> authTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_MALFORMED,
-                                                                           SAMPLE_AUD,
-                                                                           SAMPLE_ISS),
+                     () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_MALFORMED,
+                                                                             SAMPLE_AUD,
+                                                                             SAMPLE_ISS),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -161,22 +164,22 @@ class authTokenProviderTest {
                                                                  public BigInteger getPublicExponent() {
                                                                      return null;
                                                                  }
-            
+                                                                 
                                                                  @Override
                                                                  public String getAlgorithm() {
                                                                      return null;
                                                                  }
-            
+                                                                 
                                                                  @Override
                                                                  public String getFormat() {
                                                                      return null;
                                                                  }
-            
+                                                                 
                                                                  @Override
                                                                  public byte[] getEncoded() {
                                                                      return new byte[0];
                                                                  }
-            
+                                                                 
                                                                  @Override
                                                                  public BigInteger getModulus() {
                                                                      return null;

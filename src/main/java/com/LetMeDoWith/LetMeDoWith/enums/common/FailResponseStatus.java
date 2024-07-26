@@ -53,6 +53,14 @@ public enum FailResponseStatus {
                               "E217",
                               HttpStatus.BAD_REQUEST,
                               "탈퇴한 회원입니다."),
+    MEMBER_NOT_EXIST("MEMBER_NOT_EXIST",
+                     "E218",
+                     HttpStatus.BAD_REQUEST,
+                     "존재하지 않는 회원입니다"),
+    DUPLICATE_NICKNAME("DUPLICATE_NICKNAME",
+                       "E219",
+                       HttpStatus.BAD_REQUEST,
+                       "이미 존재하는 닉네임입니다"),
     
     /**
      * 401 UnAuthorized Error 인증 관련 오류

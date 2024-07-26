@@ -49,7 +49,7 @@ class MemberRepositoryTest {
     @DisplayName("새로운 객체 삽입 테스트")
     void test_insert_new() {
         Member testMemberObj = Member.builder()
-                                     .email("test@email.com")
+                                     .subject("test@email.com")
                                      .nickname("nickname")
                                      .selfDescription("self desc")
                                      .status(MemberStatus.NORMAL)
@@ -70,7 +70,7 @@ class MemberRepositoryTest {
     @DisplayName("객체 삭제 테스트")
     void test_delete() {
         Member testMemberObj = Member.builder()
-                                     .email("test@email.com")
+                                     .subject("test@email.com")
                                      .nickname("nickname")
                                      .selfDescription("self desc")
                                      .status(MemberStatus.NORMAL)
@@ -99,7 +99,7 @@ class MemberRepositoryTest {
         
         Member testMemberObj = Member.builder()
                                      .id(1L)
-                                     .email("test@email.com")
+                                     .subject("test@email.com")
                                      .nickname("nickname")
                                      .selfDescription("self desc")
                                      .status(MemberStatus.NORMAL)
@@ -108,7 +108,7 @@ class MemberRepositoryTest {
                                      .build();
         
         Member testMemberObjWithoutKey = Member.builder()
-                                               .email("test@email.com")
+                                               .subject("test@email.com")
                                                .nickname("nickname2")
                                                .selfDescription("self desc")
                                                .status(MemberStatus.NORMAL)
@@ -131,7 +131,7 @@ class MemberRepositoryTest {
         
         Member testMemberObj = Member.builder()
                                      .id(1L)
-                                     .email("test@email.com")
+                                     .subject("test@email.com")
                                      .nickname("nickname")
                                      .selfDescription("self desc")
                                      .status(MemberStatus.NORMAL)
@@ -148,8 +148,8 @@ class MemberRepositoryTest {
         
         memberSocialAccountRepository.save(memberSocialAccount);
         
-        Optional<Member> optionalMember = memberRepository.findByProviderAndEmail(SocialProvider.KAKAO,
-                                                                                  "test@email.com");
+        Optional<Member> optionalMember = memberRepository.findByProviderAndSubject(SocialProvider.KAKAO,
+                                                                                    "test@email.com");
         log.debug("member= {}", optionalMember.get().getNickname());
         assertNotNull(optionalMember);
         assertEquals(optionalMember.get().getNickname(), "nickname");
