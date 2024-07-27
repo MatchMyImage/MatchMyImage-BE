@@ -1,8 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
-import com.LetMeDoWith.LetMeDoWith.entity.member.QMember;
-import com.LetMeDoWith.LetMeDoWith.entity.member.QMemberSocialAccount;
+
+import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMember;
+import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;

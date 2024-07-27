@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
 import com.LetMeDoWith.LetMeDoWith.application.member.domain.MemberFollow;
-import com.LetMeDoWith.LetMeDoWith.entity.member.QMember;
-import com.LetMeDoWith.LetMeDoWith.entity.member.QMemberFollow;
+import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMember;
+import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMemberFollow;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
