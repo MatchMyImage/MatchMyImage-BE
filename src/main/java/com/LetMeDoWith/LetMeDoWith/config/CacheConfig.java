@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.LetMeDoWith.LetMeDoWith.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 
 @EnableCaching
 @Configuration
