@@ -3,10 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.application.member.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.MemberSocialAccount;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberAgreementCommand;
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 

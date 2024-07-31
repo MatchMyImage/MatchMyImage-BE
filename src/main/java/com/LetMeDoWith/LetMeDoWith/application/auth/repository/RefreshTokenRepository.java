@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.application.auth.repository;
 
 import java.util.Optional;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.domain.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 
 public interface RefreshTokenRepository {
 

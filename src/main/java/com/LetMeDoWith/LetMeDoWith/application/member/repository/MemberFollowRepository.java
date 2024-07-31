@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.MemberFollow;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberFollow;
 
 public interface MemberFollowRepository {
 

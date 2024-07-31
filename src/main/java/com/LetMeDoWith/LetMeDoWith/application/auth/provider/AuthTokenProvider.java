@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.application.auth.domain.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
