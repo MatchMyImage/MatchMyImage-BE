@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.MemberFollow;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMember;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMemberFollow;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberFollow;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.member.QMember;
+import com.LetMeDoWith.LetMeDoWith.domain.member.QMemberFollow;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

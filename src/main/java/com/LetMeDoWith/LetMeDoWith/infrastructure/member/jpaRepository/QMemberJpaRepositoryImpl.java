@@ -1,11 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMember;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.QMemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.member.QMember;
+import com.LetMeDoWith.LetMeDoWith.domain.member.QMemberSocialAccount;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

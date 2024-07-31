@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.domain.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
 import lombok.RequiredArgsConstructor;

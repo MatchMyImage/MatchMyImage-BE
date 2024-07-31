@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.MemberSocialAccount;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.MemberTermAgree;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberTermAgree;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberAgreementCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;

@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 
 import java.util.List;
