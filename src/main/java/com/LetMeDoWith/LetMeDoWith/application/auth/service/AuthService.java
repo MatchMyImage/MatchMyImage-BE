@@ -16,6 +16,8 @@ import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,28 +48,22 @@ public class AuthService {
                                                                     .orElseThrow(() -> new RestApiException(
                                                                         FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
         
-        // RTK 추가 보안 점검
-        if (!savedRefreshToken.getMemberId().equals(memberId)) {
-            throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED);
-        } else if (!savedRefreshToken.getAccessToken().equals(accessToken)) {
-            throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_ATK_NOT_MATCHED);
-        }
+        savedRefreshToken.checkTokenOwnership(memberId, accessToken);
         
         // 신규 ATK 발급
-        AuthTokenVO authTokenVO = authTokenProvider.createAccessToken(memberId);
+        AuthTokenVO newAccessToken = authTokenProvider.createAccessToken(memberId);
         
         // 신규 RTK 발급
         RefreshToken newRefreshToken = authTokenProvider.createRefreshToken(memberId,
-                                                                            authTokenVO.token(),
+                                                                            newAccessToken.token(),
                                                                             userAgent);
-        
+
         // 기존 RTK info Redis에서 삭제
         refreshTokenRepository.delete(savedRefreshToken);
         
         return CreateTokenRefreshResDto.builder()
-                                       .accessToken(authTokenVO.token())
-                                       .accessTokenExpireAt(authTokenVO.expireAt())
-                                       .refreshToken(newRefreshToken.getToken())
+                                       .accessToken(CreateTokenRefreshResDto.AccessTokenDto.from(newAccessToken))
+                                       .refreshToken(CreateTokenRefreshResDto.RefreshTokenDto.from(newRefreshToken))
                                        .build();
         
     }
