@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.domain.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
 
 @DataRedisTest

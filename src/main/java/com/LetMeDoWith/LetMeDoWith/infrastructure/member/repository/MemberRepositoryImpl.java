@@ -38,8 +38,8 @@ public class MemberRepositoryImpl implements MemberRepository {
 	}
 
 	@Override
-	public List<Member> getMembers(List<MemberStatus> memberStatuses) {
-		return memberJpaRepository.findAllByStatusIn(memberStatuses);
+	public List<Member> getMembers(String nickname, List<MemberStatus> memberStatuses) {
+		return memberJpaRepository.findAllByNicknameAndStatusIn(nickname, memberStatuses);
 	}
 
 	@Override

@@ -117,7 +117,7 @@ public class MemberService {
             throw new RestApiException(FailResponseStatus.MANDATORY_PARAM_ERROR_NAME);
         }
 
-        return !memberRepository.getMembers(List.of(MemberStatus.NORMAL, MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED)).isEmpty();
+        return !memberRepository.getMembers(nickname, List.of(MemberStatus.NORMAL, MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED)).isEmpty();
 
     }
 }

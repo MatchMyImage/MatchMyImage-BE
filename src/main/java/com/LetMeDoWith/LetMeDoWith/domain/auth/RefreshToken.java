@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.domain;
+package com.LetMeDoWith.LetMeDoWith.domain.auth;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.member.domain;
+package com.LetMeDoWith.LetMeDoWith.domain.member;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import jakarta.persistence.Column;

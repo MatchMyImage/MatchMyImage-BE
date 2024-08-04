@@ -4,7 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedM
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateMemberTermAgreeReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
-import com.LetMeDoWith.LetMeDoWith.application.member.domain.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;

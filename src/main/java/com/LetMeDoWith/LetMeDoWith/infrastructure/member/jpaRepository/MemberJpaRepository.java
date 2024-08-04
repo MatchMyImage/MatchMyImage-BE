@@ -17,4 +17,6 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long>, QMembe
     Optional<Member> findBySubject(String subject);
     
     List<Member> findAllByStatusIn(List<MemberStatus> memberStatuses);
+
+    List<Member> findAllByNicknameAndStatusIn(String nickname, List<MemberStatus> memberStatuses);
 }

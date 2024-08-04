@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.application.auth.domain.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 import lombok.Builder;
 
 @Builder
