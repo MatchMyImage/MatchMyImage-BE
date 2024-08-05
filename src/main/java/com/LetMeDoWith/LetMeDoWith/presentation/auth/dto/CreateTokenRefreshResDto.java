@@ -8,8 +8,8 @@ import lombok.Builder;
 
 @Builder
 public record CreateTokenRefreshResDto(
-	AccessTokenDto accessToken,
-	RefreshTokenDto refreshToken
+	AccessTokenDto atk,
+	RefreshTokenDto rtk
 ) {
 
 	@Builder

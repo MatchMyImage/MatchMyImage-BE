@@ -17,11 +17,11 @@ import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -29,41 +29,44 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     
     private final AuthTokenProvider authTokenProvider;
-
-    private final RefreshTokenRepository refreshTokenRepository;
-    
-    private final MemberService memberService;
-    
     private final OidcIdTokenProvider oidcIdTokenProvider;
     
+    private final MemberService memberService;
+
+    private final RefreshTokenRepository refreshTokenRepository;
+
+
+    /**
+     * 토큰(ATK, RTK) 재발급
+     * @param accessToken
+     * @param refreshToken
+     * @param userAgent
+     * @return
+     */
+    @Transactional
     public CreateTokenRefreshResDto createTokenRefresh(String accessToken,
                                                        String refreshToken,
                                                        String userAgent) {
         
-        Long memberId = authTokenProvider.validateToken(refreshToken,
-                                                        AuthTokenProvider.TokenType.RTK);
-        
-        // Redis에서 RTK info 조회
-        RefreshToken savedRefreshToken = refreshTokenRepository.getRefreshToken(refreshToken)
-                                                                    .orElseThrow(() -> new RestApiException(
-                                                                        FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
-        
-        savedRefreshToken.checkTokenOwnership(memberId, accessToken);
-        
-        // 신규 ATK 발급
+        Long memberId = authTokenProvider.getMemberIdWithoutVerify(accessToken);
+
+        RefreshToken savedRefreshToken = null;
+        savedRefreshToken = refreshTokenRepository.getRefreshToken(refreshToken).orElseThrow(
+                () -> new RestApiException(
+                    FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
+        savedRefreshToken.checkTokenOwnership(memberId, accessToken, userAgent);
+
         AuthTokenVO newAccessToken = authTokenProvider.createAccessToken(memberId);
-        
-        // 신규 RTK 발급
         RefreshToken newRefreshToken = authTokenProvider.createRefreshToken(memberId,
                                                                             newAccessToken.token(),
                                                                             userAgent);
 
-        // 기존 RTK info Redis에서 삭제
-        refreshTokenRepository.delete(savedRefreshToken);
+        refreshTokenRepository.deleteRefreshToken(savedRefreshToken);
+
         
         return CreateTokenRefreshResDto.builder()
-                                       .accessToken(CreateTokenRefreshResDto.AccessTokenDto.from(newAccessToken))
-                                       .refreshToken(CreateTokenRefreshResDto.RefreshTokenDto.from(newRefreshToken))
+                                       .atk(CreateTokenRefreshResDto.AccessTokenDto.from(newAccessToken))
+                                       .rtk(CreateTokenRefreshResDto.RefreshTokenDto.from(newRefreshToken))
                                        .build();
         
     }
@@ -77,6 +80,7 @@ public class AuthService {
      * @param idToken
      * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
+    @Transactional
     public CreateTokenResDto createToken(SocialProvider socialProvider, String idToken) {
         Jws<Claims> verifiedIdToken = oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider,
                                                                                  idToken);

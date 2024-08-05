@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshResDto;
@@ -26,8 +27,9 @@ public class AuthController {
     public ResponseEntity createTokenRefresh(@RequestBody CreateTokenRefreshReqDto requestBody) {
         
         String userAgent = HeaderUtil.getUserAgent();
-        
-        CreateTokenRefreshResDto result = authService.createTokenRefresh(requestBody.accessToken(),
+        String accessToken = AuthUtil.getAccessToken();
+
+        CreateTokenRefreshResDto result = authService.createTokenRefresh(accessToken,
                                                                          requestBody.refreshToken(),
                                                                          userAgent);
         

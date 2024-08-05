@@ -65,27 +65,32 @@ public enum FailResponseStatus {
     /**
      * 401 UnAuthorized Error 인증 관련 오류
      */
-    UNAUTHORIZED("UNAUTHORIZED", "E300", HttpStatus.UNAUTHORIZED, "Request is not authorized."),
-    ATK_NOT_EXIST("ATK_NOT_EXIST", "E301", HttpStatus.UNAUTHORIZED, "Access token is not exist."),
-    TOKEN_EXPIRED("TOKEN_EXPIRED", "E302", HttpStatus.UNAUTHORIZED, "Token is expired"),
+    UNAUTHORIZED("UNAUTHORIZED", "E300", HttpStatus.UNAUTHORIZED, "인가된 회원이 아닙니다."),
+    ATK_NOT_EXIST("ATK_NOT_EXIST", "E301", HttpStatus.UNAUTHORIZED, "엑세스 토큰이 존재하지 않습니다."),
+    TOKEN_EXPIRED("TOKEN_EXPIRED", "E302", HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     TOKEN_EXPIRED_BY_ADMIN("TOKEN_EXPIRED_BY_ADMIN",
                            "E303",
                            HttpStatus.UNAUTHORIZED,
-                           "Token is expired"),
-    INVALID_TOKEN("INVALID_TOKEN", "E304", HttpStatus.UNAUTHORIZED, "Token is not valid"),
+                           "만료된 토큰입니다."),
+    INVALID_TOKEN("INVALID_TOKEN", "E304", HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다"),
+    INVALID_JWT_TOKEN_FORMAT("INVALID_JWT_TOKEN_FORMAT", "E305", HttpStatus.UNAUTHORIZED, "올바르지 않은 JWT 토큰입니다."),
     INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED("INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED",
-                                         "E305",
+                                         "E306",
                                          HttpStatus.UNAUTHORIZED,
-                                         "Token is not valid"),
+                                         "유효하지 않은 토큰 소유자입니다."), // TODO - ALERT 대상
     INVALID_RTK_TOKEN_ATK_NOT_MATCHED("INVALID_RTK_TOKEN_ATK_NOT_MATCHED",
-                                      "E305",
+                                      "E307",
                                       HttpStatus.UNAUTHORIZED,
-                                      "Token is not valid"),
+                                      "유효하지 않은 토큰 소유자입니다."), // TODO - ALERT 대상
+    INVALID_RTK_TOKEN_USER_AGENT_NOT_MATCHED("INVALID_RTK_TOKEN_ATK_NOT_MATCHED",
+        "E308",
+        HttpStatus.UNAUTHORIZED,
+        "유효하지 않은 토큰 소유자입니다."), // TODO - ALERT 대상
     OIDC_ID_TOKEN_PUBKEY_NOT_FOUND("OIDC_ID_TOKEN_PUBKEY_NOT_FOUND",
-                                   "E306",
+                                   "E309",
                                    HttpStatus.UNAUTHORIZED,
                                    "OpenID Connect ID Token의 공개키를 찾을 수 없습니다."),
-    
+
     /**
      * 500 Interal Server Error 서버 내부 오류 및 서버 관리자의 조치로 인한 오류
      */

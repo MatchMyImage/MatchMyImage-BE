@@ -33,12 +33,18 @@ public class RefreshToken {
 	@TimeToLive
 	private Long expireSec;
 
-	public void checkTokenOwnership(Long reqMemberId, String reqAccessToken) {
+	public void checkTokenOwnership(Long reqMemberId, String reqAccessToken, String reqUserAgent) {
 
-		if (!this.memberId.equals(reqMemberId)) {
+		if (!reqMemberId.equals(memberId)) {
 			throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED);
-		} else if (!this.accessToken.equals(reqAccessToken)) {
+		}
+
+		if (!reqAccessToken.equals(accessToken)) {
 			throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_ATK_NOT_MATCHED);
+		}
+
+		if(!reqUserAgent.equals(userAgent)) {
+			throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_USER_AGENT_NOT_MATCHED);
 		}
 
 	}

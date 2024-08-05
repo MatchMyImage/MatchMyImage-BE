@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,21 +28,21 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Member extends BaseAuditEntity {
     
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     List<MemberSocialAccount> socialAccountList = new ArrayList<>();
     
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     List<MemberStatusHistory> statusHistoryList = new ArrayList<>();
     
-    @OneToMany(mappedBy = "followerMember")
+    @OneToMany(mappedBy = "followerMember", fetch = FetchType.LAZY)
     List<MemberFollow> followingMembers = new ArrayList<>();
     
-    @OneToMany(mappedBy = "followingMember")
+    @OneToMany(mappedBy = "followingMember", fetch = FetchType.LAZY)
     List<MemberFollow> followerMembers = new ArrayList<>();
     
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     MemberTermAgree termAgree;
     
     @Id
