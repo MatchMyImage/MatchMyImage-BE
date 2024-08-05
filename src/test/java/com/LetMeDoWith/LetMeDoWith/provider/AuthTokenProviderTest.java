@@ -3,9 +3,11 @@ package com.LetMeDoWith.LetMeDoWith.provider;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.enums.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.OidcIdTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.math.BigInteger;
