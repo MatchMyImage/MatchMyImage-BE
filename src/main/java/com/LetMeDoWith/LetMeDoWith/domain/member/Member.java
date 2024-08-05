@@ -89,6 +89,20 @@ public class Member extends BaseAuditEntity {
                      .status(MemberStatus.SOCIAL_AUTHENTICATED)
                      .build();
     }
+
+    public static List<MemberStatus> getAllMemberStatus() {
+        return List.of(MemberStatus.NORMAL, MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
+    }
+
+    public static List<MemberStatus> getActiveMemberStatus() {
+        return List.of(MemberStatus.NORMAL);
+    }
+
+    public static List<MemberStatus> getInactiveMemberStatus() {
+        return List.of(MemberStatus.SUSPENDED,
+            MemberStatus.WITHDRAWN,
+            MemberStatus.SOCIAL_AUTHENTICATED);
+    }
     
     /**
      * Member의 개인정보를 업데이트 한다.
