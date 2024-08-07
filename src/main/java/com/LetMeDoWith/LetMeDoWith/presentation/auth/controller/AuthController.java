@@ -47,7 +47,7 @@ public class AuthController {
         
         return ResponseUtil.createSuccessResponse(
             tokenRequestResult.signupToken() == null
-                ? SuccessResponseStatus.LOGIN_SUCCESS
+                ? SuccessResponseStatus.OK
                 : SuccessResponseStatus.PROCEED_TO_SIGNUP
             , tokenRequestResult);
     }
