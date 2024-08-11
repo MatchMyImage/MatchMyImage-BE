@@ -159,6 +159,12 @@ public class AuthTokenProvider {
         return parseTokenToJws(token, secretKey).getBody();
     }
 
+    /**
+     * Token 검증 없이, payload의 memberId 추출
+     *
+     * @param token
+     * @return
+     */
     public Long getMemberIdWithoutVerify(final String token) {
 
         String[] parts = token.split("\\.");
