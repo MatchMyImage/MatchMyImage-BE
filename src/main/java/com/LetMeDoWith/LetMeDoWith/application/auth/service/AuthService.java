@@ -1,19 +1,19 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.OidcIdTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
+import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.OidcIdTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshResDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.util.Optional;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     
     private final AuthTokenProvider authTokenProvider;
-
+    
     private final RefreshTokenRepository refreshTokenRepository;
     
     private final MemberService memberService;
@@ -43,8 +43,8 @@ public class AuthService {
         
         // Redis에서 RTK info 조회
         RefreshToken savedRefreshToken = refreshTokenRepository.getRefreshToken(refreshToken)
-                                                                    .orElseThrow(() -> new RestApiException(
-                                                                        FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
+                                                               .orElseThrow(() -> new RestApiException(
+                                                                   FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
         
         // RTK 추가 보안 점검
         if (!savedRefreshToken.getMemberId().equals(memberId)) {
@@ -81,7 +81,7 @@ public class AuthService {
      * @param idToken
      * @return 기 가입되어 있는 경우 ATK, 아닌 경우 회원가입 프로세스로 fallback.
      */
-    public CreateTokenResDto createToken(SocialProvider socialProvider, String idToken) {
+    public CreateTokenResult createToken(SocialProvider socialProvider, String idToken) {
         Jws<Claims> verifiedIdToken = oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider,
                                                                                  idToken);
         
@@ -103,7 +103,7 @@ public class AuthService {
      * @param member 토큰을 발급하려는 (로그인하려는) 멤버
      * @return access token 및 refresh token.
      */
-    public CreateTokenResDto getToken(Member member) {
+    public CreateTokenResult getToken(Member member) {
         
         if (member.getStatus().equals(MemberStatus.NORMAL)) {
             AuthTokenVO accessToken = authTokenProvider.createAccessToken(member.getId());
@@ -111,10 +111,7 @@ public class AuthService {
                                                                              accessToken.token(),
                                                                              HeaderUtil.getUserAgent());
             
-            return CreateTokenResDto.builder()
-                                    .atk(accessToken)
-                                    .rtk(refreshToken)
-                                    .build();
+            return CreateTokenResult.atkInit(accessToken, refreshToken);
         } else {
             throw new RestApiException(member.getStatus().getApiResponseStatus());
         }
@@ -126,14 +123,12 @@ public class AuthService {
      * <p>
      * 이후 회원가입이 완료될 때 Client에서 넘어오는 정보를 가지고 임시 Member를 업데이트한다.
      */
-    private CreateTokenResDto createTemporalMember(SocialProvider provider, String subject) {
+    private CreateTokenResult createTemporalMember(SocialProvider provider, String subject) {
         log.info("Not registered user!");
         Member member = memberService.createSocialAuthenticatedMember(provider,
                                                                       subject);
         
-        return CreateTokenResDto.builder()
-                                .signupToken(authTokenProvider.createSignupToken(member.getId()))
-                                .build();
+        return CreateTokenResult.stkInit(authTokenProvider.createSignupToken(member.getId()));
     }
     
     
