@@ -89,19 +89,22 @@ public class Member extends BaseAuditEntity {
                      .status(MemberStatus.SOCIAL_AUTHENTICATED)
                      .build();
     }
-
+    
     public static List<MemberStatus> getAllMemberStatus() {
-        return List.of(MemberStatus.NORMAL, MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
+        return List.of(MemberStatus.NORMAL,
+                       MemberStatus.SUSPENDED,
+                       MemberStatus.WITHDRAWN,
+                       MemberStatus.SOCIAL_AUTHENTICATED);
     }
-
+    
     public static List<MemberStatus> getActiveMemberStatus() {
         return List.of(MemberStatus.NORMAL);
     }
-
+    
     public static List<MemberStatus> getInactiveMemberStatus() {
         return List.of(MemberStatus.SUSPENDED,
-            MemberStatus.WITHDRAWN,
-            MemberStatus.SOCIAL_AUTHENTICATED);
+                       MemberStatus.WITHDRAWN,
+                       MemberStatus.SOCIAL_AUTHENTICATED);
     }
     
     /**
@@ -146,9 +149,15 @@ public class Member extends BaseAuditEntity {
         return this.updatePersonalInfo(personalInfoVO)
                    .changeStatusTo(MemberStatus.NORMAL);
     }
-
+    
     public void updateToNormalStatus() {
-
+    
+    }
+    
+    public Member withdraw() {
+        this.status = MemberStatus.WITHDRAWN;
+        
+        return this;
     }
     
     private Member changeStatusTo(MemberStatus status) {
