@@ -175,4 +175,10 @@ public class Member extends BaseAuditEntity {
         return this;
     }
     
+    public Member linkAlarmSetting(MemberAlarmSetting alarmSetting) {
+        this.alarmSetting = alarmSetting;
+        
+        return this;
+    }
+    
 }

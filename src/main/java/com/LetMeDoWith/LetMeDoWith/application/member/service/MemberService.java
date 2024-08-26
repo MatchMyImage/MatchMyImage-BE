@@ -4,16 +4,16 @@ package com.LetMeDoWith.LetMeDoWith.application.member.service;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberAgreementCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
+import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberSettingRepository;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
-
-import java.util.List;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberAlarmSetting;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-
+    
     private final MemberRepository memberRepository;
+    private final MemberSettingRepository memberSettingRepository;
     
     /**
      * (Provider, Subject) 의 조합으로 기 가입된 계정이 존재하는지 확인한다.
@@ -33,9 +34,9 @@ public class MemberService {
      * @return 기 가입된 계정. Optional 타입을 리턴한다..
      */
     public Optional<Member> getRegisteredMember(SocialProvider provider, String subject) {
-
+        
         return memberRepository.getMember(provider, subject);
-
+        
     }
     
     /**
@@ -47,10 +48,11 @@ public class MemberService {
      */
     @Transactional
     public Member createSocialAuthenticatedMember(SocialProvider provider, String subject) {
-
+        
         Member temporalMember = memberRepository.save(Member.temporal(subject));
-        memberRepository.saveSocialAccount(MemberSocialAccount.initialize(temporalMember, provider));
-
+        memberRepository.saveSocialAccount(MemberSocialAccount.initialize(temporalMember,
+                                                                          provider));
+        
         return temporalMember;
     }
     
@@ -63,26 +65,32 @@ public class MemberService {
      */
     @Transactional
     public Member createSignupCompletedMember(CreateSignupCompletedMemberCommand command) {
-
-        Member member = memberRepository.getMember(AuthUtil.getMemberId(), MemberStatus.SOCIAL_AUTHENTICATED)
-            .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
-
-        if(isExistingNickname(command.nickname())) throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
-
+        
+        Member member = memberRepository.getMember(AuthUtil.getMemberId(),
+                                                   MemberStatus.SOCIAL_AUTHENTICATED)
+                                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+        
+        if (isExistingNickname(command.nickname())) {
+            throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
+        }
+        
         member.updatePersonalInfoAfterCompleteSignUp(MemberPersonalInfoVO.builder()
-            .nickname(command.nickname())
-            .dateOfBirth(command.dateOfBirth())
-            .gender(command.gender())
-            .build());
-
+                                                                         .nickname(command.nickname())
+                                                                         .dateOfBirth(command.dateOfBirth())
+                                                                         .gender(command.gender())
+                                                                         .build());
+        
         memberRepository.saveAgreement(member, MemberAgreementCommand.builder()
-            .isTermsAgree(command.isTerms())
-            .isPrivacyAgree(command.isPrivacy())
-            .isAdvertisementAgree(command.isAdvertisement()).build());
-
+                                                                     .isTermsAgree(command.isTerms())
+                                                                     .isPrivacyAgree(command.isPrivacy())
+                                                                     .isAdvertisementAgree(command.isAdvertisement())
+                                                                     .build());
+        
+        memberSettingRepository.saveAlarmSetting(MemberAlarmSetting.init(member));
+        
         return memberRepository.save(member);
     }
-
+    
     /**
      * 회원의 약관 동의 정보를 생성한다.
      *
@@ -92,17 +100,20 @@ public class MemberService {
      * @throws RestApiException 필수 동의 항목이 false이거나, 회원이 존재하지 않을 경우
      */
     @Transactional
-    public void createMemberTermAgree(boolean isTermsAgree, boolean isPrivacyAgree, boolean isAdvertisementAgree) {
-
-        Member member = memberRepository.getMember(AuthUtil.getMemberId(), MemberStatus.SOCIAL_AUTHENTICATED)
-            .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
-
+    public void createMemberTermAgree(boolean isTermsAgree, boolean isPrivacyAgree,
+                                      boolean isAdvertisementAgree) {
+        
+        Member member = memberRepository.getMember(AuthUtil.getMemberId(),
+                                                   MemberStatus.SOCIAL_AUTHENTICATED)
+                                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+        
         memberRepository.saveAgreement(member, MemberAgreementCommand.builder()
-                .isTermsAgree(isTermsAgree)
-                .isPrivacyAgree(isPrivacyAgree)
-                .isAdvertisementAgree(isAdvertisementAgree)
-            .build());
-
+                                                                     .isTermsAgree(isTermsAgree)
+                                                                     .isPrivacyAgree(isPrivacyAgree)
+                                                                     .isAdvertisementAgree(
+                                                                         isAdvertisementAgree)
+                                                                     .build());
+        
     }
     
     /**
@@ -112,12 +123,12 @@ public class MemberService {
      * @return 닉네임의 중복 여부
      */
     public boolean isExistingNickname(String nickname) {
-
+        
         if (nickname.trim().isEmpty()) {
             throw new RestApiException(FailResponseStatus.MANDATORY_PARAM_ERROR_NAME);
         }
-
+        
         return !memberRepository.getMembers(nickname, Member.getAllMemberStatus()).isEmpty();
-
+        
     }
 }
