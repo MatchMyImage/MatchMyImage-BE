@@ -21,6 +21,11 @@ public class MemberSettingService {
     private final MemberRepository memberRepository;
     private final MemberSettingRepository memberSettingRepository;
     
+    /**
+     * 유저의 알람 수신 상태를 변경한다.
+     *
+     * @param command 변경하려는 알람 수신 상태
+     */
     @Transactional
     public void updateAlarmSetting(UpdateMemberAlarmSettingCommand command) {
         Member member = memberRepository.getMember(AuthUtil.getMemberId(), MemberStatus.NORMAL)

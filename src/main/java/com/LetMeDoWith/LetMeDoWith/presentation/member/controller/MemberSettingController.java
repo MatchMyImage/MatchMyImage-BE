@@ -18,6 +18,12 @@ public class MemberSettingController {
     
     private final MemberSettingService memberSettingService;
     
+    /**
+     * 유저의 푸쉬 알람 수신 상태를 변경한다.
+     *
+     * @param req 푸쉬 별 알림 수신 상태
+     * @return 성공 응답
+     */
     @PutMapping("/alarm")
     public ResponseEntity updateAlarm(@RequestBody UpdateMemberAlarmSettingReq req) {
         memberSettingService.updateAlarmSetting(UpdateMemberAlarmSettingCommand.fromReq(req));
