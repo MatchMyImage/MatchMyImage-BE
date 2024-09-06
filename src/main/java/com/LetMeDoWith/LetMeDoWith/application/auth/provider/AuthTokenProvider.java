@@ -168,19 +168,20 @@ public class AuthTokenProvider {
     public Long getMemberIdWithoutVerify(final String token) {
 
         String[] parts = token.split("\\.");
+        System.out.println(parts);
         if(parts.length!=3) throw new RestApiException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
 
         byte[] decodeBytes = Base64.getUrlDecoder().decode(parts[1]);
         String payload = new String(decodeBytes, StandardCharsets.UTF_8);
 
-        Map<String, Object> map = null;
+        Map<String, String> map = null;
         try{
-            map = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>(){});
+            map = objectMapper.readValue(payload, new TypeReference<>(){});
         }catch (JsonProcessingException e) {
             throw new RestApiException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
         }
 
-        return Long.valueOf((Integer) map.get("memberId"));
+        return Long.valueOf(map.get("memberId"));
     }
     
     /**

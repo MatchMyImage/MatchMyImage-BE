@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.application.auth.client;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
