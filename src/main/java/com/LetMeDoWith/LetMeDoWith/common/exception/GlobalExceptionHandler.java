@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(responseBody, ex.getStatus().getHttpStatusCode());
 	}
 
-	@ExceptionHandler({Exception.class})
+	@ExceptionHandler({RestApiAuthException.class})
 	protected ResponseEntity<FailResponseDto> handleRestApiAuthException(RestApiAuthException ex) {
 		ex.printStackTrace();
 		FailResponseDto responseBody = FailResponseDto.builder()
