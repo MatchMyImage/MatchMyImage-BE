@@ -1,9 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -169,7 +169,7 @@ public class AuthTokenProvider {
 
         String[] parts = token.split("\\.");
         System.out.println(parts);
-        if(parts.length!=3) throw new RestApiException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
+        if(parts.length!=3) throw new RestApiAuthException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
 
         byte[] decodeBytes = Base64.getUrlDecoder().decode(parts[1]);
         String payload = new String(decodeBytes, StandardCharsets.UTF_8);
@@ -178,7 +178,7 @@ public class AuthTokenProvider {
         try{
             map = objectMapper.readValue(payload, new TypeReference<>(){});
         }catch (JsonProcessingException e) {
-            throw new RestApiException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
         }
 
         return Long.valueOf(map.get("memberId"));
@@ -199,7 +199,7 @@ public class AuthTokenProvider {
                                                                           .equals(this.issuer)) {
             return Long.parseLong(claims.getBody().get("memberId").toString());
         } else {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN);
         }
         
     }
@@ -220,12 +220,12 @@ public class AuthTokenProvider {
                        .build()
                        .parseClaimsJws(token);
         } catch (SignatureException e) {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN, e);
         } catch (ExpiredJwtException e) {
-            throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED, e);
+            throw new RestApiAuthException(FailResponseStatus.TOKEN_EXPIRED, e);
         } catch (Exception e) {
             log.error(e.toString());
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN, e);
         }
     }
     

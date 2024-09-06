@@ -6,7 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto.Oidc
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.OidcIdTokenPublicKeyNotFoundException;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -91,7 +91,7 @@ public class OidcIdTokenProvider {
                      InvalidKeySpecException ex) {
                 log.error("OIDC ID Token 공개키 갱신 실패. {} 공개키 서버의 문제일 수 있습니다.",
                           provider.getCode());
-                throw new RestApiException(FailResponseStatus.OIDC_ID_TOKEN_PUBKEY_NOT_FOUND);
+                throw new RestApiAuthException(FailResponseStatus.OIDC_ID_TOKEN_PUBKEY_NOT_FOUND);
             }
         }
     }
@@ -124,12 +124,12 @@ public class OidcIdTokenProvider {
                        .build()
                        .parseClaimsJwt(getUnsignedToken(token));
         } catch (ExpiredJwtException e) { // 파싱하면서 만료된 토큰인지 확인.
-            throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED, e);
+            throw new RestApiAuthException(FailResponseStatus.TOKEN_EXPIRED, e);
         } catch (SignatureException e) {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN, e);
         } catch (Exception e) {
             log.error(e.toString());
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN, e);
         }
     }
     
