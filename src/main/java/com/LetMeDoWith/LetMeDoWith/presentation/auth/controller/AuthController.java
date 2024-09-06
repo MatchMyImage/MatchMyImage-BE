@@ -1,13 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
+import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
+import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
-import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
-import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,7 @@ public class AuthController {
     public ResponseEntity createToken(
         @RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
         
-        CreateTokenResDto tokenRequestResult = authService.createToken(
+        CreateTokenResult tokenRequestResult = authService.createToken(
             createAccessTokenReqDto.provider(),
             createAccessTokenReqDto.idToken()
         );
@@ -47,6 +48,6 @@ public class AuthController {
             tokenRequestResult.signupToken() == null
                 ? SuccessResponseStatus.LOGIN_SUCCESS
                 : SuccessResponseStatus.PROCEED_TO_SIGNUP
-            , tokenRequestResult);
+            , CreateTokenResDto.fromCreateTokenResult(tokenRequestResult));
     }
 }
