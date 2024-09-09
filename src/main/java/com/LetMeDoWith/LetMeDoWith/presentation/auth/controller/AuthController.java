@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
@@ -27,8 +28,9 @@ public class AuthController {
     public ResponseEntity createTokenRefresh(@RequestBody CreateTokenRefreshReqDto requestBody) {
         
         String userAgent = HeaderUtil.getUserAgent();
-        
-        CreateTokenRefreshResDto result = authService.createTokenRefresh(requestBody.accessToken(),
+        String accessToken = AuthUtil.getAccessToken();
+
+        CreateTokenRefreshResDto result = authService.createTokenRefresh(accessToken,
                                                                          requestBody.refreshToken(),
                                                                          userAgent);
         
@@ -46,7 +48,7 @@ public class AuthController {
         
         return ResponseUtil.createSuccessResponse(
             tokenRequestResult.signupToken() == null
-                ? SuccessResponseStatus.LOGIN_SUCCESS
+                ? SuccessResponseStatus.OK
                 : SuccessResponseStatus.PROCEED_TO_SIGNUP
             , CreateTokenResDto.fromCreateTokenResult(tokenRequestResult));
     }

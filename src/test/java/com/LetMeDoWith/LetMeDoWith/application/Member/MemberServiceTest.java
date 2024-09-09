@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.service.Member;
+package com.LetMeDoWith.LetMeDoWith.application.Member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

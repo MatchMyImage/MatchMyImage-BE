@@ -53,8 +53,7 @@ public class MemberController {
         Member signupCompletedMember = memberService.createSignupCompletedMember(command);
         CreateTokenResult token = authService.getToken(signupCompletedMember);
         
-        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.LOGIN_SUCCESS,
-                                                  CreateTokenResDto.fromCreateTokenResult(token));
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK, CreateTokenResDto.fromCreateTokenResult(token));
     }
     
     /**
@@ -75,7 +74,7 @@ public class MemberController {
             createMemberTermAgreeReqDto.advertisement()
         );
         
-        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK_WITHOUT_DATA);
+        return ResponseUtil.createSuccessResponse();
     }
     
     /**

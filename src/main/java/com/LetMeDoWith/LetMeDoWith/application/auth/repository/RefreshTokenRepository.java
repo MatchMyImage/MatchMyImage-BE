@@ -7,6 +7,8 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 public interface RefreshTokenRepository {
 
 	Optional<RefreshToken> getRefreshToken(String refreshToken);
-	void delete(RefreshToken refreshToken);
+
+	void deleteRefreshToken(RefreshToken refreshToken);
+	void deleteRefreshTokens(Long memberId);
 
 }

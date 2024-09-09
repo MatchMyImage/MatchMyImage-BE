@@ -8,4 +8,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 @Repository
 public interface RefreshTokenRedisRepository extends CrudRepository<RefreshToken, String> {
 
+	void deleteByMemberId(Long memberId);
+
 }

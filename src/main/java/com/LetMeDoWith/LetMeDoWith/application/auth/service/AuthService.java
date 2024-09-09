@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     
     private final AuthTokenProvider authTokenProvider;
-    
+
     private final RefreshTokenRepository refreshTokenRepository;
     
     private final MemberService memberService;
@@ -38,36 +38,25 @@ public class AuthService {
                                                        String refreshToken,
                                                        String userAgent) {
         
-        Long memberId = authTokenProvider.validateToken(refreshToken,
-                                                        AuthTokenProvider.TokenType.RTK);
-        
-        // Redis에서 RTK info 조회
-        RefreshToken savedRefreshToken = refreshTokenRepository.getRefreshToken(refreshToken)
-                                                               .orElseThrow(() -> new RestApiException(
-                                                                   FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
-        
-        // RTK 추가 보안 점검
-        if (!savedRefreshToken.getMemberId().equals(memberId)) {
-            throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED);
-        } else if (!savedRefreshToken.getAccessToken().equals(accessToken)) {
-            throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_ATK_NOT_MATCHED);
-        }
-        
-        // 신규 ATK 발급
-        AuthTokenVO authTokenVO = authTokenProvider.createAccessToken(memberId);
-        
-        // 신규 RTK 발급
+        Long memberId = authTokenProvider.getMemberIdWithoutVerify(accessToken);
+
+        RefreshToken savedRefreshToken = null;
+        savedRefreshToken = refreshTokenRepository.getRefreshToken(refreshToken).orElseThrow(
+                () -> new RestApiException(
+                    FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
+        savedRefreshToken.checkTokenOwnership(memberId, accessToken, userAgent);
+
+        AuthTokenVO newAccessToken = authTokenProvider.createAccessToken(memberId);
         RefreshToken newRefreshToken = authTokenProvider.createRefreshToken(memberId,
-                                                                            authTokenVO.token(),
+                                                                            newAccessToken.token(),
                                                                             userAgent);
-        
-        // 기존 RTK info Redis에서 삭제
-        refreshTokenRepository.delete(savedRefreshToken);
+
+        refreshTokenRepository.deleteRefreshToken(savedRefreshToken);
+
         
         return CreateTokenRefreshResDto.builder()
-                                       .accessToken(authTokenVO.token())
-                                       .accessTokenExpireAt(authTokenVO.expireAt())
-                                       .refreshToken(newRefreshToken.getToken())
+                                       .atk(CreateTokenRefreshResDto.AccessTokenDto.from(newAccessToken))
+                                       .rtk(CreateTokenRefreshResDto.RefreshTokenDto.from(newRefreshToken))
                                        .build();
         
     }

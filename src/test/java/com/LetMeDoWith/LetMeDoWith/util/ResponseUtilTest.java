@@ -60,17 +60,6 @@ class ResponseUtilTest {
         assertEquals(successResponse.getHeaders().get("attr").get(0), "val");
         
     }
-    
-    @Test
-    @DisplayName("성공응답 테스트 - with custom status")
-    void test_success_res_with_status() {
-        ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse(
-            SuccessResponseStatus.OK_WITHOUT_DATA);
-        
-        assertEquals(successResponse.getStatusCode(), HttpStatus.NO_CONTENT);
-        
-        // 사용자 지정 상태와 일치하는지 확인
-        assertEquals(successResponse.getBody().statusCode(), "S101");
-    }
+
     
 }
