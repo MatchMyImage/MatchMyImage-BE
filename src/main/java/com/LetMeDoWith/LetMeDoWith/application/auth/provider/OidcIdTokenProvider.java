@@ -4,7 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto.OidcPublicKeyVO;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import io.jsonwebtoken.Claims;

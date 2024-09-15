@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.converter;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.fasterxml.jackson.core.JsonParser;

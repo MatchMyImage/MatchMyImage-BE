@@ -3,7 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateAccessTokenReqDto;

@@ -54,6 +54,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath subject = createString("subject");
 
+    public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskLevel> taskLevel = createEnum("taskLevel", com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskLevel.class);
+
     public final QMemberTermAgree termAgree;
 
     public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType> type = createEnum("type", com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType.class);

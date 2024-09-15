@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -47,7 +48,7 @@ public class Member extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
     
     
@@ -58,6 +59,9 @@ public class Member extends BaseAuditEntity {
     
     @Column(nullable = false)
     private MemberStatus status;
+
+    @Column(name = "task_level")
+    private TaskLevel taskLevel;
     
     @Column
     private String nickname;

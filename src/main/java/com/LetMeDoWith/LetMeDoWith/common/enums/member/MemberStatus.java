@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.enums.member;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

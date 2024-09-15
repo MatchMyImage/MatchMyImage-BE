@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.common.exception;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import lombok.Getter;
 
 @Getter

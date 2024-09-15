@@ -22,7 +22,7 @@ public class MemberPushSetting extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_push_setting_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
     
     @OneToOne
