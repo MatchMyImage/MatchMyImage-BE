@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface BadgeRepository {
 
+  void save(List<Badge> badges);
   List<Badge> getBadges(Long memberId);
 
 }

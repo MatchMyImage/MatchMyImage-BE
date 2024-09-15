@@ -20,8 +20,8 @@ public class QBadgeJpaRepositoryImpl implements QBadgeJpaRepository {
   @Override
   public List<Badge> findAllByMemberId(Long memberId) {
     return jpaQueryFactory.select(qBadge)
-        .from(qMemberBadge)
-        .innerJoin(qMemberBadge.badge, qBadge)
+        .from(qBadge)
+        .leftJoin(qBadge, qMemberBadge.badge)
         .where(qMemberBadge.memberId.eq(memberId))
         .orderBy(qBadge.sortOrder.asc())
         .fetch();

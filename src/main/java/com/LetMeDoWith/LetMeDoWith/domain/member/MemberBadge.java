@@ -35,10 +35,15 @@ public class MemberBadge extends BaseAuditEntity {
   @JoinColumn(name = "badge_id", nullable = false)
   private Badge badge;
 
-  @Column(name = "active_yn", nullable = false)
-  private Yn isActive;
-
   @Column(name = "main_yn", nullable = false)
   private Yn isMain;
+
+  public void registerToMainBadge() {
+    this.isMain = Yn.TRUE;
+  }
+
+  public void cancelMainBadge() {
+    this.isMain = Yn.FALSE;
+  }
 
 }

@@ -16,6 +16,18 @@ public class BadgeRepositoryImpl implements BadgeRepository {
   private final BadgeJpaRepository badgeJpaRepository;
   private final MemberBadgeJpaRepository memberBadgeJpaRepository;
 
+  @Override
+  public void save(List<Badge> badges) {
+
+    badgeJpaRepository.saveAll(badges);
+    badges.forEach(badge -> {
+      if(badge.getMemberBadges() != null && !badge.getMemberBadges().isEmpty()) {
+        memberBadgeJpaRepository.saveAll(badge.getMemberBadges());
+      }
+    });
+
+  }
+
   public List<Badge> getBadges(Long memberId) {
 
     return badgeJpaRepository.findAllByMemberId(memberId);

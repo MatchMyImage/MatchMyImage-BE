@@ -95,6 +95,11 @@ public class Member extends BaseAuditEntity {
                      .build();
     }
 
+    // LAZY Badge 획득 레벨인지 확인
+    public boolean isLazyBadgeAcquireLevel() {
+        return TaskLevel.BAD.equals(this.taskLevel);
+    }
+
     public static List<MemberStatus> getAllMemberStatus() {
         return List.of(MemberStatus.NORMAL, MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
     }
