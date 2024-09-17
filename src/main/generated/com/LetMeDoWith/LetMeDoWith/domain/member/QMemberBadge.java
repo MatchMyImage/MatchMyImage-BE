@@ -34,8 +34,6 @@ public class QMemberBadge extends EntityPathBase<MemberBadge> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn> isActive = createEnum("isActive", com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn.class);
-
     public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn> isMain = createEnum("isMain", com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn.class);
 
     public final NumberPath<Long> memberId = createNumber("memberId", Long.class);

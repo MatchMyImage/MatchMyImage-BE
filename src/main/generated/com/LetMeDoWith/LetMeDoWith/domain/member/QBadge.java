@@ -22,6 +22,8 @@ public class QBadge extends EntityPathBase<Badge> {
 
     public final com.LetMeDoWith.LetMeDoWith.common.entity.QBaseAuditEntity _super = new com.LetMeDoWith.LetMeDoWith.common.entity.QBaseAuditEntity(this);
 
+    public final StringPath activeHint = createString("activeHint");
+
     public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus> badgeStatus = createEnum("badgeStatus", com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus.class);
 
     //inherited
@@ -34,7 +36,7 @@ public class QBadge extends EntityPathBase<Badge> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath image = createString("image");
+    public final StringPath imageUrl = createString("imageUrl");
 
     public final ListPath<MemberBadge, QMemberBadge> memberBadges = this.<MemberBadge, QMemberBadge>createList("memberBadges", MemberBadge.class, QMemberBadge.class, PathInits.DIRECT2);
 

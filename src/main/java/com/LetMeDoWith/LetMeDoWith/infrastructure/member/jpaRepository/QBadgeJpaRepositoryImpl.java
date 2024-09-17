@@ -1,8 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository;
 
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.QMemberBadge;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +23,24 @@ public class QBadgeJpaRepositoryImpl implements QBadgeJpaRepository {
   private QMemberBadge qMemberBadge = QMemberBadge.memberBadge;
 
   @Override
-  public List<Badge> findAllByMemberId(Long memberId) {
-    return jpaQueryFactory.select(qBadge)
+  public List<MemberBadgeVO> findAllJoinMemberBadge(Long memberId, BadgeStatus badgeStatus) {
+    return jpaQueryFactory.select(Projections.bean(
+            MemberBadgeVO.class,
+            qMemberBadge.id.as("memberBadgeId"),
+            qMemberBadge.memberId,
+            qMemberBadge.isMain,
+            qBadge.id.as("badgeId"),
+            qBadge.badgeStatus,
+            qBadge.name,
+            qBadge.description,
+            qBadge.activeHint,
+            qBadge.imageUrl,
+            qBadge.sortOrder
+        ))
         .from(qBadge)
-        .leftJoin(qBadge, qMemberBadge.badge)
-        .where(qMemberBadge.memberId.eq(memberId))
+        .leftJoin(qBadge.memberBadges, qMemberBadge)
+        .on(qMemberBadge.memberId.eq(memberId)
+            .and(qBadge.badgeStatus.eq(badgeStatus)))
         .orderBy(qBadge.sortOrder.asc())
         .fetch();
   }

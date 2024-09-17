@@ -49,13 +49,17 @@ public class Badge extends BaseAuditEntity {
   private String activeHint;
 
   @Column(name = "image_url")
-  private String image;
+  private String imageUrl;
 
   @Column(name = "sort_order")
   private int sortOrder;
 
-  public boolean isActive() {
-    return memberBadges != null && !memberBadges.isEmpty();
+  public boolean isActive(Long memberId) {
+    if(memberBadges != null && !memberBadges.isEmpty() && BadgeStatus.ACTIVE.equals(badgeStatus)) {
+      return memberBadges.get(0).getMemberId().equals(memberId);
+    }else {
+      return false;
+    }
   }
 
   public boolean isMainBadge() {

@@ -5,6 +5,7 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.MEMBER_NOT_EXIST_BADGE;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.GetBadgesInfoResult;
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveBadgesInfoResDto;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.BadgeRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
@@ -13,6 +14,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,7 @@ public class BadgeService {
     Member member = memberRepository.getMember(memberId, MemberStatus.NORMAL)
         .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
-    List<Badge> badges = badgeRepository.getBadges(memberId);
+    List<MemberBadgeVO> badges = badgeRepository.getBadges(memberId);
 
     return GetBadgesInfoResult.of(member.isLazyBadgeAcquireLevel(), badges);
 
@@ -42,19 +44,22 @@ public class BadgeService {
         .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
     if(member.isLazyBadgeAcquireLevel()) throw new RestApiException(LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE);
-
-    List<Badge> badges = badgeRepository.getBadges(memberId);
-    Badge oldMainBadge = badges.stream().filter(Badge::isMainBadge).findFirst().orElse(null);
-    Badge newMainBadge = badges.stream().filter(e -> e.getId().equals(badgeId)).findFirst()
-        .orElseThrow(() -> new RestApiException(BADGE_NOT_EXIST));
-
-    if(oldMainBadge != null) {
-      oldMainBadge.cancelMain();
-    }
-
-    newMainBadge.registerToMain();
-
-    badgeRepository.save(badges);
+//
+//    List<Badge> badges = badgeRepository.getBadges(memberId);
+//
+//    Optional<Badge> oldMainBadge = badges.stream()
+//        .filter(Badge::isMainBadge)
+//        .findFirst();
+//    Badge newMainBadge = badges.stream()
+//        .filter(e -> e.getId().equals(badgeId))
+//        .findFirst()
+//        .orElseThrow(() -> new RestApiException(BADGE_NOT_EXIST));
+//
+//    oldMainBadge.ifPresent(Badge::cancelMain);
+//
+//    newMainBadge.registerToMain();
+//
+//    badgeRepository.save(badges);
 
   }
 

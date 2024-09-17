@@ -33,14 +33,14 @@ public class RetrieveBadgesInfoResDto {
     private String activeHint;
   }
 
-  public static RetrieveBadgesInfoResDto of(boolean isLazy, @Nullable com.LetMeDoWith.LetMeDoWith.domain.member.Badge mainBadge, List<com.LetMeDoWith.LetMeDoWith.domain.member.Badge> badges) {
+  public static RetrieveBadgesInfoResDto of(Long memberId, boolean isLazy, @Nullable com.LetMeDoWith.LetMeDoWith.domain.member.Badge mainBadge, List<com.LetMeDoWith.LetMeDoWith.domain.member.Badge> badges) {
 
     List<Badge> badgesResult = new ArrayList<>();
     badges.forEach(e -> badgesResult.add(Badge.builder()
         .id(e.getId())
-        .isActive(e.isActive())
+        .isActive(e.isActive(memberId))
         .name(e.getName())
-        .imageUrl(e.getImage())
+        .imageUrl(e.getImageUrl())
         .description(e.getDescription())
         .activeHint(e.getActiveHint())
         .build()));
@@ -50,7 +50,7 @@ public class RetrieveBadgesInfoResDto {
         .mainBadge(mainBadge == null ? null : MainBadge.builder()
             .id(mainBadge.getId())
             .name(mainBadge.getName())
-            .imageUrl(mainBadge.getImage())
+            .imageUrl(mainBadge.getImageUrl())
             .description(mainBadge.getDescription())
             .build())
         .badges(badgesResult)

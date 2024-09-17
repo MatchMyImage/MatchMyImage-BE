@@ -48,6 +48,7 @@ public abstract class AbstractCombinedConverter<T extends BaseEnum> extends Json
     
     @Override
     public T convertToEntityAttribute(String dbData) {
+        if(dbData == null) return null;
         try {
             return EnumUtil.getEnum(targetClass, dbData);
         } catch (Exception e) {

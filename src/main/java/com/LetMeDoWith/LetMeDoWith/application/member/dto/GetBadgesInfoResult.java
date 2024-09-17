@@ -10,9 +10,9 @@ import lombok.Data;
 public class GetBadgesInfoResult {
 
   private boolean isLazy;
-  public List<Badge> badges;
+  private List<MemberBadgeVO> badges;
 
-  public static GetBadgesInfoResult of(boolean isLazy, List<Badge> badges) {
+  public static GetBadgesInfoResult of(boolean isLazy, List<MemberBadgeVO> badges) {
     return GetBadgesInfoResult.builder()
         .isLazy(isLazy)
         .badges(badges)

@@ -1,7 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.repository;
 
 
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.BadgeRepository;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Badge;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.BadgeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberBadgeJpaRepository;
@@ -28,9 +30,10 @@ public class BadgeRepositoryImpl implements BadgeRepository {
 
   }
 
-  public List<Badge> getBadges(Long memberId) {
+  @Override
+  public List<MemberBadgeVO> getBadges(Long memberId) {
 
-    return badgeJpaRepository.findAllByMemberId(memberId);
+    return badgeJpaRepository.findAllJoinMemberBadge(memberId, BadgeStatus.ACTIVE);
 
   }
 
