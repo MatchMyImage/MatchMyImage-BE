@@ -15,7 +15,7 @@ public class MemberBadgeVO {
   private BadgeStatus badgeStatus;
   private String name;
   private String description;
-  private String activeHint;
+  private String acquireHint;
   private String imageUrl;
   private int sortOrder;
 

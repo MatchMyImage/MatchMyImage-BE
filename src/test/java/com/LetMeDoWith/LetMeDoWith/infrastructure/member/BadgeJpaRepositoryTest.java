@@ -12,7 +12,6 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.BadgeJpaR
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberBadgeJpaRepository;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -70,7 +69,7 @@ public class BadgeJpaRepositoryTest {
         .badgeStatus(badge1Status)
         .name(badge1Name)
         .description(badge1Description)
-        .activeHint(badge1ActiveHint)
+        .acquireHint(badge1ActiveHint)
         .imageUrl(badge1ImageUrl)
         .sortOrder(badge1SortOrder)
         .build();
@@ -79,7 +78,7 @@ public class BadgeJpaRepositoryTest {
         .badgeStatus(badge2Status)
         .name(badge2Name)
         .description(badge2Description)
-        .activeHint(badge2ActiveHint)
+        .acquireHint(badge2ActiveHint)
         .imageUrl(badge2ImageUrl)
         .sortOrder(badge2SortOrder)
         .build();
@@ -88,7 +87,7 @@ public class BadgeJpaRepositoryTest {
         .badgeStatus(badge3Status)
         .name(badge3Name)
         .description(badge3Description)
-        .activeHint(badge3ActiveHint)
+        .acquireHint(badge3ActiveHint)
         .imageUrl(badge3ImageUrl)
         .sortOrder(badge3SortOrder)
         .build();
@@ -118,7 +117,7 @@ public class BadgeJpaRepositoryTest {
         .badgeStatus(badge1Status)
         .name(badge1Name)
         .description(badge1Description)
-        .activeHint(badge1ActiveHint)
+        .acquireHint(badge1ActiveHint)
         .imageUrl(badge1ImageUrl)
         .sortOrder(badge1SortOrder)
         .build();
@@ -139,9 +138,9 @@ public class BadgeJpaRepositoryTest {
     // when
     memberBadgeJpaRepository.saveAll(List.of(memberBadge1, memberBadge2));
     memberBadgeJpaRepository.flush();
-    MemberBadge savedMemberBadge1 = memberBadgeJpaRepository.findAllByMemberIdAndIsMain(1L, Yn.TRUE)
+    MemberBadge savedMemberBadge1 = memberBadgeJpaRepository.findByMemberIdAndIsMain(1L, Yn.TRUE)
         .orElseThrow(() -> new IllegalArgumentException("not found"));
-    MemberBadge savedMemberBadge2 = memberBadgeJpaRepository.findAllByMemberIdAndIsMain(1L, Yn.FALSE)
+    MemberBadge savedMemberBadge2 = memberBadgeJpaRepository.findByMemberIdAndIsMain(1L, Yn.FALSE)
         .orElseThrow(() -> new IllegalArgumentException("not found"));
 
     // then
@@ -165,7 +164,7 @@ public class BadgeJpaRepositoryTest {
         .badgeStatus(badge1Status)
         .name(badge1Name)
         .description(badge1Description)
-        .activeHint(badge1ActiveHint)
+        .acquireHint(badge1ActiveHint)
         .imageUrl(badge1ImageUrl)
         .sortOrder(badge1SortOrder)
         .build());
@@ -174,7 +173,7 @@ public class BadgeJpaRepositoryTest {
         .badgeStatus(badge2Status)
         .name(badge2Name)
         .description(badge2Description)
-        .activeHint(badge2ActiveHint)
+        .acquireHint(badge2ActiveHint)
         .imageUrl(badge2ImageUrl)
         .sortOrder(badge2SortOrder)
         .build());
@@ -183,7 +182,7 @@ public class BadgeJpaRepositoryTest {
         .badgeStatus(badge3Status)
         .name(badge3Name)
         .description(badge3Description)
-        .activeHint(badge3ActiveHint)
+        .acquireHint(badge3ActiveHint)
         .imageUrl(badge3ImageUrl)
         .sortOrder(badge3SortOrder)
         .build());
@@ -206,6 +205,10 @@ public class BadgeJpaRepositoryTest {
 
     // then
     assertThat(result.size()).isEqualTo(3);
+
+    assertThat(result.get(0).getName()).isEqualTo(badge2Name);
+    assertThat(result.get(1).getName()).isEqualTo(badge1Name);
+    assertThat(result.get(2).getName()).isEqualTo(badge3Name);
 
   }
 

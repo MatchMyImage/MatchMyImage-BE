@@ -33,14 +33,14 @@ public class QBadgeJpaRepositoryImpl implements QBadgeJpaRepository {
             qBadge.badgeStatus,
             qBadge.name,
             qBadge.description,
-            qBadge.activeHint,
+            qBadge.acquireHint,
             qBadge.imageUrl,
             qBadge.sortOrder
         ))
         .from(qBadge)
         .leftJoin(qBadge.memberBadges, qMemberBadge)
-        .on(qMemberBadge.memberId.eq(memberId)
-            .and(qBadge.badgeStatus.eq(badgeStatus)))
+          .on(qMemberBadge.memberId.eq(memberId))
+        .where(qBadge.badgeStatus.eq(badgeStatus))
         .orderBy(qBadge.sortOrder.asc())
         .fetch();
   }

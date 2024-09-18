@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.dto;
 
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -9,7 +10,7 @@ import org.springframework.lang.Nullable;
 @Data
 @Builder
 public class RetrieveBadgesInfoResDto {
-  private boolean isLazy;
+  private boolean lazyYn;
   private MainBadge mainBadge;
   private List<Badge> badges;
 
@@ -26,32 +27,32 @@ public class RetrieveBadgesInfoResDto {
   @Builder
   public static class Badge {
     private Long id;
-    private boolean isActive;
+    private boolean acquiredYn;
     private String name;
     private String imageUrl;
     private String description;
-    private String activeHint;
+    private String acquireHint;
   }
 
-  public static RetrieveBadgesInfoResDto of(Long memberId, boolean isLazy, @Nullable com.LetMeDoWith.LetMeDoWith.domain.member.Badge mainBadge, List<com.LetMeDoWith.LetMeDoWith.domain.member.Badge> badges) {
+  public static RetrieveBadgesInfoResDto of(Long memberId, boolean isLazy, @Nullable MemberBadgeVO mainBadgeVO, List<MemberBadgeVO> badgeVOs) {
 
     List<Badge> badgesResult = new ArrayList<>();
-    badges.forEach(e -> badgesResult.add(Badge.builder()
-        .id(e.getId())
-        .isActive(e.isActive(memberId))
+    badgeVOs.forEach(e -> badgesResult.add(Badge.builder()
+        .id(e.getBadgeId())
+        .acquiredYn(e.getMemberBadgeId() != null)
         .name(e.getName())
         .imageUrl(e.getImageUrl())
         .description(e.getDescription())
-        .activeHint(e.getActiveHint())
+        .acquireHint(e.getAcquireHint())
         .build()));
 
     return RetrieveBadgesInfoResDto.builder()
-        .isLazy(isLazy)
-        .mainBadge(mainBadge == null ? null : MainBadge.builder()
-            .id(mainBadge.getId())
-            .name(mainBadge.getName())
-            .imageUrl(mainBadge.getImageUrl())
-            .description(mainBadge.getDescription())
+        .lazyYn(isLazy)
+        .mainBadge(mainBadgeVO == null ? null : MainBadge.builder()
+            .id(mainBadgeVO.getBadgeId())
+            .name(mainBadgeVO.getName())
+            .imageUrl(mainBadgeVO.getImageUrl())
+            .description(mainBadgeVO.getDescription())
             .build())
         .badges(badgesResult)
         .build();

@@ -43,12 +43,11 @@ public abstract class AbstractCombinedConverter<T extends BaseEnum> extends Json
     // JPA AttributeConverter methods
     @Override
     public String convertToDatabaseColumn(T attribute) {
-        return attribute.getCode();
+        return attribute==null ? null : attribute.getCode();
     }
     
     @Override
     public T convertToEntityAttribute(String dbData) {
-        if(dbData == null) return null;
         try {
             return EnumUtil.getEnum(targetClass, dbData);
         } catch (Exception e) {

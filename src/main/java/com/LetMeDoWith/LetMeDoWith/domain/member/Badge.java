@@ -45,8 +45,8 @@ public class Badge extends BaseAuditEntity {
   @Column(name = "description")
   private String description;
 
-  @Column(name = "active_hint")
-  private String activeHint;
+  @Column(name = "acquire_hint")
+  private String acquireHint;
 
   @Column(name = "image_url")
   private String imageUrl;
@@ -62,21 +62,21 @@ public class Badge extends BaseAuditEntity {
     }
   }
 
-  public boolean isMainBadge() {
+  public boolean isMainBadge(Long memberId) {
     if(memberBadges == null || memberBadges.isEmpty()) return false;
-    MemberBadge memberBadge = this.memberBadges.get(0);
+    MemberBadge memberBadge = this.memberBadges.stream().filter(e -> e.getMemberId().equals(memberId)).findFirst().orElseThrow(() -> new RestApiException(MEMBER_BADGE_NOT_EXIST));
     return Yn.TRUE.equals(memberBadge.getIsMain());
   }
 
-  public void registerToMain() {
+  public void registerToMain(Long memberId) {
     if(memberBadges ==null || memberBadges.isEmpty()) throw new RestApiException(MEMBER_BADGE_NOT_EXIST);
-    MemberBadge memberBadge = this.memberBadges.get(0);
+    MemberBadge memberBadge = this.memberBadges.stream().filter(e -> e.getMemberId().equals(memberId)).findFirst().orElseThrow(() -> new RestApiException(MEMBER_BADGE_NOT_EXIST));
     memberBadge.registerToMainBadge();
   }
 
-  public void cancelMain() {
+  public void cancelMain(Long memberId) {
     if(memberBadges ==null || memberBadges.isEmpty()) throw new RestApiException(MEMBER_BADGE_NOT_EXIST);
-    MemberBadge memberBadge = this.memberBadges.get(0);
+    MemberBadge memberBadge = this.memberBadges.stream().filter(e -> e.getMemberId().equals(memberId)).findFirst().orElseThrow(() -> new RestApiException(MEMBER_BADGE_NOT_EXIST));
     memberBadge.cancelMainBadge();
   }
 

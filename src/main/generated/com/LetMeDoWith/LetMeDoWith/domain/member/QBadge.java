@@ -22,7 +22,7 @@ public class QBadge extends EntityPathBase<Badge> {
 
     public final com.LetMeDoWith.LetMeDoWith.common.entity.QBaseAuditEntity _super = new com.LetMeDoWith.LetMeDoWith.common.entity.QBaseAuditEntity(this);
 
-    public final StringPath activeHint = createString("activeHint");
+    public final StringPath acquireHint = createString("acquireHint");
 
     public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus> badgeStatus = createEnum("badgeStatus", com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus.class);
 

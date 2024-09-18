@@ -1,6 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.member.Badge;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -9,12 +8,12 @@ import lombok.Data;
 @Builder
 public class GetBadgesInfoResult {
 
-  private boolean isLazy;
+  private boolean isMemberLazy;
   private List<MemberBadgeVO> badges;
 
   public static GetBadgesInfoResult of(boolean isLazy, List<MemberBadgeVO> badges) {
     return GetBadgesInfoResult.builder()
-        .isLazy(isLazy)
+        .isMemberLazy(isLazy)
         .badges(badges)
         .build();
   }

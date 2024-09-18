@@ -2,10 +2,13 @@ package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.BADGE_NOT_EXIST;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.MEMBER_BADGE_NOT_EXIST;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.MEMBER_NOT_EXIST_BADGE;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.GetBadgesInfoResult;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberBadge;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveBadgesInfoResDto;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.BadgeRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
@@ -44,22 +47,19 @@ public class BadgeService {
         .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
     if(member.isLazyBadgeAcquireLevel()) throw new RestApiException(LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE);
-//
-//    List<Badge> badges = badgeRepository.getBadges(memberId);
-//
-//    Optional<Badge> oldMainBadge = badges.stream()
-//        .filter(Badge::isMainBadge)
-//        .findFirst();
-//    Badge newMainBadge = badges.stream()
-//        .filter(e -> e.getId().equals(badgeId))
-//        .findFirst()
-//        .orElseThrow(() -> new RestApiException(BADGE_NOT_EXIST));
-//
-//    oldMainBadge.ifPresent(Badge::cancelMain);
-//
-//    newMainBadge.registerToMain();
-//
-//    badgeRepository.save(badges);
+
+    Badge newMainBadge = badgeRepository.getBadge(badgeId, BadgeStatus.ACTIVE)
+        .orElseThrow(() -> new RestApiException(BADGE_NOT_EXIST));
+
+    // 기존 Main Badge cancel
+    Optional<MemberBadge> mainMemberBadge = badgeRepository.getMainMemberBadge(memberId);
+    if(mainMemberBadge.isPresent()) {
+      mainMemberBadge.get().cancelMainBadge();
+    }
+
+    // 새로운 Main Badge 등록
+    MemberBadge memberBadge = badgeRepository.getMemberBadge(memberId, newMainBadge).orElseThrow(() -> new RestApiException(MEMBER_BADGE_NOT_EXIST));
+    memberBadge.registerToMainBadge();
 
   }
 
