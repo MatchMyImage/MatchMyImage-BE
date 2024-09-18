@@ -10,7 +10,7 @@ import org.springframework.lang.Nullable;
 @Data
 @Builder
 public class RetrieveBadgesInfoResDto {
-  private boolean lazyYn;
+  private Boolean isLazyMember;
   private MainBadge mainBadge;
   private List<Badge> badges;
 
@@ -27,7 +27,7 @@ public class RetrieveBadgesInfoResDto {
   @Builder
   public static class Badge {
     private Long id;
-    private boolean acquiredYn;
+    private Boolean isAcquired;
     private String name;
     private String imageUrl;
     private String description;
@@ -39,7 +39,7 @@ public class RetrieveBadgesInfoResDto {
     List<Badge> badgesResult = new ArrayList<>();
     badgeVOs.forEach(e -> badgesResult.add(Badge.builder()
         .id(e.getBadgeId())
-        .acquiredYn(e.getMemberBadgeId() != null)
+        .isAcquired(e.getMemberBadgeId() != null)
         .name(e.getName())
         .imageUrl(e.getImageUrl())
         .description(e.getDescription())
@@ -47,7 +47,7 @@ public class RetrieveBadgesInfoResDto {
         .build()));
 
     return RetrieveBadgesInfoResDto.builder()
-        .lazyYn(isLazy)
+        .isLazyMember(isLazy)
         .mainBadge(mainBadgeVO == null ? null : MainBadge.builder()
             .id(mainBadgeVO.getBadgeId())
             .name(mainBadgeVO.getName())

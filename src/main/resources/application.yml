@@ -25,7 +25,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     generate-ddl: true
     show-sql: true
     properties:
