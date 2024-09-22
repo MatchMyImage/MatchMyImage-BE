@@ -1,10 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.domain.auth;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,5 +32,25 @@ public class RefreshToken {
 
 	@TimeToLive
 	private Long expireSec;
+
+	public void checkTokenOwnership(Long reqMemberId, String reqAccessToken, String reqUserAgent) {
+
+		if (!reqMemberId.equals(memberId)) {
+			throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED);
+		}
+
+		if (!reqAccessToken.equals(accessToken)) {
+			throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_ATK_NOT_MATCHED);
+		}
+
+		if(!reqUserAgent.equals(userAgent)) {
+			throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_USER_AGENT_NOT_MATCHED);
+		}
+
+	}
+
+	public LocalDateTime calculateExpireAt() {
+		return LocalDateTime.now().plusSeconds(this.expireSec);
+	}
 
 }

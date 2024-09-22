@@ -1,10 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -13,6 +16,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -22,6 +26,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
+
 import javax.crypto.SecretKey;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +48,8 @@ public class AuthTokenProvider {
     private Long rtkDurationDay;
     @Value("${auth.jwt.issuer}")
     private String issuer;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
     
     // private final long refreshExpireTime = 1 * 60 * 1000L * 60 * 24 * 14; // 14일
     
@@ -97,19 +106,8 @@ public class AuthTokenProvider {
      */
     
     public RefreshToken createRefreshToken(Long memberId, String accessToken, String userAgent) {
-        
-        Date nowDate = new Date();
-        Date expireAt = new Date(nowDate.getTime() + rtkDurationDay * 24 * 60 * 60 * 1000L);
-        
-        String refreshToken = Jwts.builder()
-                                  .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                                  .setIssuer(this.issuer)
-                                  .setIssuedAt(nowDate)
-                                  .setExpiration(expireAt)
-                                  .setSubject(TokenType.RTK.name())
-                                  .claim("memberId", memberId)
-                                  .signWith(secretKey)
-                                  .compact();
+
+        String refreshToken = UUID.randomUUID().toString();
         
         // redis에 저장
         return refreshTokenRedisRepository.save(RefreshToken.builder()
@@ -160,6 +158,31 @@ public class AuthTokenProvider {
     public Claims getTokenPayload(final String token) {
         return parseTokenToJws(token, secretKey).getBody();
     }
+
+    /**
+     * Token 검증 없이, payload의 memberId 추출
+     *
+     * @param token
+     * @return
+     */
+    public Long getMemberIdWithoutVerify(final String token) {
+
+        String[] parts = token.split("\\.");
+        System.out.println(parts);
+        if(parts.length!=3) throw new RestApiAuthException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
+
+        byte[] decodeBytes = Base64.getUrlDecoder().decode(parts[1]);
+        String payload = new String(decodeBytes, StandardCharsets.UTF_8);
+
+        Map<String, String> map = null;
+        try{
+            map = objectMapper.readValue(payload, new TypeReference<>(){});
+        }catch (JsonProcessingException e) {
+            throw new RestApiAuthException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
+        }
+
+        return Long.valueOf(map.get("memberId"));
+    }
     
     /**
      * Token(ATK, RTK) 검증 및 memberId 추출
@@ -176,7 +199,7 @@ public class AuthTokenProvider {
                                                                           .equals(this.issuer)) {
             return Long.parseLong(claims.getBody().get("memberId").toString());
         } else {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN);
         }
         
     }
@@ -197,12 +220,12 @@ public class AuthTokenProvider {
                        .build()
                        .parseClaimsJws(token);
         } catch (SignatureException e) {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN, e);
         } catch (ExpiredJwtException e) {
-            throw new RestApiException(FailResponseStatus.TOKEN_EXPIRED, e);
+            throw new RestApiAuthException(FailResponseStatus.TOKEN_EXPIRED, e);
         } catch (Exception e) {
             log.error(e.toString());
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN, e);
+            throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN, e);
         }
     }
     

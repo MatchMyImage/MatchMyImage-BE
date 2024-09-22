@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.repository.auth;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.auth;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.repository.member;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

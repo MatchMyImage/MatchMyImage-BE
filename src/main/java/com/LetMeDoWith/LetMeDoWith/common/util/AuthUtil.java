@@ -23,7 +23,7 @@ public class AuthUtil {
         if (!authorizationHeader.startsWith("Bearer")) {
             throw new RestApiException(FailResponseStatus.ATK_NOT_EXIST);
         }
-        String accessToken = authorizationHeader.substring(6);
+        String accessToken = authorizationHeader.substring(6).trim();
         if (accessToken.isEmpty()) {
             throw new RestApiException(FailResponseStatus.ATK_NOT_EXIST);
         } else {

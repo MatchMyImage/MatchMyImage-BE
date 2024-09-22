@@ -4,11 +4,15 @@ package com.LetMeDoWith.LetMeDoWith.application.member.service;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
+import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberSettingRepository;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberAlarmSetting;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberTermAgree;
@@ -22,8 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
-    
+
     private final MemberRepository memberRepository;
+    private final MemberSettingRepository memberSettingRepository;
     
     /**
      * (Provider, Subject) 의 조합으로 기 가입된 계정이 존재하는지 확인한다.
@@ -48,11 +53,11 @@ public class MemberService {
     @Transactional
     public Member createSocialAuthenticatedMember(SocialProvider provider, String subject) {
         
-        Member temporalMember = memberRepository.save(Member.temporal(subject));
-        memberRepository.saveSocialAccount(MemberSocialAccount.initialize(temporalMember,
-                                                                          provider));
+        Member socialAuthenticatedMember = memberRepository.save(Member.socialAuthenticated(subject));
+        memberRepository.saveSocialAccount(MemberSocialAccount.of(socialAuthenticatedMember,
+                                                                  provider));
         
-        return temporalMember;
+        return socialAuthenticatedMember;
     }
     
     /**

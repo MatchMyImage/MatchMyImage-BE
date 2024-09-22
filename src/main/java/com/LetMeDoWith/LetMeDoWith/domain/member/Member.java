@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,22 +28,25 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Member extends BaseAuditEntity {
     
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     List<MemberSocialAccount> socialAccountList = new ArrayList<>();
     
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     List<MemberStatusHistory> statusHistoryList = new ArrayList<>();
     
-    @OneToMany(mappedBy = "followerMember")
+    @OneToMany(mappedBy = "followerMember", fetch = FetchType.LAZY)
     List<MemberFollow> followingMembers = new ArrayList<>();
     
-    @OneToMany(mappedBy = "followingMember")
+    @OneToMany(mappedBy = "followingMember", fetch = FetchType.LAZY)
     List<MemberFollow> followerMembers = new ArrayList<>();
     
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     MemberTermAgree termAgree;
+    
+    @OneToOne(mappedBy = "member")
+    MemberAlarmSetting alarmSetting;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,7 +86,7 @@ public class Member extends BaseAuditEntity {
      * @param subject OIDC id token에서 추출한 회원 구분 번호.
      * @return 초기회된 멤버 객체
      */
-    public static Member temporal(String subject) {
+    public static Member socialAuthenticated(String subject) {
         return Member.builder()
                      .subject(subject)
                      .type(MemberType.USER)
@@ -173,4 +177,11 @@ public class Member extends BaseAuditEntity {
         
         return this;
     }
+    
+    public Member linkAlarmSetting(MemberAlarmSetting alarmSetting) {
+        this.alarmSetting = alarmSetting;
+        
+        return this;
+    }
+    
 }

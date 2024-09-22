@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
@@ -51,9 +52,9 @@ public class MemberController {
                                               .build();
         
         Member signupCompletedMember = memberService.createSignupCompletedMember(command);
-        CreateTokenResDto token = authService.getToken(signupCompletedMember);
+        CreateTokenResult token = authService.getToken(signupCompletedMember);
         
-        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.LOGIN_SUCCESS, token);
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK, CreateTokenResDto.fromCreateTokenResult(token));
     }
     
     /**
@@ -75,7 +76,7 @@ public class MemberController {
             createMemberTermAgreeReqDto.advertisement()
         );
         
-        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK_WITHOUT_DATA);
+        return ResponseUtil.createSuccessResponse();
     }
     
     /**

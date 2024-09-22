@@ -1,10 +1,8 @@
-package com.LetMeDoWith.LetMeDoWith.provider;
+package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.OidcIdTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -28,7 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Slf4j
 //@ExtendWith(MockitoExtension.class)
 @SpringBootTest
-class authTokenProviderTest {
+class AuthTokenProviderTest {
     
     /*
      * Sample OIDC ID Tokens for test.
