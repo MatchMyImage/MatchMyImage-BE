@@ -63,6 +63,7 @@ public class MemberController {
      * @param createMemberTermAgreeReqDto 멤버의 약관 동의 사항. 필수 동의사항은 false일 수 없다.
      * @return 성공 메세지
      */
+    @Deprecated
     @PostMapping("/{memberId}/agreement")
     public ResponseEntity createMemberTermAgree(
         @PathVariable Long memberId,
