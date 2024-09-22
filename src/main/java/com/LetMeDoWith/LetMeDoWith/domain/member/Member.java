@@ -154,8 +154,10 @@ public class Member extends BaseAuditEntity {
                    .changeStatusTo(MemberStatus.NORMAL);
     }
     
-    public void updateToNormalStatus() {
-    
+    public Member withdraw() {
+        this.status = MemberStatus.WITHDRAWN;
+        
+        return this;
     }
     
     private Member changeStatusTo(MemberStatus status) {

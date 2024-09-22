@@ -61,6 +61,10 @@ public enum FailResponseStatus {
                        "E219",
                        HttpStatus.BAD_REQUEST,
                        "이미 존재하는 닉네임입니다"),
+    MEMBER_CANNOT_WITHDRAW("MEMBER_CANNOT_WITHDRAW",
+                           "E220",
+                           HttpStatus.BAD_REQUEST,
+                           "회원을 찾을 수 없습니다. 이미 탈퇴하였거나 회원가입이 완료되지 않았습니다."),
     
     /**
      * 401 UnAuthorized Error 인증 관련 오류
