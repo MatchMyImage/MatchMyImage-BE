@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.MemberAlarmSetting;
 
 public interface MemberSettingRepository {
     
-    MemberAlarmSetting saveAlarmSetting(MemberAlarmSetting memberAlarmSetting);
+    MemberAlarmSetting save(MemberAlarmSetting memberAlarmSetting);
     
     MemberAlarmSetting findAlarmSettingByMember(Member member);
     

@@ -83,7 +83,7 @@ class MemberSettingServiceTest {
         assertFalse(tobeAlarmSetting.isFeedbackYn());
         assertFalse(tobeAlarmSetting.isMarketingYn());
         
-        verify(memberSettingRepository).saveAlarmSetting(
+        verify(memberSettingRepository).save(
             alarmSetting.update(MemberAlarmSettingVO.fromCommand(tobeCommand))
         );
         

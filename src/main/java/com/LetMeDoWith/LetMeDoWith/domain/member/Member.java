@@ -85,7 +85,7 @@ public class Member extends BaseAuditEntity {
      * @param subject OIDC id token에서 추출한 회원 구분 번호.
      * @return 초기회된 멤버 객체
      */
-    public static Member temporal(String subject) {
+    public static Member socialAuthenticated(String subject) {
         return Member.builder()
                      .subject(subject)
                      .type(MemberType.USER)

@@ -33,7 +33,7 @@ public class MemberSettingService {
         
         MemberAlarmSetting alarmSetting = member.getAlarmSetting();
         
-        memberSettingRepository.saveAlarmSetting(
+        memberSettingRepository.save(
             alarmSetting.update(MemberAlarmSettingVO.fromCommand(command)));
     }
     

@@ -49,11 +49,11 @@ public class MemberService {
     @Transactional
     public Member createSocialAuthenticatedMember(SocialProvider provider, String subject) {
         
-        Member temporalMember = memberRepository.save(Member.temporal(subject));
-        memberRepository.saveSocialAccount(MemberSocialAccount.initialize(temporalMember,
-                                                                          provider));
+        Member socialAuthenticatedMember = memberRepository.save(Member.socialAuthenticated(subject));
+        memberRepository.saveSocialAccount(MemberSocialAccount.of(socialAuthenticatedMember,
+                                                                  provider));
         
-        return temporalMember;
+        return socialAuthenticatedMember;
     }
     
     /**
@@ -86,7 +86,7 @@ public class MemberService {
                                                                      .isAdvertisementAgree(command.isAdvertisement())
                                                                      .build());
         
-        memberSettingRepository.saveAlarmSetting(MemberAlarmSetting.init(member));
+        memberSettingRepository.save(MemberAlarmSetting.init(member));
         
         return memberRepository.save(member);
     }

@@ -14,7 +14,7 @@ public class MemberSettingRepositoryImpl implements MemberSettingRepository {
     private final MemberAlarmSettingJpaRepository memberAlarmSettingJpaRepository;
     
     @Override
-    public MemberAlarmSetting saveAlarmSetting(MemberAlarmSetting memberAlarmSetting) {
+    public MemberAlarmSetting save(MemberAlarmSetting memberAlarmSetting) {
         return memberAlarmSettingJpaRepository.save(memberAlarmSetting);
     }
     
