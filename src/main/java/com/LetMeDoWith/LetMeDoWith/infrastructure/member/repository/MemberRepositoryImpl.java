@@ -38,6 +38,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 	}
 
 	@Override
+	public Optional<Member> getNormalStatusMember(Long id) {
+		return memberJpaRepository.findByIdAndStatus(id, MemberStatus.NORMAL);
+	}
+
+	@Override
 	public List<Member> getMembers(String nickname, List<MemberStatus> memberStatuses) {
 		return memberJpaRepository.findAllByNicknameAndStatusIn(nickname, memberStatuses);
 	}

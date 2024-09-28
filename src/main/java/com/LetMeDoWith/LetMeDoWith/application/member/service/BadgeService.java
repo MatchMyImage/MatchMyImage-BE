@@ -31,7 +31,7 @@ public class BadgeService {
 
   public GetBadgesInfoResult getBadgesInfo(Long memberId) {
 
-    Member member = memberRepository.getMember(memberId, MemberStatus.NORMAL)
+    Member member = memberRepository.getNormalStatusMember(memberId)
         .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
     List<MemberBadgeVO> badges = badgeRepository.getBadges(memberId);
