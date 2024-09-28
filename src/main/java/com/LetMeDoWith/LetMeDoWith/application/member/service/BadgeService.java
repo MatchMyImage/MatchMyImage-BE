@@ -29,6 +29,11 @@ public class BadgeService {
   private final BadgeRepository badgeRepository;
   private final MemberRepository memberRepository;
 
+  /**
+   * 유져의 뱃지 리스트 조회
+   * @param memberId
+   * @return
+   */
   public GetBadgesInfoResult getBadgesInfo(Long memberId) {
 
     Member member = memberRepository.getNormalStatusMember(memberId)
@@ -40,6 +45,11 @@ public class BadgeService {
 
   }
 
+  /**
+   * 대표 뱃지로 설정
+   * @param memberId
+   * @param badgeId
+   */
   @Transactional
   public void updateMainBadge(Long memberId, Long badgeId) {
 
