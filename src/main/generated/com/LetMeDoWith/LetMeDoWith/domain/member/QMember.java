@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.member;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
@@ -54,7 +55,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath subject = createString("subject");
 
-    public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskLevel> taskLevel = createEnum("taskLevel", com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskLevel.class);
+    public final EnumPath<TaskCompleteLevel> taskLevel = createEnum("taskLevel", TaskCompleteLevel.class);
 
     public final QMemberTermAgree termAgree;
 

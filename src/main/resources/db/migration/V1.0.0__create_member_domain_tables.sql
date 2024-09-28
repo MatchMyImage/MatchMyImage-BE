@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS member
     updated_by        VARCHAR(255)          NULL,
     email             VARCHAR(255)          NULL,
     status            VARCHAR(255)          NOT NULL,
-    task_level        VARCHAR(10)           NOT NULL,
+    task_complete_level        VARCHAR(10)           NOT NULL,
     nickname          VARCHAR(255)          NULL,
     self_description  VARCHAR(255)          NULL,
     type              VARCHAR(255)          NOT NULL,

@@ -15,7 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskLevel;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberBadge;
@@ -84,7 +84,7 @@ public class BadgeIntegrationTest {
 
     member = memberJpaRepository.save(Member.builder()
         .status(MemberStatus.NORMAL)
-        .taskLevel(TaskLevel.AVERAGE)
+        .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
         .nickname("test")
         .selfDescription("test description")
         .gender(Gender.MALE)
@@ -94,7 +94,7 @@ public class BadgeIntegrationTest {
 
     lazyMember = memberJpaRepository.save(Member.builder()
         .status(MemberStatus.NORMAL)
-        .taskLevel(TaskLevel.BAD)
+        .taskCompleteLevel(TaskCompleteLevel.BAD)
         .nickname("test2")
         .selfDescription("test description2")
         .gender(Gender.FEMALE)
