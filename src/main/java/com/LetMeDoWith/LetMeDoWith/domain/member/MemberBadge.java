@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.member;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@AggregateRoot
 @Table(name = "MEMBER_BADGE")
 public class MemberBadge extends BaseAuditEntity {
 
