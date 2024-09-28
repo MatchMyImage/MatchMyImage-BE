@@ -22,13 +22,8 @@ public class BadgeRepositoryImpl implements BadgeRepository {
   private final MemberBadgeJpaRepository memberBadgeJpaRepository;
 
   @Override
-  public void save(List<Badge> badges) {
-    badgeJpaRepository.saveAll(badges);
-    badges.forEach(badge -> {
-      if(badge.getMemberBadges() != null && !badge.getMemberBadges().isEmpty()) {
-        memberBadgeJpaRepository.saveAll(badge.getMemberBadges());
-      }
-    });
+  public void save(List<MemberBadge> memberBadges) {
+    memberBadgeJpaRepository.saveAll(memberBadges);
   }
 
   @Override
@@ -42,11 +37,6 @@ public class BadgeRepositoryImpl implements BadgeRepository {
   }
 
   @Override
-  public Optional<Badge> getBadge(Long badgeId, BadgeStatus badgeStatus) {
-    return badgeJpaRepository.findByIdAndBadgeStatus(badgeId, badgeStatus);
-  }
-
-  @Override
   public Optional<MemberBadge> getMemberBadge(Long memberId, Badge badge) {
     return memberBadgeJpaRepository.findByMemberIdAndBadge(memberId, badge);
   }
@@ -55,4 +45,10 @@ public class BadgeRepositoryImpl implements BadgeRepository {
   public Optional<MemberBadge> getMainMemberBadge(Long memberId) {
     return memberBadgeJpaRepository.findByMemberIdAndIsMain(memberId, Yn.TRUE);
   }
+
+  @Override
+  public Optional<Badge> getBadge(Long badgeId, BadgeStatus badgeStatus) {
+    return badgeJpaRepository.findByIdAndBadgeStatus(badgeId, badgeStatus);
+  }
+
 }

@@ -9,12 +9,13 @@ import java.util.Optional;
 
 public interface BadgeRepository {
 
-  void save(List<Badge> badges);
+  void save(List<MemberBadge> memberBadges);
   void save(MemberBadge memberBadge);
-  Optional<Badge> getBadge(Long badgeId, BadgeStatus badgeStatus);
 
   Optional<MemberBadge> getMemberBadge(Long memberId, Badge badge);
   Optional<MemberBadge> getMainMemberBadge(Long memberId);
+
+  Optional<Badge> getBadge(Long badgeId, BadgeStatus badgeStatus);
   List<MemberBadgeVO> getBadges(Long memberId);
 
 }
