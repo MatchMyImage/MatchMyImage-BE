@@ -2,7 +2,6 @@ package com.LetMeDoWith.LetMeDoWith.domain.member;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
@@ -24,6 +23,8 @@ public class QMember extends EntityPathBase<Member> {
     public static final QMember member = new QMember("member1");
 
     public final com.LetMeDoWith.LetMeDoWith.common.entity.QBaseAuditEntity _super = new com.LetMeDoWith.LetMeDoWith.common.entity.QBaseAuditEntity(this);
+
+    public final QMemberAlarmSetting alarmSetting;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
@@ -55,7 +56,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath subject = createString("subject");
 
-    public final EnumPath<TaskCompleteLevel> taskLevel = createEnum("taskLevel", TaskCompleteLevel.class);
+    public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel> taskCompleteLevel = createEnum("taskCompleteLevel", com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel.class);
 
     public final QMemberTermAgree termAgree;
 
@@ -85,6 +86,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public QMember(Class<? extends Member> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.alarmSetting = inits.isInitialized("alarmSetting") ? new QMemberAlarmSetting(forProperty("alarmSetting"), inits.get("alarmSetting")) : null;
         this.termAgree = inits.isInitialized("termAgree") ? new QMemberTermAgree(forProperty("termAgree"), inits.get("termAgree")) : null;
     }
 

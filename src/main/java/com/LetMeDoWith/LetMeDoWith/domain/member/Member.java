@@ -46,6 +46,9 @@ public class Member extends BaseAuditEntity {
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     MemberTermAgree termAgree;
     
+    @OneToOne(mappedBy = "member")
+    MemberAlarmSetting alarmSetting;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -87,7 +90,7 @@ public class Member extends BaseAuditEntity {
      * @param subject OIDC id token에서 추출한 회원 구분 번호.
      * @return 초기회된 멤버 객체
      */
-    public static Member temporal(String subject) {
+    public static Member socialAuthenticated(String subject) {
         return Member.builder()
                      .subject(subject)
                      .type(MemberType.USER)
@@ -101,17 +104,20 @@ public class Member extends BaseAuditEntity {
     }
 
     public static List<MemberStatus> getAllMemberStatus() {
-        return List.of(MemberStatus.NORMAL, MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
+        return List.of(MemberStatus.NORMAL,
+                       MemberStatus.SUSPENDED,
+                       MemberStatus.WITHDRAWN,
+                       MemberStatus.SOCIAL_AUTHENTICATED);
     }
-
+    
     public static List<MemberStatus> getActiveMemberStatus() {
         return List.of(MemberStatus.NORMAL);
     }
-
+    
     public static List<MemberStatus> getInactiveMemberStatus() {
         return List.of(MemberStatus.SUSPENDED,
-            MemberStatus.WITHDRAWN,
-            MemberStatus.SOCIAL_AUTHENTICATED);
+                       MemberStatus.WITHDRAWN,
+                       MemberStatus.SOCIAL_AUTHENTICATED);
     }
     
     /**
@@ -156,9 +162,11 @@ public class Member extends BaseAuditEntity {
         return this.updatePersonalInfo(personalInfoVO)
                    .changeStatusTo(MemberStatus.NORMAL);
     }
-
-    public void updateToNormalStatus() {
-
+    
+    public Member withdraw() {
+        this.status = MemberStatus.WITHDRAWN;
+        
+        return this;
     }
     
     private Member changeStatusTo(MemberStatus status) {
@@ -175,6 +183,12 @@ public class Member extends BaseAuditEntity {
     
     public Member addSocialAccount(MemberSocialAccount memberSocialAccount) {
         this.socialAccountList.add(memberSocialAccount);
+        
+        return this;
+    }
+    
+    public Member linkAlarmSetting(MemberAlarmSetting alarmSetting) {
+        this.alarmSetting = alarmSetting;
         
         return this;
     }

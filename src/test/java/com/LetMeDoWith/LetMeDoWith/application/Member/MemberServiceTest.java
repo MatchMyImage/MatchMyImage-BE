@@ -1,18 +1,24 @@
-package com.LetMeDoWith.LetMeDoWith.application.Member;
+package com.LetMeDoWith.LetMeDoWith.application.member;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-
+import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberSocialAccountJpaRepository;
-
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,6 +29,9 @@ class MemberServiceTest {
     
     @Mock
     MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
+    
+    @Mock
+    MemberRepository memberRepository;
     
     @InjectMocks
     MemberService memberService;
@@ -130,4 +139,50 @@ class MemberServiceTest {
     //
     //
     // }
+    
+    @Test
+    @DisplayName("[SUCCESS] 유저 탈퇴")
+    void withdrawMemberTest() {
+        Member member = Member.builder()
+                              .id(1L)
+                              .subject("subject")
+                              .nickname("nickname")
+                              .selfDescription("self desc")
+                              .status(MemberStatus.NORMAL)
+                              .type(MemberType.USER)
+                              .gender(Gender.FEMALE)
+                              .profileImageUrl("image.jpeg")
+                              .build();
+        
+        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq(1L),
+                                                ArgumentMatchers.eq(MemberStatus.NORMAL)))
+               .thenReturn(Optional.of(member));
+        
+        memberService.withdrawMember(1L);
+        
+        Assertions.assertEquals(member.getStatus(), MemberStatus.WITHDRAWN);
+    }
+    
+    @Test
+    @DisplayName("[FAIL] 일반 상태 외에서 탈퇴 시도")
+    void withdrawAbnormalStatusMemberTest() {
+        Member member = Member.builder()
+                              .id(1L)
+                              .subject("subject")
+                              .nickname("nickname")
+                              .selfDescription("self desc")
+                              .status(MemberStatus.WITHDRAWN)
+                              .type(MemberType.USER)
+                              .gender(Gender.FEMALE)
+                              .profileImageUrl("image.jpeg")
+                              .build();
+        
+        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq(1L),
+                                                ArgumentMatchers.eq(MemberStatus.NORMAL)))
+               .thenReturn(Optional.empty());
+        
+        Assertions.assertThrows(RestApiException.class,
+                                () -> {memberService.withdrawMember(1L);},
+                                FailResponseStatus.MEMBER_CANNOT_WITHDRAW.getMessage());
+    }
 }
