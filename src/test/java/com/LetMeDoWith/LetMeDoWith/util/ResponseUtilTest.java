@@ -3,8 +3,8 @@ package com.LetMeDoWith.LetMeDoWith.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 
 import org.junit.jupiter.api.DisplayName;

@@ -46,8 +46,7 @@ class MemberJpaRepositoryTest {
     void beforeEach() {
         entityManager.clear();
     }
-    
-    
+
     @Test
     @DisplayName("새로운 객체 삽입 테스트")
     void test_insert_new() {

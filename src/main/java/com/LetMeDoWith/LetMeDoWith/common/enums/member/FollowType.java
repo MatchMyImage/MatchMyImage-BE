@@ -15,7 +15,6 @@ public enum FollowType implements BaseEnum {
 	FOLLOWER("FOLLOWER", "팔로워"),
 	FOLLOWING("FOLLOWING", "팔로잉");
 
-
 	private final String code;
 	private final String description;
 

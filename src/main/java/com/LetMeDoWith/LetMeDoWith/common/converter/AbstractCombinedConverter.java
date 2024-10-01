@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.converter;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.fasterxml.jackson.core.JsonParser;
@@ -43,7 +43,7 @@ public abstract class AbstractCombinedConverter<T extends BaseEnum> extends Json
     // JPA AttributeConverter methods
     @Override
     public String convertToDatabaseColumn(T attribute) {
-        return attribute.getCode();
+        return attribute==null ? null : attribute.getCode();
     }
     
     @Override

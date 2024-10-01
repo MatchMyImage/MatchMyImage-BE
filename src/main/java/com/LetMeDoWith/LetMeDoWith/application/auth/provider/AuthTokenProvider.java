@@ -3,7 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

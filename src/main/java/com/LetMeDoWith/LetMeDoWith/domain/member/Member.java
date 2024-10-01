@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -50,7 +51,7 @@ public class Member extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
     
     
@@ -61,6 +62,9 @@ public class Member extends BaseAuditEntity {
     
     @Column(nullable = false)
     private MemberStatus status;
+
+    @Column(name = "task_complete_level")
+    private TaskCompleteLevel taskCompleteLevel;
     
     @Column
     private String nickname;
@@ -93,7 +97,12 @@ public class Member extends BaseAuditEntity {
                      .status(MemberStatus.SOCIAL_AUTHENTICATED)
                      .build();
     }
-    
+
+    // LAZY Badge 획득 레벨인지 확인
+    public boolean isLazyBadgeAcquireLevel() {
+        return TaskCompleteLevel.BAD.equals(this.taskCompleteLevel);
+    }
+
     public static List<MemberStatus> getAllMemberStatus() {
         return List.of(MemberStatus.NORMAL,
                        MemberStatus.SUSPENDED,

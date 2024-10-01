@@ -2,11 +2,11 @@ package com.LetMeDoWith.LetMeDoWith.application.member;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberSocialAccountJpaRepository;
@@ -150,7 +150,7 @@ class MemberServiceTest {
                               .selfDescription("self desc")
                               .status(MemberStatus.NORMAL)
                               .type(MemberType.USER)
-                              .gender(Gender.FEMAIL)
+                              .gender(Gender.FEMALE)
                               .profileImageUrl("image.jpeg")
                               .build();
         
@@ -173,7 +173,7 @@ class MemberServiceTest {
                               .selfDescription("self desc")
                               .status(MemberStatus.WITHDRAWN)
                               .type(MemberType.USER)
-                              .gender(Gender.FEMAIL)
+                              .gender(Gender.FEMALE)
                               .profileImageUrl("image.jpeg")
                               .build();
         

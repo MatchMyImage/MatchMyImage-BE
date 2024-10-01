@@ -7,7 +7,7 @@ import lombok.experimental.UtilityClass;
 public class EnumUtil {
 
 	public <T extends BaseEnum> T getEnum(Class<T> enumClass, String code) throws Exception {
-		if(code == null) throw new Exception(); // TODO - 추후 RestAPI exception 생기면 추가
+		if(code == null) return null;
 
 		for(BaseEnum el : enumClass.getEnumConstants()) {
 			if(code.equalsIgnoreCase(el.getCode().toUpperCase())) {

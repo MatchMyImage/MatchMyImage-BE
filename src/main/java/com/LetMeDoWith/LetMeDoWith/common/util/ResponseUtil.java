@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.util;
 
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import lombok.experimental.UtilityClass;
 

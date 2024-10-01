@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateFollowReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveFollowsResDto;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.FollowType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.FollowService;
