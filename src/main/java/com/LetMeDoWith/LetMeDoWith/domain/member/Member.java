@@ -154,6 +154,30 @@ public class Member extends BaseAuditEntity {
                    .changeStatusTo(MemberStatus.NORMAL);
     }
     
+    /**
+     * Member의 약관 동의 객체를 업데이트한다.
+     * 약관 동의 객체가 없는 경우 초기 생성한다.
+     *
+     * @param isTermsOfAgree  사용 약관 동의 여부
+     * @param isPrivacy       개인정보 활용 동의 여부
+     * @param isAdvertisement 광고성 메세지 수신 동의 여부
+     * @return 약관 동의 여부가 업데이트된 Member
+     */
+    public Member updateTermAgree(boolean isTermsOfAgree,
+                                  boolean isPrivacy,
+                                  boolean isAdvertisement) {
+        if (termAgree != null) {
+            this.termAgree.update(isTermsOfAgree, isPrivacy, isAdvertisement);
+        } else {
+            this.termAgree = MemberTermAgree.initialize(this,
+                                                        isTermsOfAgree,
+                                                        isPrivacy,
+                                                        isAdvertisement);
+        }
+        
+        return this;
+    }
+    
     public void updateToNormalStatus() {
     
     }

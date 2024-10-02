@@ -74,17 +74,15 @@ public class MemberService {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
         }
         
+        member.updateTermAgree(command.isTerms(),
+                               command.isPrivacy(),
+                               command.isAdvertisement());
+        
         member.updatePersonalInfoAfterCompleteSignUp(MemberPersonalInfoVO.builder()
                                                                          .nickname(command.nickname())
                                                                          .dateOfBirth(command.dateOfBirth())
                                                                          .gender(command.gender())
                                                                          .build());
-        
-        memberRepository.saveAgreement(member, MemberAgreementCommand.builder()
-                                                                     .isTermsAgree(command.isTerms())
-                                                                     .isPrivacyAgree(command.isPrivacy())
-                                                                     .isAdvertisementAgree(command.isAdvertisement())
-                                                                     .build());
         
         memberSettingRepository.save(MemberAlarmSetting.init(member));
         

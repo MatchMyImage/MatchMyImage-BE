@@ -57,4 +57,12 @@ public class MemberTermAgree extends BaseAuditEntity {
         
         return memberTermAgree;
     }
+    
+    public MemberTermAgree update(boolean termsOfAgree, boolean privacy, boolean advertisement) {
+        this.termsOfAgree = termsOfAgree;
+        this.privacy = privacy;
+        this.advertisement = advertisement;
+        
+        return this;
+    }
 }
