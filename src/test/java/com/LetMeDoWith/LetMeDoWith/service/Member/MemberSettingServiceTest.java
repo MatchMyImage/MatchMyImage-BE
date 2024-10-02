@@ -113,6 +113,8 @@ class MemberSettingServiceTest {
         Assertions.assertThrows(RestApiException.class,
                                 () -> memberSettingService.updateAlarmSetting(tobeCommand),
                                 FailResponseStatus.MEMBER_NOT_EXIST.getMessage());
+        
+        mockedAuthUtil.close();
     }
     
 }
