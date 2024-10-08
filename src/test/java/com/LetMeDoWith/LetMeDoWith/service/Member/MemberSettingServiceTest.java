@@ -11,10 +11,10 @@ import com.LetMeDoWith.LetMeDoWith.application.member.dto.UpdateMemberAlarmSetti
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberSettingRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberSettingService;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberAlarmSetting;
@@ -113,6 +113,8 @@ class MemberSettingServiceTest {
         Assertions.assertThrows(RestApiException.class,
                                 () -> memberSettingService.updateAlarmSetting(tobeCommand),
                                 FailResponseStatus.MEMBER_NOT_EXIST.getMessage());
+        
+        mockedAuthUtil.close();
     }
     
 }

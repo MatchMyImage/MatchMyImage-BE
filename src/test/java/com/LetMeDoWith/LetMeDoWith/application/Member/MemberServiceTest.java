@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.member;
+package com.LetMeDoWith.LetMeDoWith.application.Member;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;

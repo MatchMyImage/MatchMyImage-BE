@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.math.BigInteger;
@@ -99,7 +99,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[FAIL] 만료된 token에서 signature 추출 시도 ")
     void extractSignatureFromExpiredTokenTest() {
-        assertThrows(RestApiException.class,
+        assertThrows(RestApiAuthException.class,
                      () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_EXPIRED,
                                                                              SAMPLE_AUD,
                                                                              SAMPLE_ISS),
@@ -109,7 +109,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[FAIL] 잘못된 signature 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromIllegalSignatureTokenTest() {
-        assertThrows(RestApiException.class,
+        assertThrows(RestApiAuthException.class,
                      () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(
                          SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
                          SAMPLE_AUD,
@@ -120,7 +120,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[FAIL] 잘못된 format 가지는 token에서 signature 추출 시도 ")
     void extractSignatureFromMalformedTokenTest() {
-        assertThrows(RestApiException.class,
+        assertThrows(RestApiAuthException.class,
                      () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_MALFORMED,
                                                                              SAMPLE_AUD,
                                                                              SAMPLE_ISS),
@@ -130,7 +130,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[FAIL] 만료된 ID token 검증 시도")
     void verifyExpiredTokenTest() {
-        assertThrows(RestApiException.class,
+        assertThrows(RestApiAuthException.class,
                      () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_EXPIRED,
                                                              SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.TOKEN_EXPIRED.getMessage());
@@ -139,7 +139,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[FAIL] 잘못된 signature 가지는 ID token 검증 시도")
     void verifyIllegalSignatureTokenTest() {
-        assertThrows(RestApiException.class,
+        assertThrows(RestApiAuthException.class,
                      () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
                                                              SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
@@ -148,7 +148,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[FAIL] 잘못된 format 가지는 ID token 검증 시도")
     void verifyMalformedTokenTest() {
-        assertThrows(RestApiException.class,
+        assertThrows(RestApiAuthException.class,
                      () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_MALFORMED,
                                                              SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
@@ -157,7 +157,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[FAIL] 잘못된 RSA Key로 ID token 검증 시도")
     void verifyTokenWithInvalidKeyTest() {
-        assertThrows(RestApiException.class,
+        assertThrows(RestApiAuthException.class,
                      () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
                                                              new RSAPublicKey() {
                                                                  @Override
