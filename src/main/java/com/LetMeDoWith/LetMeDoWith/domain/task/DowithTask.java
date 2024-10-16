@@ -6,6 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.task.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
@@ -64,10 +65,10 @@ public class DowithTask extends BaseAuditEntity {
   @Column(name = "complete_at")
   private LocalDateTime completeDateTime;
 
-  @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<DowithTaskConfirm> confirms;
 
-  @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<DowithTaskRoutine> routines;
 
   public static DowithTask ofInit(Long memberId, Long taskCategoryId, String title, LocalDateTime startDateTime) {
