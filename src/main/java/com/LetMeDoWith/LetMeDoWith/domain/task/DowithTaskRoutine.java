@@ -31,9 +31,4 @@ public class DowithTaskRoutine extends BaseAuditEntity {
   @Column(name = "id", nullable = false)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "dowith_task_id", nullable = false)
-  private DowithTask dowithTask;
-
-
 }
