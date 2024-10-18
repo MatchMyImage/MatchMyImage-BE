@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +29,10 @@ public class TaskCategory extends BaseAuditEntity {
     
     @Column(nullable = false)
     private String title;
+    
+    @Column(nullable = false)
+    @Builder.Default
+    private Yn isActive = Yn.FALSE;
     
     @Column(nullable = false)
     private TaskCategoryCreationType creationType;

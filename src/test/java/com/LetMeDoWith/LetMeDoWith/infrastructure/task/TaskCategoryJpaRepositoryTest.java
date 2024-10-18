@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.TaskCategoryJpaRepository;
@@ -38,6 +39,7 @@ public class TaskCategoryJpaRepositoryTest {
         // 단일 TaskCategory 엔티티: 단일 엔티티 저장 및 조회 테스트에 사용
         singleUserCategory = new TaskCategory(null,
                                               "User 단일 카테고리",
+                                              Yn.TRUE,
                                               TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                                               "🔧",
                                               1L);
@@ -46,16 +48,19 @@ public class TaskCategoryJpaRepositoryTest {
         multipleUserCategories = List.of(
             new TaskCategory(null,
                              "User 카테고리1",
+                             Yn.TRUE,
                              TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                              "🔧",
                              1L),
             new TaskCategory(null,
                              "User 카테고리2",
+                             Yn.TRUE,
                              TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                              "📅",
                              1L),
             new TaskCategory(null,
                              "User 카테고리3",
+                             Yn.TRUE,
                              TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                              "📚",
                              1L)
@@ -135,16 +140,19 @@ public class TaskCategoryJpaRepositoryTest {
         // Given: 2개의 공통 카테고리와 1개의 유저 커스텀 카테고리 저장
         taskCategoryJpaRepository.save(new TaskCategory(null,
                                                         "공통 카테고리1",
+                                                        Yn.TRUE,
                                                         TaskCategory.TaskCategoryCreationType.COMMON,
                                                         "📘",
                                                         null));
         taskCategoryJpaRepository.save(new TaskCategory(null,
                                                         "공통 카테고리2",
+                                                        Yn.TRUE,
                                                         TaskCategory.TaskCategoryCreationType.COMMON,
                                                         "📚",
                                                         null));
         taskCategoryJpaRepository.save(new TaskCategory(null,
                                                         "User 카테고리1",
+                                                        Yn.TRUE,
                                                         TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                                                         "📅",
                                                         1L));

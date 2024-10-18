@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskCategoryVO;
+import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory.TaskCategoryCreationType;
 import java.util.List;
 
@@ -12,16 +12,16 @@ public record GetAllTaskCategoryRes(
     Long categoryHolderId
 ) {
     
-    public static GetAllTaskCategoryRes from(TaskCategoryVO taskCategoryVO) {
-        return new GetAllTaskCategoryRes(taskCategoryVO.getId(),
-                                         taskCategoryVO.getTitle(),
-                                         taskCategoryVO.getCreationType(),
-                                         taskCategoryVO.getEmoji(),
-                                         taskCategoryVO.getCategoryHolderId());
+    public static GetAllTaskCategoryRes from(TaskCategory taskCategory) {
+        return new GetAllTaskCategoryRes(taskCategory.getId(),
+                                         taskCategory.getTitle(),
+                                         taskCategory.getCreationType(),
+                                         taskCategory.getEmoji(),
+                                         taskCategory.getCategoryHolderId());
     }
     
-    public static List<GetAllTaskCategoryRes> from(List<TaskCategoryVO> voList) {
-        return voList.stream().map(GetAllTaskCategoryRes::from).toList();
+    public static List<GetAllTaskCategoryRes> from(List<TaskCategory> catList) {
+        return catList.stream().map(GetAllTaskCategoryRes::from).toList();
     }
     
 }

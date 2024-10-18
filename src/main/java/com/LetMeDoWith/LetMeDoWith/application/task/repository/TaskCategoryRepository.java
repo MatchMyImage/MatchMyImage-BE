@@ -13,7 +13,7 @@ public interface TaskCategoryRepository {
     
     List<TaskCategory> getAllTaskCategories();
     
-    List<TaskCategory> getCategories(Long holderId);
+    List<TaskCategory> getCategories(Long memberId);
     
     List<TaskCategory> getCategories(TaskCategoryCreationType creationType);
     
