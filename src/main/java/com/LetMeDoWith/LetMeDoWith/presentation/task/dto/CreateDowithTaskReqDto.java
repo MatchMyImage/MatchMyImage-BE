@@ -1,6 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand.RoutineInfo;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;

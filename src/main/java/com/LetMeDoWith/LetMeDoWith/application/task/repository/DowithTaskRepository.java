@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface DowithTaskRepository {
 
-  Optional<DowithTask> getDowithTask(Long id);
-  List<DowithTask> getDowithTasks(LocalDate startDate);
+  Optional<DowithTask> getDowithTask(Long id, Long memberId);
+  List<DowithTask> getDowithTasks(Long memberId, LocalDate date);
   DowithTask saveDowithTask(DowithTask dowithTask);
 
 }

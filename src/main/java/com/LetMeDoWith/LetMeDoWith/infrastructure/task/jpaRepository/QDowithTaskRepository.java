@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface QDowithTaskRepository {
 
   Optional<DowithTask> findJoinRoutineAndConfirm(Long id);
-  List<DowithTask> findJoinRoutineAndConfirm(LocalDate date);
+  List<DowithTask> findJoinRoutineAndConfirm(Long memberId, LocalDate date);
   Optional<DowithTask> findJoinRoutineAndConfirm(Long id, Long memberId);
 
 }

@@ -35,12 +35,12 @@ private QDowithTaskRoutine qDowithTaskRoutine = QDowithTaskRoutine.dowithTaskRou
   }
 
   @Override
-  public List<DowithTask> findJoinRoutineAndConfirm(LocalDate date) {
+  public List<DowithTask> findJoinRoutineAndConfirm(Long memberId, LocalDate date) {
     Date targetDate = Date.valueOf(date);
     return jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
         .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
-        .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.startDateTime).eq(targetDate))
+        .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.startDateTime).eq(targetDate).and(qDowithTask.memberId.eq(memberId)))
         .fetchJoin()
         .fetch();
   }

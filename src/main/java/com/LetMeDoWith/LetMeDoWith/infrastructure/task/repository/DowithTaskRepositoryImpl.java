@@ -21,13 +21,13 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
   private final DowithTaskConfirmJpaRepository dowithTaskConfirmJpaRepository;
 
   @Override
-  public Optional<DowithTask> getDowithTask(Long id) {
-    return dowithTaskJpaRepository.findJoinRoutineAndConfirm(id);
+  public Optional<DowithTask> getDowithTask(Long id, Long memberId) {
+    return dowithTaskJpaRepository.findJoinRoutineAndConfirm(id, memberId);
   }
 
   @Override
-  public List<DowithTask> getDowithTasks(LocalDate startDate) {
-    return null;
+  public List<DowithTask> getDowithTasks(Long memberId, LocalDate date) {
+    return dowithTaskJpaRepository.findJoinRoutineAndConfirm(memberId, date);
   }
 
   @Override

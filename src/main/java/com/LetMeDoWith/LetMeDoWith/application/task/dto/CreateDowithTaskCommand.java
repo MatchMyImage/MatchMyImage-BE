@@ -11,7 +11,7 @@ public record CreateDowithTaskCommand(
     Long categoryId,
     LocalDateTime startDateTime,
     Boolean isRoutine,
-    RoutineInfo routineInfo
+    RoutineInfoVO routineInfo
 ) {
 
   public static CreateDowithTaskCommand of(CreateDowithTaskReqDto dto) {
@@ -20,12 +20,10 @@ public record CreateDowithTaskCommand(
         .categoryId(dto.categoryId())
         .startDateTime(dto.startDateTime())
         .isRoutine(dto.isRoutine())
-        .routineInfo(RoutineInfo.builder().build())
+        .routineInfo(RoutineInfoVO.builder()
+            // TODO - 정의 필요
+            .build())
         .build();
   }
 
-  @Builder(access = AccessLevel.PRIVATE)
-  public static record RoutineInfo () {
-    // TODO - 정의 필요
-  }
 }

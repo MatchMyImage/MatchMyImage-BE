@@ -1,10 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
+
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RoutineInfoVO;
 import com.LetMeDoWith.LetMeDoWith.common.converter.YnConverter;
 import com.LetMeDoWith.LetMeDoWith.common.converter.task.DowithTaskStatusConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.task.DowithTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,6 +30,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Getter
@@ -97,6 +103,23 @@ public class DowithTask extends BaseAuditEntity {
   public void complete() {
     this.status = DowithTaskStatus.COMPLETE;
     this.completeDateTime = LocalDateTime.now();
+  }
+
+  public void update(String title, @Nullable Long taskCategoryId, @Nullable LocalDateTime startDateTime, @Nullable Boolean isRoutine, @Nullable RoutineInfoVO routineInfo) {
+
+    if(LocalDateTime.now().isBefore(this.startDateTime)) {
+      this.title = title;
+      this.taskCategoryId = taskCategoryId;
+      this.startDateTime = startDateTime;
+      this.isRoutine = EnumUtil.getEnum(Yn.class, Boolean.TRUE.equals(isRoutine) ? "Y" : "N");
+
+    }else {
+      if(taskCategoryId != null && startDateTime != null && isRoutine != null && routineInfo != null) {
+        throw new RestApiException(DOWITH_TASK_UPDATE_NOT_AVAIL);
+      }
+      this.title = title;
+    }
+
   }
 
 
