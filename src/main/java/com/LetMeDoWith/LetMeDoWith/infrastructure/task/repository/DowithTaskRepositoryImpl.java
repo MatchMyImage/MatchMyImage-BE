@@ -6,6 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.DowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskConfirmJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskRoutineJpaRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,11 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
   @Override
   public Optional<DowithTask> getDowithTask(Long id) {
     return dowithTaskJpaRepository.findJoinRoutineAndConfirm(id);
+  }
+
+  @Override
+  public List<DowithTask> getDowithTasks(LocalDate startDate) {
+    return null;
   }
 
   @Override
