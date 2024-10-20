@@ -1,14 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.DowithTaskRoutineInfoVO;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
 import java.time.LocalDateTime;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
-public record CreateDowithTaskReqDto(
+@Builder
+public record UpdateDowithTaskReqDto(
     String title,
     Long taskCategoryId,
     LocalDateTime startDateTime,
@@ -21,14 +20,16 @@ public record CreateDowithTaskReqDto(
     // TODO - 정의 필요
   }
 
-  public CreateDowithTaskCommand toCommand() {
-    return CreateDowithTaskCommand.builder()
+  public UpdateDowithTaskCommand toCommand() {
+    return UpdateDowithTaskCommand.builder()
         .title(this.title)
         .taskCategoryId(this.taskCategoryId)
         .startDateTime(this.startDateTime)
         .isRoutine(this.isRoutine)
         .routineInfo(DowithTaskRoutineInfoVO.builder()
-            .build()) // TODO - 정의 필요
+            // TODO 정의 필요
+            .build())
         .build();
   }
+
 }

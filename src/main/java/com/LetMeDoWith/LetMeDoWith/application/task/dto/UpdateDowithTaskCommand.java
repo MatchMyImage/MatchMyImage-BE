@@ -10,7 +10,7 @@ public record UpdateDowithTaskCommand(
     Long taskCategoryId,
     LocalDateTime startDateTime,
     Boolean isRoutine,
-    RoutineInfoVO routineInfo
+    DowithTaskRoutineInfoVO routineInfo
 ) {
 
 }

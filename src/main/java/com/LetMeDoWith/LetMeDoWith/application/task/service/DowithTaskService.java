@@ -22,21 +22,21 @@ public class DowithTaskService {
    * @param memberId
    * @param command
    */
-  public void createDowithTask(Long memberId, CreateDowithTaskCommand command) {
+  public DowithTask createDowithTask(Long memberId, CreateDowithTaskCommand command) {
 
     // 두윗모드 사용가능한지 validate
     if(!dowithTaskRepository.getDowithTasks(memberId, command.startDateTime().toLocalDate()).isEmpty()) {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
-    DowithTask dowithTask = DowithTask.ofInit(memberId, command.categoryId(), command.title(),
+    DowithTask dowithTask = DowithTask.ofInit(memberId, command.taskCategoryId(), command.title(),
         command.startDateTime());
 
     if(command.isRoutine()) {
       // 루틴설정
     }
 
-    dowithTaskRepository.saveDowithTask(dowithTask);
+    return dowithTaskRepository.saveDowithTask(dowithTask);
 
   }
 

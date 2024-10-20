@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task;
 
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RoutineInfoVO;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.DowithTaskRoutineInfoVO;
 import com.LetMeDoWith.LetMeDoWith.common.converter.YnConverter;
 import com.LetMeDoWith.LetMeDoWith.common.converter.task.DowithTaskStatusConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
@@ -14,7 +14,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -105,7 +104,7 @@ public class DowithTask extends BaseAuditEntity {
     this.completeDateTime = LocalDateTime.now();
   }
 
-  public void update(String title, @Nullable Long taskCategoryId, @Nullable LocalDateTime startDateTime, @Nullable Boolean isRoutine, @Nullable RoutineInfoVO routineInfo) {
+  public void update(String title, @Nullable Long taskCategoryId, @Nullable LocalDateTime startDateTime, @Nullable Boolean isRoutine, @Nullable DowithTaskRoutineInfoVO routineInfo) {
 
     if(LocalDateTime.now().isBefore(this.startDateTime)) {
       this.title = title;
