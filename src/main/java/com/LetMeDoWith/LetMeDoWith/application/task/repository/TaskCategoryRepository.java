@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.repository;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory.TaskCategoryCreationType;
 import java.util.List;
@@ -9,12 +10,12 @@ public interface TaskCategoryRepository {
     
     TaskCategory save(TaskCategory taskCategory);
     
-    Optional<TaskCategory> getTaskCategory(Long id);
+    Optional<TaskCategory> getTaskCategory(Long id, Yn isActive);
     
-    List<TaskCategory> getAllTaskCategories();
+    List<TaskCategory> getAllTaskCategories(Yn isActive);
     
-    List<TaskCategory> getCategories(Long memberId);
+    List<TaskCategory> getCategories(Long memberId, Yn isActive);
     
-    List<TaskCategory> getCategories(TaskCategoryCreationType creationType);
+    List<TaskCategory> getCategories(TaskCategoryCreationType creationType, Yn isActive);
     
 }

@@ -58,7 +58,8 @@ class TaskCategoryServiceTest {
     @DisplayName("[SUCCESS] 모든 카테고리 조회")
     void testGetAllCategory() {
         // Given: taskCategoryRepository가 memberId로 TaskCategory 엔티티를 반환할 때, 유저의 카테고리를 모킹한다.
-        when(taskCategoryRepository.getCategories(TEST_MEMBER_ID)).thenReturn(mockUserCategories);
+        when(taskCategoryRepository.getCategories(TEST_MEMBER_ID, Yn.TRUE)).thenReturn(
+            mockUserCategories);
         
         // When: 모든 카테고리를 조회하는 메서드 호출
         List<TaskCategory> result = taskCategoryService.getAllCategory(TEST_MEMBER_ID);

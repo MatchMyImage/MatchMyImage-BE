@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "task_category")
 public class TaskCategory extends BaseAuditEntity {
     
     @Id
@@ -27,20 +29,20 @@ public class TaskCategory extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
     
-    @Column(nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
     
-    @Column(nullable = false)
+    @Column(name = "active_yn", nullable = false)
     @Builder.Default
     private Yn isActive = Yn.FALSE;
     
-    @Column(nullable = false)
+    @Column(name = "creation_type", nullable = false)
     private TaskCategoryCreationType creationType;
     
-    @Column(nullable = false)
+    @Column(name = "emoji", nullable = false)
     private String emoji;
     
-    @Column
+    @Column(name = "category_holder_id")
     private Long categoryHolderId;
     
     @Getter

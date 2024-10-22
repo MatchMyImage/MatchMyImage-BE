@@ -124,9 +124,10 @@ public class TaskCategoryJpaRepositoryTest {
         taskCategoryJpaRepository.saveAll(multipleUserCategories);
         
         // When: 특정 홀더 ID로 유저 커스텀 카테고리를 조회하는 메서드 호출
-        List<TaskCategory> result = taskCategoryJpaRepository.findByCategoryHolderIdAndCreationType(
+        List<TaskCategory> result = taskCategoryJpaRepository.findAllByCategoryHolderIdAndCreationTypeAndIsActive(
             1L,
-            TaskCategory.TaskCategoryCreationType.USER_CUSTOM);
+            TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
+            Yn.TRUE);
         
         // Then: 결과가 기대값과 동일한지 확인
         assertThat(result).hasSize(3);
@@ -158,7 +159,9 @@ public class TaskCategoryJpaRepositoryTest {
                                                         1L));
         
         // When: creationType이 공통(COMMON)인 카테고리를 조회하는 메서드 호출
-        List<TaskCategory> result = taskCategoryJpaRepository.findByCreationType(TaskCategory.TaskCategoryCreationType.COMMON);
+        List<TaskCategory> result = taskCategoryJpaRepository.findAllByCreationTypeAndIsActive(
+            TaskCategory.TaskCategoryCreationType.COMMON,
+            Yn.TRUE);
         
         // Then: 결과가 기대값과 동일한지 확인
         assertThat(result).hasSize(2 + 8); // 공통 카테고리가 2 + 8(기 저장된 카테고리) 개인지 확인
