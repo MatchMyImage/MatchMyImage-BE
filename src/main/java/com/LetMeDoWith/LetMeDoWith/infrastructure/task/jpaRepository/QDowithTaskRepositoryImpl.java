@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.QDowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.QDowithTaskConfirm;
 import com.LetMeDoWith.LetMeDoWith.domain.task.QDowithTaskRoutine;

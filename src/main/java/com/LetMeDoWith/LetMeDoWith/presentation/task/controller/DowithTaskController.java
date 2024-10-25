@@ -1,12 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.service.DowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.task.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,14 +21,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DowithTaskController {
 
-  private final DowithTaskService dowithTaskService;
+  private final RegisterDowithTaskService registerDowithTaskService;
 
   @GetMapping("")
   public ResponseEntity createDowithTask(@RequestBody CreateDowithTaskReqDto requestBody) {
 
     Long memberId = AuthUtil.getMemberId();
 
-    DowithTask dowithTask = dowithTaskService.createDowithTask(memberId, requestBody.toCommand());
+    List<DowithTask> dowithTasks;
+    if(requestBody.isRoutine()) {
+      dowithTasks.addAll(registerDowithTaskService.registerDowithTaskWithRoutine(memberId, requestBody.toCreateDowithTaskRoutineCommand()));
+    } else {
+      dowithTask = registerDowithTaskService.registerDowithTask(memberId, requestBody.toCreateDowithTaskCommand());
+    }
+
 
     return ResponseUtil.createSuccessResponse(CreateDowithTaskResDto.builder()
         .id(dowithTask.getId())
@@ -40,7 +47,7 @@ public class DowithTaskController {
 
     Long memberId =AuthUtil.getMemberId();
 
-    dowithTaskService.updateDowithTask(memberId, requestBody.toCommand());
+    registerDowithTaskService.updateDowithTask(memberId, requestBody.toCommand());
 
     return ResponseUtil.createSuccessResponse();
 

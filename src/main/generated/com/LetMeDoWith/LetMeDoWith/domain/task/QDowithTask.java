@@ -2,6 +2,8 @@ package com.LetMeDoWith.LetMeDoWith.domain.task;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskConfirm;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;

@@ -21,7 +21,7 @@ import org.springframework.core.convert.converter.Converter;
  *
  * @param <T> Converter가 필요한 Enum
  */
-public abstract class AbstractCombinedConverter<T extends BaseEnum> extends JsonDeserializer<T>
+public abstract class AbstractCombinedConverter<T extends BaseEnum, S> extends JsonDeserializer<T>
     implements Converter<String, T>, AttributeConverter<T, String> {
     
     private final Class<T> targetClass;

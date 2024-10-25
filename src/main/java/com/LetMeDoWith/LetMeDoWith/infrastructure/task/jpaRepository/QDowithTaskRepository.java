@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

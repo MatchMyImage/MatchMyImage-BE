@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.task;
+package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
 
@@ -78,7 +78,7 @@ public class DowithTask extends BaseAuditEntity {
   @Column(name = "dowith_task_routine_id")
   private DowithTaskRoutine routine;
 
-  public static DowithTask ofInit(Long memberId, Long taskCategoryId, String title, LocalDateTime startDateTime) {
+  public static DowithTask create(Long memberId, Long taskCategoryId, String title, LocalDateTime startDateTime) {
     return DowithTask.builder()
         .memberId(memberId)
         .taskCategoryId(taskCategoryId)
@@ -88,6 +88,23 @@ public class DowithTask extends BaseAuditEntity {
         .startDateTime(startDateTime)
         .build();
   }
+
+  public static List<DowithTask> createWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDateTime startDateTime) {
+    return List.of(DowithTask.builder()
+        .memberId(memberId)
+        .taskCategoryId(taskCategoryId)
+        .title(title)
+        .status(DowithTaskStatus.WAIT)
+        .isRoutine(Yn.TRUE)
+        .startDateTime(startDateTime)
+        .build()); // TODO - 정책 수립 시 수정 필요
+  }
+
+  public static boolean validateRegisterAvailable(List<DowithTask> existings) {
+    return existings.size() > 1;
+  }
+
+
 
 //  public void setRoutine() {
 //
