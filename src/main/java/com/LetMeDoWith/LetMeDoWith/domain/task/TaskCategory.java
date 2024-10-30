@@ -34,7 +34,7 @@ public class TaskCategory extends BaseAuditEntity {
     
     @Column(name = "active_yn", nullable = false)
     @Builder.Default
-    private Yn isActive = Yn.FALSE;
+    private Yn isActive = Yn.TRUE;
     
     @Column(name = "creation_type", nullable = false)
     private TaskCategoryCreationType creationType;
