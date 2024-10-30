@@ -11,8 +11,8 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberAlarmSetting;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberTermAgree;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,16 +75,17 @@ public class MemberService {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
         }
         
+        member.updateTermAgree(command.isTerms(),
+                               command.isPrivacy(),
+                               command.isAdvertisement());
+        
         member.updatePersonalInfoWithCompletingSignUp(MemberPersonalInfoVO.builder()
                                                                           .nickname(command.nickname())
                                                                           .dateOfBirth(command.dateOfBirth())
                                                                           .gender(command.gender())
                                                                           .build());
         
-        memberRepository.save(MemberTermAgree.of(member,
-                                                 command.isTerms(),
-                                                 command.isPrivacy(),
-                                                 command.isAdvertisement()));
+        memberSettingRepository.save(MemberAlarmSetting.init(member));
         
         return memberRepository.save(member);
     }
@@ -97,7 +98,6 @@ public class MemberService {
      * @param isAdvertisementAgree
      * @throws RestApiException 필수 동의 항목이 false이거나, 회원이 존재하지 않을 경우
      */
-    @Deprecated
     @Transactional
     public void createMemberTermAgree(boolean isTermsAgree, boolean isPrivacyAgree,
                                       boolean isAdvertisementAgree) {
@@ -105,14 +105,10 @@ public class MemberService {
         Member member = memberRepository.getMember(AuthUtil.getMemberId(),
                                                    MemberStatus.SOCIAL_AUTHENTICATED)
                                         .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
-
-//        memberRepository.saveAgreement(member, MemberAgreementCommand.builder()
-//                                                                     .isTermsAgree(isTermsAgree)
-//                                                                     .isPrivacyAgree(isPrivacyAgree)
-//                                                                     .isAdvertisementAgree(
-//                                                                         isAdvertisementAgree)
-//                                                                     .build());
-    
+        
+        member.updateTermAgree(isTermsAgree, isPrivacyAgree, isAdvertisementAgree);
+        
+        memberRepository.save(member);
     }
     
     /**
