@@ -9,6 +9,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,14 @@ public class RegisterDowithTaskService {
    */
   public DowithTask registerDowithTask(Long memberId, CreateDowithTaskCommand command) {
 
+    LocalDateTime startDateTime = command.startDateTime();
     // 두윗모드 사용가능한지 validate
     if(!DowithTask.validateRegisterAvailable(
-        dowithTaskRepository.getDowithTasks(memberId, command.startDateTime().toLocalDate()))) {
+        dowithTaskRepository.getDowithTasks(memberId, startDateTime.toLocalDate()), startDateTime.toLocalDate())) {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
-    DowithTask dowithTask = DowithTask.create(memberId, command.taskCategoryId(), command.title(),
-        command.startDateTime());
+    DowithTask dowithTask = DowithTask.create(memberId, command.taskCategoryId(), command.title(), startDateTime);
 
     return dowithTaskRepository.saveDowithTask(dowithTask);
 
@@ -45,12 +46,12 @@ public class RegisterDowithTaskService {
 
     // 두윗모드 사용가능한지 validate
     if(!DowithTask.validateRegisterAvailable(
-        dowithTaskRepository.getDowithTasks(memberId, command.startDateTime().toLocalDate()))) {
+        dowithTaskRepository.getDowithTasks(memberId, command.routineDates()), command.routineDates())) {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
     List<DowithTask> dowithTask = DowithTask.createWithRoutine(memberId, command.taskCategoryId(),
-        command.title(), command.startDateTime());
+        command.title(), command.startDateTime(), command.routineDates());
 
     return dowithTaskRepository.saveDowithTasks(dowithTask);
 

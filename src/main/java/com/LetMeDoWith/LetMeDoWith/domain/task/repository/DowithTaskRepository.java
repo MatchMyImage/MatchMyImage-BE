@@ -9,6 +9,7 @@ public interface DowithTaskRepository {
 
   Optional<DowithTask> getDowithTask(Long id, Long memberId);
   List<DowithTask> getDowithTasks(Long memberId, LocalDate date);
+  List<DowithTask> getDowithTasks(Long memberId, List<LocalDate> dates);
   DowithTask saveDowithTask(DowithTask dowithTask);
   List<DowithTask> saveDowithTasks(List<DowithTask> dowithTasks);
 

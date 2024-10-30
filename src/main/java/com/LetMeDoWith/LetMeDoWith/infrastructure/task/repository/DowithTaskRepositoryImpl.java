@@ -30,6 +30,11 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
   }
 
   @Override
+  public List<DowithTask> getDowithTasks(Long memberId, List<LocalDate> dates) {
+    return dowithTaskJpaRepository.findJoinRoutineAndConfirm(memberId, dates);
+  }
+
+  @Override
   public DowithTask saveDowithTask(DowithTask dowithTask) {
     return dowithTaskJpaRepository.save(dowithTask);
   }

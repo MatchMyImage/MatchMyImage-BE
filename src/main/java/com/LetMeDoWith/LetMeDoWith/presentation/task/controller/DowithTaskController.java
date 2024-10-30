@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +29,15 @@ public class DowithTaskController {
 
     Long memberId = AuthUtil.getMemberId();
 
-    List<DowithTask> dowithTasks;
+    List<DowithTask> dowithTasks = new ArrayList<>();
     if(requestBody.isRoutine()) {
       dowithTasks.addAll(registerDowithTaskService.registerDowithTaskWithRoutine(memberId, requestBody.toCreateDowithTaskRoutineCommand()));
     } else {
-      dowithTask = registerDowithTaskService.registerDowithTask(memberId, requestBody.toCreateDowithTaskCommand());
+      dowithTasks.add(registerDowithTaskService.registerDowithTask(memberId, requestBody.toCreateDowithTaskCommand()));
     }
 
 
-    return ResponseUtil.createSuccessResponse(CreateDowithTaskResDto.builder()
-        .id(dowithTask.getId())
-        .build());
+    return ResponseUtil.createSuccessResponse();
 
   }
 

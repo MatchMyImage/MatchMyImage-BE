@@ -22,8 +22,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -89,7 +94,7 @@ public class DowithTask extends BaseAuditEntity {
         .build();
   }
 
-  public static List<DowithTask> createWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDateTime startDateTime) {
+  public static List<DowithTask> createWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDateTime startDateTime, List<LocalDate> routineDates) {
     return List.of(DowithTask.builder()
         .memberId(memberId)
         .taskCategoryId(taskCategoryId)
@@ -100,15 +105,26 @@ public class DowithTask extends BaseAuditEntity {
         .build()); // TODO - 정책 수립 시 수정 필요
   }
 
-  public static boolean validateRegisterAvailable(List<DowithTask> existings) {
-    return existings.size() > 1;
+  public static boolean validateRegisterAvailable(List<DowithTask> existings, LocalDate targetDate) {
+    Map<LocalDate, List<DowithTask>> dowithTaskMap = existings.stream()
+        .collect(Collectors.groupingBy(e -> e.getStartDateTime().toLocalDate()));
+
+    return !dowithTaskMap.containsKey(targetDate);
+  }
+
+  public static boolean validateRegisterAvailable(List<DowithTask> existings, List<LocalDate> targetDates) {
+    Map<LocalDate, List<DowithTask>> dowithTaskMap = existings.stream()
+        .collect(Collectors.groupingBy(e -> e.getStartDateTime().toLocalDate()));
+
+    List<LocalDate> notAvailableDates = new ArrayList<>();
+    targetDates.forEach(date -> {
+      if(dowithTaskMap.containsKey(date)) notAvailableDates.add(date);
+    });
+
+    return notAvailableDates.isEmpty();
   }
 
 
-
-//  public void setRoutine() {
-//
-//  }
 
   public void confirm(String imageUrl) {
     confirms.add(DowithTaskConfirm.of(this, imageUrl));

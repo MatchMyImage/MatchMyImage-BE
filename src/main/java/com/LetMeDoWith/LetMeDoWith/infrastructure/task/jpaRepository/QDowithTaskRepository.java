@@ -9,6 +9,7 @@ public interface QDowithTaskRepository {
 
   Optional<DowithTask> findJoinRoutineAndConfirm(Long id);
   List<DowithTask> findJoinRoutineAndConfirm(Long memberId, LocalDate date);
+  List<DowithTask> findJoinRoutineAndConfirm(Long memberId, List<LocalDate> dates);
   Optional<DowithTask> findJoinRoutineAndConfirm(Long id, Long memberId);
 
 }

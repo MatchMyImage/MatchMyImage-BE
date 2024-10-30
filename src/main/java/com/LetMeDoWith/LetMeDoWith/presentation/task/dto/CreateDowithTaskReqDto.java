@@ -3,7 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.DowithTaskRoutineInfoVO;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -12,13 +14,9 @@ public record CreateDowithTaskReqDto(
     Long taskCategoryId,
     LocalDateTime startDateTime,
     Boolean isRoutine,
-    RoutineInfo routineInfo
+    List<LocalDate> routineDates
 ) {
 
-  @Data
-  public static record RoutineInfo () {
-    // TODO - 정의 필요
-  }
 
   public CreateDowithTaskCommand toCreateDowithTaskCommand() {
     return CreateDowithTaskCommand.builder()
@@ -33,8 +31,7 @@ public record CreateDowithTaskReqDto(
         .title(this.title)
         .taskCategoryId(this.taskCategoryId)
         .startDateTime(this.startDateTime)
-        .routineInfo(DowithTaskRoutineInfoVO.builder()
-            .build()) // TODO - 정의 필요
+        .routineDates(this.routineDates)
         .build();
   }
 }
