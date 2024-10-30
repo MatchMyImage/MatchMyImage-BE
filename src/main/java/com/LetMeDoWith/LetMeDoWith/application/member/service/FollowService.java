@@ -1,11 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberFollowRepository;
+import com.LetMeDoWith.LetMeDoWith.application.member.repository.FollowRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveFollowsResDto;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberFollow;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.FollowType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowService {
 
     private final MemberRepository memberRepository;
-    private final MemberFollowRepository memberFollowRepository;
+    private final FollowRepository followRepository;
     
     public RetrieveFollowsResDto retrieveFollows(Long memberId,
         FollowType followType,
@@ -32,7 +32,7 @@ public class FollowService {
         RetrieveFollowsResDto result = null;
         switch (followType) {
             case FOLLOWER -> {
-                List<MemberFollow> memberFollows = memberFollowRepository.getFollowers(member, pageable);
+                List<MemberFollow> memberFollows = followRepository.getFollowers(member, pageable);
                 result = RetrieveFollowsResDto.builder().follows(memberFollows.stream()
                                                                               .map(e -> new RetrieveFollowsResDto.Follow(
                                                                                   e.getFollowerMember()
@@ -48,7 +48,7 @@ public class FollowService {
                                               .build();
             }
             case FOLLOWING -> {
-                List<MemberFollow> memberFollows = memberFollowRepository.getFollowings(member, pageable);
+                List<MemberFollow> memberFollows = followRepository.getFollowings(member, pageable);
                 result = RetrieveFollowsResDto.builder().follows(memberFollows.stream()
                                                                               .map(e -> new RetrieveFollowsResDto.Follow(
                                                                                   e.getFollowingMember()
@@ -75,20 +75,20 @@ public class FollowService {
         Member followingMember = memberRepository.getMember(followingMemberId, MemberStatus.NORMAL).orElseThrow(() -> new RestApiException(
             FailResponseStatus.INVALID_FOLLOWING_MEMBER));
         
-        memberFollowRepository.save(followerMember, followingMember);
+        followRepository.save(followerMember, followingMember);
         
     }
     
     @Transactional
     public void deleteFollow(Long memberId, Long followingMemberId) {
         
-        MemberFollow memberFollow = memberFollowRepository.getFollowing(
+        MemberFollow memberFollow = followRepository.getFollowing(
                                                               memberId,
                                                               followingMemberId)
                                                           .orElseThrow(() -> new RestApiException(
                                                               FailResponseStatus.MEMBER_FOLLOW_NOT_EXIST));
         
-        memberFollowRepository.delete(memberFollow);
+        followRepository.delete(memberFollow);
         
     }
     

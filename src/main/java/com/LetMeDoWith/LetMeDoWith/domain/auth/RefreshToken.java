@@ -5,15 +5,13 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
-import org.springframework.data.redis.core.index.Indexed;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Builder
 @Getter

@@ -22,7 +22,7 @@ public class MemberFollow extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_follow_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
     
     @ManyToOne

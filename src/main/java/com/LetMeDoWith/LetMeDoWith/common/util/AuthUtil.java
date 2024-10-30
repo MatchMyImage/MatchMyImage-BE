@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.common.util;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;

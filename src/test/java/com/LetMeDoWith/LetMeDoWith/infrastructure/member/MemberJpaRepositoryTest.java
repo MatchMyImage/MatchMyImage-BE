@@ -5,17 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
+import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
+import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberSocialAccountJpaRepository;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,23 +42,29 @@ class MemberJpaRepositoryTest {
     @Autowired
     private MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
     
-    @BeforeEach
-    void beforeEach() {
-        entityManager.clear();
-    }
-    
-    
-    @Test
-    @DisplayName("새로운 객체 삽입 테스트")
-    void test_insert_new() {
+    private static Member getMember() {
         Member testMemberObj = Member.builder()
+                                     .id(1L)
                                      .subject("test@email.com")
                                      .nickname("nickname")
                                      .selfDescription("self desc")
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
+                                     .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
                                      .build();
+        return testMemberObj;
+    }
+    
+    @BeforeEach
+    void beforeEach() {
+        entityManager.clear();
+    }
+    
+    @Test
+    @DisplayName("새로운 객체 삽입 테스트")
+    void test_insert_new() {
+        Member testMemberObj = getMember();
         
         memberJpaRepository.save(testMemberObj);
         
@@ -72,14 +78,7 @@ class MemberJpaRepositoryTest {
     @Test
     @DisplayName("객체 삭제 테스트")
     void test_delete() {
-        Member testMemberObj = Member.builder()
-                                     .subject("test@email.com")
-                                     .nickname("nickname")
-                                     .selfDescription("self desc")
-                                     .status(MemberStatus.NORMAL)
-                                     .type(MemberType.USER)
-                                     .profileImageUrl("image.jpeg")
-                                     .build();
+        Member testMemberObj = getMember();
         
         memberJpaRepository.save(testMemberObj);
         memberJpaRepository.flush();
@@ -100,15 +99,7 @@ class MemberJpaRepositoryTest {
     @Test
     void test_duplicated_key() {
         
-        Member testMemberObj = Member.builder()
-                                     .id(1L)
-                                     .subject("test@email.com")
-                                     .nickname("nickname")
-                                     .selfDescription("self desc")
-                                     .status(MemberStatus.NORMAL)
-                                     .type(MemberType.USER)
-                                     .profileImageUrl("image.jpeg")
-                                     .build();
+        Member testMemberObj = getMember();
         
         Member testMemberObjWithoutKey = Member.builder()
                                                .subject("test@email.com")
@@ -117,6 +108,7 @@ class MemberJpaRepositoryTest {
                                                .status(MemberStatus.NORMAL)
                                                .type(MemberType.USER)
                                                .profileImageUrl("image.jpeg")
+                                               .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
                                                .build();
         
         memberJpaRepository.save(testMemberObj);
@@ -132,15 +124,7 @@ class MemberJpaRepositoryTest {
     @DisplayName("[SUCCESS] 가입된 유저 조회 테스트")
     void findRegisteredMemberTest() {
         
-        Member testMemberObj = Member.builder()
-                                     .id(1L)
-                                     .subject("test@email.com")
-                                     .nickname("nickname")
-                                     .selfDescription("self desc")
-                                     .status(MemberStatus.NORMAL)
-                                     .type(MemberType.USER)
-                                     .profileImageUrl("image.jpeg")
-                                     .build();
+        Member testMemberObj = getMember();
         
         Member member = memberJpaRepository.save(testMemberObj);
         
@@ -151,8 +135,9 @@ class MemberJpaRepositoryTest {
         
         memberSocialAccountJpaRepository.save(memberSocialAccount);
         
-        Optional<Member> optionalMember = memberJpaRepository.findByProviderAndSubject(SocialProvider.KAKAO,
-                                                                                    "test@email.com");
+        Optional<Member> optionalMember = memberJpaRepository.findByProviderAndSubject(
+            SocialProvider.KAKAO,
+            "test@email.com");
         log.debug("member= {}", optionalMember.get().getNickname());
         assertNotNull(optionalMember);
         assertEquals(optionalMember.get().getNickname(), "nickname");

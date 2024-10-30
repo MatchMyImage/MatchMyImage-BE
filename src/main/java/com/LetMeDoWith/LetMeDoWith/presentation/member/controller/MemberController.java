@@ -4,8 +4,8 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
@@ -14,6 +14,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateMemberTermAgree
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -63,6 +64,7 @@ public class MemberController {
      * @param createMemberTermAgreeReqDto 멤버의 약관 동의 사항. 필수 동의사항은 false일 수 없다.
      * @return 성공 메세지
      */
+    @Deprecated
     @PostMapping("/{memberId}/agreement")
     public ResponseEntity createMemberTermAgree(
         @PathVariable Long memberId,
@@ -91,4 +93,18 @@ public class MemberController {
             return ResponseUtil.createSuccessResponse("사용 가능한 닉네임입니다.");
         }
     }
+    
+    /**
+     * 멤버를 탈퇴처리한다.
+     *
+     * @param memberId 탈퇴하려는 멤버의 id
+     * @return 탈퇴 성공 여부
+     */
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity withdrawMember(@PathVariable Long memberId) {
+        memberService.withdrawMember(memberId);
+        
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
+    }
+    
 }

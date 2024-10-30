@@ -17,6 +17,4 @@ ALTER TABLE letmedowith_app.member_alarm_setting
     ADD CONSTRAINT uc_member_alarm_setting_member UNIQUE (member_id);
 
 ALTER TABLE letmedowith_app.member_alarm_setting
-    ADD CONSTRAINT FK_MEMBER_ALARM_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES letmedowith_app.member (member_id);
-
-DROP TABLE letmedowith_app.member_push_setting;
+    ADD CONSTRAINT FK_MEMBER_ALARM_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES letmedowith_app.member (id);

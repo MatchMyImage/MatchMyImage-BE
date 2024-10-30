@@ -7,7 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.provider.OidcIdTokenProvider
 import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;

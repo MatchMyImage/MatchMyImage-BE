@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.math.BigInteger;

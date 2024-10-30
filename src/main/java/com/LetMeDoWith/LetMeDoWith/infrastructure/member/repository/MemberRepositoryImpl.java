@@ -1,9 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberAgreementCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepository {
+
     
     private final MemberJpaRepository memberJpaRepository;
     private final MemberTermAgreeJpaRepository termAgreeJpaRepository;
@@ -34,7 +34,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     public Optional<Member> getMember(SocialProvider provider, String subject) {
         return memberJpaRepository.findByProviderAndSubject(provider, subject);
     }
-    
+
+    @Override
+    public Optional<Member> getNormalStatusMember(Long id) {
+        return memberJpaRepository.findByIdAndStatus(id, MemberStatus.NORMAL);
+    }
+
     @Override
     public List<Member> getMembers(String nickname, List<MemberStatus> memberStatuses) {
         return memberJpaRepository.findAllByNicknameAndStatusIn(nickname, memberStatuses);
@@ -50,21 +55,13 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
     
     @Override
-    public void saveAgreement(Member member, MemberAgreementCommand command) {
+    public MemberTermAgree save(MemberTermAgree memberTermAgree) {
         
-        if (!command.isTermsAgree() || !command.isPrivacyAgree()) {
+        if (!memberTermAgree.isTermsOfAgree() || !memberTermAgree.isPrivacy()) {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
         
-        termAgreeJpaRepository.save(
-            MemberTermAgree.initialize(member,
-                                       command.isTermsAgree(),
-                                       command.isPrivacyAgree(),
-                                       command.isAdvertisementAgree())
-        );
-        
-        memberJpaRepository.save(member);
-        
+        return termAgreeJpaRepository.save(memberTermAgree);
     }
     
     @Override

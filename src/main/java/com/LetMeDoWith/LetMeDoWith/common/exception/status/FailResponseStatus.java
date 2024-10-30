@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.enums.common;
+package com.LetMeDoWith.LetMeDoWith.common.exception.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,7 +61,26 @@ public enum FailResponseStatus {
                        "E219",
                        HttpStatus.BAD_REQUEST,
                        "이미 존재하는 닉네임입니다"),
-    
+    MEMBER_CANNOT_WITHDRAW("MEMBER_CANNOT_WITHDRAW",
+        "E220",
+        HttpStatus.BAD_REQUEST,
+        "회원을 찾을 수 없습니다. 이미 탈퇴하였거나 회원가입이 완료되지 않았습니다."),
+    MEMBER_NOT_EXIST_BADGE("MEMBER_BADGE_NOT_EXIST",
+                        "E220",
+                        HttpStatus.BAD_REQUEST,
+                        "뱃지 관련 작업 수행을 위한 회원이 존재하지 않습니다."),
+    BADGE_NOT_EXIST("BADGE_NOT_EXIST",
+                        "E221",
+                        HttpStatus.BAD_REQUEST,
+                        "해당 뱃지가 존재하지 않습니다"),
+    LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE("LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE",
+                        "E222",
+                        HttpStatus.BAD_REQUEST,
+                        "레이지 뱃지를 받은 회원은 대표 뱃지를 설정할 수 없습니다."),
+    MEMBER_BADGE_NOT_EXIST("MEMBER_BADGE_NOT_EXIST",
+                        "E223",
+                        HttpStatus.BAD_REQUEST,
+                        "획득하지 않은 뱃지입니다"),
     /**
      * 401 UnAuthorized Error 인증 관련 오류
      */

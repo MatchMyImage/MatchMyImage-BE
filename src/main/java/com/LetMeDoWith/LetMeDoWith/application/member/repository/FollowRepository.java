@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberFollow;
 
-public interface MemberFollowRepository {
+public interface FollowRepository {
 
 	MemberFollow save(Member followerMember, Member followingMember);
 

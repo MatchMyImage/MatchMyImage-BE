@@ -24,7 +24,7 @@ public class MemberTermAgree extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_term_agree_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
     
     @OneToOne
@@ -42,10 +42,19 @@ public class MemberTermAgree extends BaseAuditEntity {
     @Column(nullable = false)
     private boolean advertisement;
     
-    public static MemberTermAgree initialize(Member member,
-                                             boolean termsOfAgree,
-                                             boolean privacy,
-                                             boolean advertisement) {
+    /**
+     * 유저의 약관 동의 여부 객체를 생성하고, 멤버와 연관관계를 맺는다.
+     *
+     * @param member
+     * @param termsOfAgree
+     * @param privacy
+     * @param advertisement
+     * @return 동의여부의 주체인 멤버와 연관관계가 맺어진 약관 동의 여부 객체
+     */
+    public static MemberTermAgree ofInit(Member member,
+                                         boolean termsOfAgree,
+                                         boolean privacy,
+                                         boolean advertisement) {
         MemberTermAgree memberTermAgree = MemberTermAgree.builder()
                                                          .member(member)
                                                          .termsOfAgree(termsOfAgree)

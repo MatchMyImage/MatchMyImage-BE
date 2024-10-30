@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.enums.common;
+package com.LetMeDoWith.LetMeDoWith.common.exception.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

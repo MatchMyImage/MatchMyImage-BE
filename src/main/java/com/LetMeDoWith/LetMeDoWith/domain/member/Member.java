@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -50,7 +51,7 @@ public class Member extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
     
     
@@ -61,6 +62,9 @@ public class Member extends BaseAuditEntity {
     
     @Column(nullable = false)
     private MemberStatus status;
+    
+    @Column(name = "task_complete_level")
+    private TaskCompleteLevel taskCompleteLevel;
     
     @Column
     private String nickname;
@@ -91,6 +95,7 @@ public class Member extends BaseAuditEntity {
                      .subject(subject)
                      .type(MemberType.USER)
                      .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                     .taskCompleteLevel(TaskCompleteLevel.GOOD)
                      .build();
     }
     
@@ -109,6 +114,11 @@ public class Member extends BaseAuditEntity {
         return List.of(MemberStatus.SUSPENDED,
                        MemberStatus.WITHDRAWN,
                        MemberStatus.SOCIAL_AUTHENTICATED);
+    }
+    
+    // LAZY Badge 획득 레벨인지 확인
+    public boolean isLazyBadgeAcquireLevel() {
+        return TaskCompleteLevel.BAD.equals(this.taskCompleteLevel);
     }
     
     /**
@@ -144,12 +154,12 @@ public class Member extends BaseAuditEntity {
     }
     
     /**
-     * 회원 가입을 완료하는 Member의 개인정보를 업데이트 하고, 회원 가입 완료 상태로 변경한다.
+     * Member의 개인정보를 업데이트 하고, 회원 가입 완료 상태로 변경한다.
      *
      * @param personalInfoVO 회원의 개인 정보.
      * @return 개인정보가 입력되고 회원가입 완료 상태로 변경된 회원 객체
      */
-    public Member updatePersonalInfoAfterCompleteSignUp(MemberPersonalInfoVO personalInfoVO) {
+    public Member updatePersonalInfoWithCompletingSignUp(MemberPersonalInfoVO personalInfoVO) {
         return this.updatePersonalInfo(personalInfoVO)
                    .changeStatusTo(MemberStatus.NORMAL);
     }
@@ -169,21 +179,29 @@ public class Member extends BaseAuditEntity {
         if (termAgree != null) {
             this.termAgree.update(isTermsOfAgree, isPrivacy, isAdvertisement);
         } else {
-            this.termAgree = MemberTermAgree.initialize(this,
-                                                        isTermsOfAgree,
-                                                        isPrivacy,
-                                                        isAdvertisement);
+            this.termAgree = MemberTermAgree.ofInit(this,
+                                                    isTermsOfAgree,
+                                                    isPrivacy,
+                                                    isAdvertisement);
         }
         
         return this;
     }
     
-    public void updateToNormalStatus() {
-    
+    public Member withdraw() {
+        this.status = MemberStatus.WITHDRAWN;
+        
+        return this;
     }
     
     private Member changeStatusTo(MemberStatus status) {
         this.status = status;
+        
+        return this;
+    }
+    
+    private Member changeTaskCompleteLevelTo(TaskCompleteLevel taskCompleteLevel) {
+        this.taskCompleteLevel = taskCompleteLevel;
         
         return this;
     }

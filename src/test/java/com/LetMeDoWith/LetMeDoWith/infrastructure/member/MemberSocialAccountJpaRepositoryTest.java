@@ -2,16 +2,16 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import com.LetMeDoWith.LetMeDoWith.config.JpaAuditingConfiguration;
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
-import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberSocialAccountJpaRepository;
-
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ class MemberSocialAccountJpaRepositoryTest {
     TestEntityManager entityManager;
     
     @Autowired
-	MemberJpaRepository memberJpaRepository;
+    MemberJpaRepository memberJpaRepository;
     
     @Autowired
     MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
@@ -48,6 +48,7 @@ class MemberSocialAccountJpaRepositoryTest {
                                      .status(MemberStatus.NORMAL)
                                      .type(MemberType.USER)
                                      .profileImageUrl("image.jpeg")
+                                     .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
                                      .build();
         
         memberJpaRepository.save(testMemberObj);
