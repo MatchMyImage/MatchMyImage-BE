@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DowithTaskController {
 
   private final RegisterDowithTaskService registerDowithTaskService;
+  private final UpdateDowithTaskService updateDowithTaskService;
 
   @GetMapping("")
   public ResponseEntity createDowithTask(@RequestBody CreateDowithTaskReqDto requestBody) {
@@ -46,7 +48,7 @@ public class DowithTaskController {
 
     Long memberId =AuthUtil.getMemberId();
 
-    registerDowithTaskService.updateDowithTask(memberId, requestBody.toCommand());
+    updateDowithTaskService.updateDowithTask(memberId, requestBody.toCommand());
 
     return ResponseUtil.createSuccessResponse();
 

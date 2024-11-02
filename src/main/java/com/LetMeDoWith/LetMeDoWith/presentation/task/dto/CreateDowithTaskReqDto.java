@@ -5,7 +5,10 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRout
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.DowithTaskRoutineInfoVO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -16,7 +19,6 @@ public record CreateDowithTaskReqDto(
     Boolean isRoutine,
     List<LocalDate> routineDates
 ) {
-
 
   public CreateDowithTaskCommand toCreateDowithTaskCommand() {
     return CreateDowithTaskCommand.builder()
@@ -30,8 +32,9 @@ public record CreateDowithTaskReqDto(
     return CreateDowithTaskWithRoutineCommand.builder()
         .title(this.title)
         .taskCategoryId(this.taskCategoryId)
-        .startDateTime(this.startDateTime)
-        .routineDates(this.routineDates)
+        .startDate(this.startDateTime.toLocalDate())
+        .startTime(this.startDateTime.toLocalTime())
+        .routineDates(routineDates != null ? Set.copyOf(this.routineDates) : new HashSet<>())
         .build();
   }
 }

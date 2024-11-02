@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskConfirm;
 import com.querydsl.core.types.dsl.*;
@@ -46,7 +47,7 @@ public class QDowithTask extends EntityPathBase<DowithTask> {
 
     public final DateTimePath<java.time.LocalDateTime> startDateTime = createDateTime("startDateTime", java.time.LocalDateTime.class);
 
-    public final EnumPath<com.LetMeDoWith.LetMeDoWith.common.enums.task.DowithTaskStatus> status = createEnum("status", com.LetMeDoWith.LetMeDoWith.common.enums.task.DowithTaskStatus.class);
+    public final EnumPath<DowithTaskStatus> status = createEnum("status", DowithTaskStatus.class);
 
     public final DateTimePath<java.time.LocalDateTime> successDateTime = createDateTime("successDateTime", java.time.LocalDateTime.class);
 

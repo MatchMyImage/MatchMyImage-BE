@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -46,7 +47,7 @@ private QDowithTaskRoutine qDowithTaskRoutine = QDowithTaskRoutine.dowithTaskRou
   }
 
   @Override
-  public List<DowithTask> findJoinRoutineAndConfirm(Long memberId, List<LocalDate> dates) {
+  public List<DowithTask> findJoinRoutineAndConfirm(Long memberId, Set<LocalDate> dates) {
     List<Date> targetDates = dates.stream().map(Date::valueOf).toList();
     return jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)

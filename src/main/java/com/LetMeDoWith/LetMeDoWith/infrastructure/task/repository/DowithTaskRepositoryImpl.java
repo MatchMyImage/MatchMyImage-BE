@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskR
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +31,7 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
   }
 
   @Override
-  public List<DowithTask> getDowithTasks(Long memberId, List<LocalDate> dates) {
+  public List<DowithTask> getDowithTasks(Long memberId, Set<LocalDate> dates) {
     return dowithTaskJpaRepository.findJoinRoutineAndConfirm(memberId, dates);
   }
 

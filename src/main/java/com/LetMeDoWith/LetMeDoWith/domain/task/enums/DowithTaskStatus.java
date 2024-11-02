@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.enums.task;
+package com.LetMeDoWith.LetMeDoWith.domain.task.enums;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
 import lombok.AllArgsConstructor;

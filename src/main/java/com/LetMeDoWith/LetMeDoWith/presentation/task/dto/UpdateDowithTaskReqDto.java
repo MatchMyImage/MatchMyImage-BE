@@ -2,7 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.DowithTaskRoutineInfoVO;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,23 +14,17 @@ public record UpdateDowithTaskReqDto(
     Long taskCategoryId,
     LocalDateTime startDateTime,
     Boolean isRoutine,
-    RoutineInfo routineInfo
+    List<LocalDate> routineDates
 ) {
-
-  @Data
-  public static record RoutineInfo () {
-    // TODO - 정의 필요
-  }
 
   public UpdateDowithTaskCommand toCommand() {
     return UpdateDowithTaskCommand.builder()
         .title(this.title)
         .taskCategoryId(this.taskCategoryId)
-        .startDateTime(this.startDateTime)
+        .startDate(this.startDateTime.toLocalDate())
+        .startTime(this.startDateTime.toLocalTime())
         .isRoutine(this.isRoutine)
-        .routineInfo(DowithTaskRoutineInfoVO.builder()
-            // TODO 정의 필요
-            .build())
+        .routineDates(routineDates)
         .build();
   }
 

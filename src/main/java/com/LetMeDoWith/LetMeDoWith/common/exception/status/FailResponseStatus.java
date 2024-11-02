@@ -92,7 +92,7 @@ public enum FailResponseStatus {
     DOWITH_TASK_UPDATE_NOT_AVAIL("DOWITH_TASK_UPDATE_NOT_AVAIL",
                                 "E231",
                                 HttpStatus.BAD_REQUEST,
-                                "업데이트 불가한 프로퍼티가 존재합니다."),
+                                "수정이 불가합니다."),
     DOWITH_TASK_NOT_EXIST("DOWITH_TASK_NOT_EXIST",
                                 "E232",
                                 HttpStatus.BAD_REQUEST,
