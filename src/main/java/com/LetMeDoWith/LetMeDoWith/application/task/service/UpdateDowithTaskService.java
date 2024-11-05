@@ -26,12 +26,12 @@ public class UpdateDowithTaskService {
 
     DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
         .orElseThrow(() -> new RestApiException(DOWITH_TASK_NOT_EXIST));
-
-    dowithTask.updateInfo(command.title(), command.taskCategoryId(), LocalDateTime.of(command.startDate(), command.startTime()));
-
-    if(dowithTask.isDifferent(LocalDateTime.of(command.startDate(), command.startTime()), command.routineDates())) {
-
-    }
+//
+//    dowithTask.updateInfo(command.title(), command.taskCategoryId(), LocalDateTime.of(command.startDate(), command.startTime()));
+//
+//    if(dowithTask.isEqual(command.date(), command.startTime(), command.routineDates())) {
+//
+//    }
 
   }
 

@@ -12,7 +12,7 @@ public record UpdateDowithTaskCommand(
     Long id,
     String title,
     Long taskCategoryId,
-    LocalDate startDate,
+    LocalDate date,
     LocalTime startTime,
     Boolean isRoutine,
     Set<LocalDate> routineDates

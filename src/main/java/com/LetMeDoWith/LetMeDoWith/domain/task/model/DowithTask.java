@@ -3,10 +3,8 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -59,8 +57,11 @@ public class DowithTask extends BaseAuditEntity {
   @Column(name = "status", nullable = false)
   private DowithTaskStatus status;
 
-  @Column(name = "start_at",nullable = false)
-  private LocalDateTime startDateTime;
+  @Column(name = "date", nullable = false)
+  private LocalDate date;
+
+  @Column(name = "start_time", nullable = true)
+  private LocalTime startTime;
 
   @Column(name = "success_at")
   private LocalDateTime successDateTime;
@@ -75,30 +76,33 @@ public class DowithTask extends BaseAuditEntity {
   @Column(name = "dowith_task_routine_id")
   private DowithTaskRoutine routine;
 
-  public static DowithTask create(Long memberId, Long taskCategoryId, String title, LocalDate startDate, LocalTime startTime) {
+  public static DowithTask create(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
     return DowithTask.builder()
         .memberId(memberId)
         .taskCategoryId(taskCategoryId)
         .title(title)
         .status(DowithTaskStatus.WAIT)
-        .startDateTime(LocalDateTime.of(startDate, startTime))
+        .date(date)
+        .startTime(startTime)
+        .routine(null)
+        .confirms(null)
         .build();
   }
 
-  public static List<DowithTask> createWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDate startDate, LocalTime startTime, Set<LocalDate> routineDates) {
+  public static List<DowithTask> createWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
     List<DowithTask> result = new ArrayList<>();
     Set<LocalDate> targetDateSet = new HashSet<>(routineDates);
-    targetDateSet.add(startDate);
-    targetDateSet.stream().sorted().toList().forEach(date -> {
-      LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
-      DowithTaskRoutine routine = DowithTaskRoutine.create(routineDates);
+    targetDateSet.add(date);
+    targetDateSet.stream().sorted().toList().forEach(e -> {
+      DowithTaskRoutine routine = DowithTaskRoutine.create(targetDateSet);
       result.add(DowithTask.builder()
           .memberId(memberId)
           .taskCategoryId(taskCategoryId)
           .title(title)
           .status(DowithTaskStatus.WAIT)
           .routine(routine)
-          .startDateTime(startDateTime)
+          .date(e)
+          .startTime(startTime)
           .build());
     });
 
@@ -111,7 +115,7 @@ public class DowithTask extends BaseAuditEntity {
 
   public static boolean checkRegisterAvailable(List<DowithTask> existings, Set<LocalDate> targetDates) {
     Map<LocalDate, List<DowithTask>> dowithTaskMap = existings.stream()
-        .collect(Collectors.groupingBy(e -> e.getStartDateTime().toLocalDate()));
+        .collect(Collectors.groupingBy(DowithTask::getDate));
 
     List<LocalDate> notAvailableDates = new ArrayList<>();
     targetDates.forEach(date -> {
@@ -132,38 +136,38 @@ public class DowithTask extends BaseAuditEntity {
     this.completeDateTime = LocalDateTime.now();
   }
 
-  public boolean isDifferent(LocalDateTime startDateTime, Set<LocalDate> routineDates) {
-    if(!this.startDateTime.equals(startDateTime)) return true;
+  public boolean isEqual(LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
+    if(!this.date.equals(date)) return false;
+    if(!this.startTime.equals(startTime)) return false;
     if(isRoutine()) {
-      return this.routine.isDifferent(routineDates);
+      return this.routine.isEqual(routineDates);
     }else {
-      return routineDates != null && !routineDates.isEmpty();
+      return routineDates == null || routineDates.isEmpty();
     }
   }
 
-  public void updateInfo(String title, Long taskCategoryId, LocalDateTime startDateTime) {
-
-    LocalDateTime now = LocalDateTime.now();
-    if(now.isAfter(this.startDateTime) || now.equals(this.startDateTime)) {
-      throw new RestApiException(DOWITH_TASK_UPDATE_NOT_AVAIL);
-    }
-
-    if(startDateTime.isBefore(now) || startDateTime.equals(now)) {
-      throw new RestApiException(DOWITH_TASK_UPDATE_NOT_AVAIL);
-    }
-
-    this.title = title;
-    this.taskCategoryId = taskCategoryId;
-    if(this.startDateTime.equals(startDateTime)) {
-      // y인 경우 date가
-    }else {
-
-    }
-    this.startDateTime = startDateTime;
-
-  }
-
-  public void updateRoutine(Boolean isRoutine, )
+//  public void updateInfo(String title, Long taskCategoryId, LocalDateTime startDateTime) {
+//
+//    LocalDateTime now = LocalDateTime.now();
+//    if(now.isAfter(this.startDateTime) || now.equals(this.startDateTime)) {
+//      throw new RestApiException(DOWITH_TASK_UPDATE_NOT_AVAIL);
+//    }
+//
+//    if(startDateTime.isBefore(now) || startDateTime.equals(now)) {
+//      throw new RestApiException(DOWITH_TASK_UPDATE_NOT_AVAIL);
+//    }
+//
+//    this.title = title;
+//    this.taskCategoryId = taskCategoryId;
+//    if(this.startDateTime.equals(startDateTime)) {
+//      // y인 경우 date가
+//    }else {
+//
+//    }
+//    this.startDateTime = startDateTime;
+//
+//  }
+//
 
 
 
