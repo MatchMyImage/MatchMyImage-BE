@@ -36,7 +36,7 @@ public class RegisterDowithTaskService {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
-    DowithTask dowithTask = DowithTask.create(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
+    DowithTask dowithTask = DowithTask.createOf(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
 
     return dowithTaskRepository.saveDowithTask(dowithTask);
 
@@ -45,16 +45,13 @@ public class RegisterDowithTaskService {
   @Transactional
   public List<DowithTask> registerDowithTaskWithRoutine(Long memberId, CreateDowithTaskWithRoutineCommand command) {
 
-    // 두윗모드 사용가능한지 validate
-    Set<LocalDate> tartgetDateSet = new HashSet<>();
-    tartgetDateSet.add(command.date());
-    tartgetDateSet.addAll(command.routineDates());
+    Set<LocalDate> tartgetDateSet = command.getTargetDateSet();
     if(!DowithTask.checkRegisterAvailable(
         dowithTaskRepository.getDowithTasks(memberId, tartgetDateSet), tartgetDateSet)) {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
-    List<DowithTask> dowithTask = DowithTask.createWithRoutine(memberId, command.taskCategoryId(),
+    List<DowithTask> dowithTask = DowithTask.createWithRoutineOf(memberId, command.taskCategoryId(),
         command.title(), command.date(), command.startTime(), command.routineDates());
 
     return dowithTaskRepository.saveDowithTasks(dowithTask);

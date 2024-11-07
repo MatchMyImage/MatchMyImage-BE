@@ -1,10 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
-
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -76,7 +73,7 @@ public class DowithTask extends BaseAuditEntity {
   @Column(name = "dowith_task_routine_id")
   private DowithTaskRoutine routine;
 
-  public static DowithTask create(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
+  public static DowithTask createOf(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
     return DowithTask.builder()
         .memberId(memberId)
         .taskCategoryId(taskCategoryId)
@@ -89,10 +86,11 @@ public class DowithTask extends BaseAuditEntity {
         .build();
   }
 
-  public static List<DowithTask> createWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
+  public static List<DowithTask> createWithRoutineOf(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
     List<DowithTask> result = new ArrayList<>();
     Set<LocalDate> targetDateSet = new HashSet<>(routineDates);
     targetDateSet.add(date);
+
     targetDateSet.stream().sorted().toList().forEach(e -> {
       DowithTaskRoutine routine = DowithTaskRoutine.create(targetDateSet);
       result.add(DowithTask.builder()
