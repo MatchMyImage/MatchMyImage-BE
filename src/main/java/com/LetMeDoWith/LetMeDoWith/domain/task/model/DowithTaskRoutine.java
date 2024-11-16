@@ -1,7 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.domain.converter.DowithTaskRoutineDatesConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
-@Table(name = "DOWITH_TASK_CONFIRM")
+@Table(name = "dowith_task_routine")
 public class DowithTaskRoutine extends BaseAuditEntity {
 
   @Id
@@ -29,18 +32,35 @@ public class DowithTaskRoutine extends BaseAuditEntity {
   @Column(name = "id", nullable = false)
   private Long id;
 
-  @Embedded
-  @Column(name = "rountine_dates")
+  @Column(name = "dates", columnDefinition = "TEXT")
+  @Convert(converter = DowithTaskRoutineDatesConverter.class)
   private DowithTaskRoutineDates routineDates;
 
-  public static DowithTaskRoutine create(Set<LocalDate> dates) {
+  public static DowithTaskRoutine from(Set<LocalDate> dates) {
     return DowithTaskRoutine.builder()
-        .routineDates(new DowithTaskRoutineDates(dates))
+        .routineDates(DowithTaskRoutineDates.from(dates))
         .build();
   }
 
-  public boolean isEqual(Set<LocalDate> routineDates) {
-    return this.routineDates.isEqual(routineDates);
-  }
+
+//  @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//  private List<DowithTaskRoutineDate2> routineDates;
+
+//  public static DowithTaskRoutine from(Set<LocalDate> dates) {
+//    DowithTaskRoutine dowithTaskRoutine = new DowithTaskRoutine();
+//    List<DowithTaskRoutineDate2> dowithTaskRoutineDates = dates.stream()
+//        .map(date -> DowithTaskRoutineDate2.of(dowithTaskRoutine, date))
+//        .collect(Collectors.toList());
+//    dowithTaskRoutine.updateRoutineDates(dowithTaskRoutineDates);
+//    return dowithTaskRoutine;
+//  }
+//
+//  private void updateRoutineDates(List<DowithTaskRoutineDate2> routineDates) {
+//    this.routineDates = routineDates;
+//  }
+
+//  public boolean isEqual(Set<LocalDate> routineDates) {
+//    return this.routineDates.isEqual(routineDates);
+//  }
 
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -33,7 +34,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(access = AccessLevel.PRIVATE)
-@Table(name = "DOWITH_TASK")
+@Table(name = "dowith_task")
 @AggregateRoot
 public class DowithTask extends BaseAuditEntity {
 
@@ -70,10 +71,10 @@ public class DowithTask extends BaseAuditEntity {
   private List<DowithTaskConfirm> confirms;
 
   @ManyToOne(cascade = CascadeType.ALL)
-  @Column(name = "dowith_task_routine_id")
+  @JoinColumn(name = "dowith_task_routine_id")
   private DowithTaskRoutine routine;
 
-  public static DowithTask createOf(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
+  public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
     return DowithTask.builder()
         .memberId(memberId)
         .taskCategoryId(taskCategoryId)
@@ -86,13 +87,13 @@ public class DowithTask extends BaseAuditEntity {
         .build();
   }
 
-  public static List<DowithTask> createWithRoutineOf(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
+  public static List<DowithTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
     List<DowithTask> result = new ArrayList<>();
     Set<LocalDate> targetDateSet = new HashSet<>(routineDates);
     targetDateSet.add(date);
 
+    DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
     targetDateSet.stream().sorted().toList().forEach(e -> {
-      DowithTaskRoutine routine = DowithTaskRoutine.create(targetDateSet);
       result.add(DowithTask.builder()
           .memberId(memberId)
           .taskCategoryId(taskCategoryId)
@@ -134,15 +135,15 @@ public class DowithTask extends BaseAuditEntity {
     this.completeDateTime = LocalDateTime.now();
   }
 
-  public boolean isEqual(LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
-    if(!this.date.equals(date)) return false;
-    if(!this.startTime.equals(startTime)) return false;
-    if(isRoutine()) {
-      return this.routine.isEqual(routineDates);
-    }else {
-      return routineDates == null || routineDates.isEmpty();
-    }
-  }
+//  public boolean isEqual(LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
+//    if(!this.date.equals(date)) return false;
+//    if(!this.startTime.equals(startTime)) return false;
+//    if(isRoutine()) {
+//      return this.routine.isEqual(routineDates);
+//    }else {
+//      return routineDates == null || routineDates.isEmpty();
+//    }
+//  }
 
 //  public void updateInfo(String title, Long taskCategoryId, LocalDateTime startDateTime) {
 //

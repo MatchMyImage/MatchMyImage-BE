@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import lombok.Data;
 
-@Data
 public record CreateDowithTaskReqDto(
     String title,
     Long taskCategoryId,
@@ -24,7 +23,8 @@ public record CreateDowithTaskReqDto(
     return CreateDowithTaskCommand.builder()
         .title(this.title)
         .taskCategoryId(this.taskCategoryId)
-        .startDateTime(this.startDateTime)
+        .date(this.startDateTime.toLocalDate())
+        .startTime(this.startDateTime.toLocalTime())
         .build();
   }
 
@@ -32,7 +32,7 @@ public record CreateDowithTaskReqDto(
     return CreateDowithTaskWithRoutineCommand.builder()
         .title(this.title)
         .taskCategoryId(this.taskCategoryId)
-        .startDate(this.startDateTime.toLocalDate())
+        .date(this.startDateTime.toLocalDate())
         .startTime(this.startDateTime.toLocalTime())
         .routineDates(routineDates != null ? Set.copyOf(this.routineDates) : new HashSet<>())
         .build();

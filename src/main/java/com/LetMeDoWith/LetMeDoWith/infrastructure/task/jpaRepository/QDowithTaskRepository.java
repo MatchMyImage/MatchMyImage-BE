@@ -8,9 +8,8 @@ import java.util.Set;
 
 public interface QDowithTaskRepository {
 
-  Optional<DowithTask> findJoinRoutineAndConfirm(Long id);
-  List<DowithTask> findJoinRoutineAndConfirm(Long memberId, LocalDate date);
-  List<DowithTask> findJoinRoutineAndConfirm(Long memberId, Set<LocalDate> dates);
-  Optional<DowithTask> findJoinRoutineAndConfirm(Long id, Long memberId);
-
+  Optional<DowithTask> findDowithTaskAggregate(Long id);
+  Optional<DowithTask> findDowithTaskAggregate(Long id, Long memberId);
+  List<DowithTask> findDowithTaskAggregates(Long memberId, LocalDate date);
+  List<DowithTask> findDowithTaskAggregates(Long memberId, Set<LocalDate> dates);
 }

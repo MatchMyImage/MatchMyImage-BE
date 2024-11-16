@@ -1,9 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.QDowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.QDowithTaskConfirm;
-import com.LetMeDoWith.LetMeDoWith.domain.task.QDowithTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskConfirm;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.sql.Date;
@@ -26,7 +26,7 @@ private QDowithTaskRoutine qDowithTaskRoutine = QDowithTaskRoutine.dowithTaskRou
 
 
   @Override
-  public Optional<DowithTask> findJoinRoutineAndConfirm(Long id) {
+  public Optional<DowithTask> findDowithTaskAggregate(Long id) {
     return Optional.ofNullable(jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
         .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
@@ -36,35 +36,36 @@ private QDowithTaskRoutine qDowithTaskRoutine = QDowithTaskRoutine.dowithTaskRou
   }
 
   @Override
-  public List<DowithTask> findJoinRoutineAndConfirm(Long memberId, LocalDate date) {
+  public List<DowithTask> findDowithTaskAggregates(Long memberId, LocalDate date) {
     Date targetDate = Date.valueOf(date);
     return jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
         .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
-        .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.startDateTime).eq(targetDate).and(qDowithTask.memberId.eq(memberId)))
+        .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date).eq(targetDate).and(qDowithTask.memberId.eq(memberId)))
+        .orderBy(qDowithTask.createdAt.asc())
         .fetchJoin()
         .fetch();
   }
 
   @Override
-  public List<DowithTask> findJoinRoutineAndConfirm(Long memberId, Set<LocalDate> dates) {
+  public List<DowithTask> findDowithTaskAggregates(Long memberId, Set<LocalDate> dates) {
     List<Date> targetDates = dates.stream().map(Date::valueOf).toList();
     return jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
         .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
-        .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.startDateTime).in(targetDates).and(qDowithTask.memberId.eq(memberId)))
+        .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date).in(targetDates).and(qDowithTask.memberId.eq(memberId)))
+        .orderBy(qDowithTask.createdAt.asc())
         .fetchJoin()
         .fetch();
   }
 
   @Override
-  public Optional<DowithTask> findJoinRoutineAndConfirm(Long id, Long memberId) {
+  public Optional<DowithTask> findDowithTaskAggregate(Long id, Long memberId) {
     return Optional.ofNullable(jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
         .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
         .where(qDowithTask.id.eq(id).and(qDowithTask.memberId.eq(memberId)))
-        .fetchJoin()
-        .fetchOne());
+        .fetchJoin().fetchOne());
   }
 
 }

@@ -36,7 +36,7 @@ public class RegisterDowithTaskService {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
-    DowithTask dowithTask = DowithTask.createOf(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
+    DowithTask dowithTask = DowithTask.of(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
 
     return dowithTaskRepository.saveDowithTask(dowithTask);
 
@@ -51,7 +51,7 @@ public class RegisterDowithTaskService {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
-    List<DowithTask> dowithTask = DowithTask.createWithRoutineOf(memberId, command.taskCategoryId(),
+    List<DowithTask> dowithTask = DowithTask.ofWithRoutine(memberId, command.taskCategoryId(),
         command.title(), command.date(), command.startTime(), command.routineDates());
 
     return dowithTaskRepository.saveDowithTasks(dowithTask);

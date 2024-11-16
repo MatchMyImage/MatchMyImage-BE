@@ -22,17 +22,22 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
 
   @Override
   public Optional<DowithTask> getDowithTask(Long id, Long memberId) {
-    return dowithTaskJpaRepository.findJoinRoutineAndConfirm(id, memberId);
+    return dowithTaskJpaRepository.findDowithTaskAggregate(id, memberId);
   }
 
   @Override
   public List<DowithTask> getDowithTasks(Long memberId, LocalDate date) {
-    return dowithTaskJpaRepository.findJoinRoutineAndConfirm(memberId, date);
+    return dowithTaskJpaRepository.findDowithTaskAggregates(memberId, date);
   }
 
   @Override
   public List<DowithTask> getDowithTasks(Long memberId, Set<LocalDate> dates) {
-    return dowithTaskJpaRepository.findJoinRoutineAndConfirm(memberId, dates);
+    return dowithTaskJpaRepository.findDowithTaskAggregates(memberId, dates);
+  }
+
+  @Override
+  public List<DowithTask> getDowithTasks(Long memberId, Long DowithTaskRoutineId) {
+    return null; // TODO - 구현 필요
   }
 
   @Override
