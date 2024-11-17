@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
 import java.util.Set;
@@ -18,6 +20,12 @@ public class DowithTaskRoutineDates {
 
   public static DowithTaskRoutineDates from(Set<LocalDate> dates) {
     return new DowithTaskRoutineDates(dates);
+  }
+
+  public void validate() {
+    dates.forEach(date -> {
+      if(date.isBefore(LocalDate.now())) throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+    });
   }
 
 }

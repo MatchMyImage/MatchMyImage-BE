@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.CascadeType;
@@ -75,7 +77,7 @@ public class DowithTask extends BaseAuditEntity {
   private DowithTaskRoutine routine;
 
   public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
-    return DowithTask.builder()
+    DowithTask newDowithTask = DowithTask.builder()
         .memberId(memberId)
         .taskCategoryId(taskCategoryId)
         .title(title)
@@ -85,6 +87,8 @@ public class DowithTask extends BaseAuditEntity {
         .routine(null)
         .confirms(null)
         .build();
+    newDowithTask.validate();
+    return newDowithTask;
   }
 
   public static List<DowithTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
@@ -94,7 +98,7 @@ public class DowithTask extends BaseAuditEntity {
 
     DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
     targetDateSet.stream().sorted().toList().forEach(e -> {
-      result.add(DowithTask.builder()
+      DowithTask newDowithTask = DowithTask.builder()
           .memberId(memberId)
           .taskCategoryId(taskCategoryId)
           .title(title)
@@ -102,10 +106,22 @@ public class DowithTask extends BaseAuditEntity {
           .routine(routine)
           .date(e)
           .startTime(startTime)
-          .build());
+          .build();
+      newDowithTask.validate();
+      result.add(newDowithTask);
     });
 
     return result;
+  }
+
+  public void validate() {
+    if(LocalDate.now().isEqual(date)) {
+      if(startTime.isAfter(LocalTime.now())) throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
+    }
+    if(date.isBefore(LocalDate.now())) throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+    if(isRoutine()) {
+      routine.getRoutineDates().validate();
+    }
   }
 
   public boolean isRoutine() {

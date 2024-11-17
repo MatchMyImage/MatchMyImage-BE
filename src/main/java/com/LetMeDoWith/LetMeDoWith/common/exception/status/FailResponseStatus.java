@@ -97,6 +97,14 @@ public enum FailResponseStatus {
                                 "E232",
                                 HttpStatus.BAD_REQUEST,
                                 "존재하지 않는 두윗모드 테스크입니다."),
+    DOWITH_TASK_NOT_AVAIL_START_TIME("DOWITH_TASK_NOT_AVAIL_START_TIME",
+                                        "E243",
+                                HttpStatus.BAD_REQUEST,
+                                "등록 불가한 시작시간입니다."),
+    DOWITH_TASK_NOT_AVAIL_DATE("DOWITH_TASK_NOT_AVAIL_START_TIME",
+        "E243",
+        HttpStatus.BAD_REQUEST,
+        "등록 불가한 날짜입니다."),
 
 
     /**
