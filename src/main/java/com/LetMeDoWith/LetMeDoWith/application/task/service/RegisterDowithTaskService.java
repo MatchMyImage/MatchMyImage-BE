@@ -28,10 +28,8 @@ public class RegisterDowithTaskService {
    */
   public DowithTask registerDowithTask(Long memberId, CreateDowithTaskCommand command) {
 
-    Set<LocalDate> targetDateSet = new HashSet<>();
-    targetDateSet.add(command.date());
+    Set<LocalDate> targetDateSet = command.getTargetDateSet();
 
-    // 두윗모드 사용가능한지 validate
     if(!DowithTask.checkRegisterAvailable(dowithTaskRepository.getDowithTasks(memberId, targetDateSet), targetDateSet)) {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }

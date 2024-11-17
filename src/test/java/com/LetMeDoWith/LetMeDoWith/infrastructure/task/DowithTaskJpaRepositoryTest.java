@@ -5,22 +5,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskConfirm;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.BadgeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskJpaRepository;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -123,12 +113,11 @@ public class DowithTaskJpaRepositoryTest {
   void test_findDowithTaskAggregate() {
     // given
     DowithTask dowithTask = DowithTask.of(memberId, taskCategoryId1, title1, date1, startTime1);
-    List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(memberId, taskCategoryId2, title2,
-        date2, startTime2, Set.of(routineDate4, routineDate5));
 
     // when
     DowithTask savedTask = dowithTaskJpaRepository.save(dowithTask);
     Long id = savedTask.getId();
+    entityManager.flush();
     DowithTask target = dowithTaskJpaRepository.findDowithTaskAggregate(id,
         memberId).orElseThrow(() -> new NoResultException());
 
@@ -156,6 +145,7 @@ public class DowithTaskJpaRepositoryTest {
 
     List<DowithTask> dowithTasks = dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
     Set<LocalDate> targetDates = Set.of(date2, routineDate4, routineDate5);
+    entityManager.flush();
     dowithTasks.forEach(task -> {
       // when
       DowithTask target = dowithTaskJpaRepository.findDowithTaskAggregate(task.getId()).orElseThrow(() -> new NoResultException());
@@ -186,6 +176,7 @@ public class DowithTaskJpaRepositoryTest {
     // when
     dowithTaskJpaRepository.save(dowithTask);
     dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
+    entityManager.flush();
     List<DowithTask> dowithTaskAggregates = dowithTaskJpaRepository.findDowithTaskAggregates(
         memberId, date2);
 
@@ -205,6 +196,7 @@ public class DowithTaskJpaRepositoryTest {
     // when
     dowithTaskJpaRepository.save(dowithTask);
     dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
+    entityManager.flush();
     List<DowithTask> dowithTaskAggregates = dowithTaskJpaRepository.findDowithTaskAggregates(
         memberId, Set.of(date2, routineDate4));
 

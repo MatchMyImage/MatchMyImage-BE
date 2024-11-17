@@ -112,8 +112,16 @@ public class DowithTask extends BaseAuditEntity {
     return routine != null;
   }
 
-  public static boolean checkRegisterAvailable(List<DowithTask> existings, Set<LocalDate> targetDates) {
-    Map<LocalDate, List<DowithTask>> dowithTaskMap = existings.stream()
+  public Set<LocalDate> getRoutineDates() {
+    if(isRoutine()) {
+      return this.routine.getRoutineDates().getDates();
+    }else {
+      return Set.of();
+    }
+  }
+
+  public static boolean checkRegisterAvailable(List<DowithTask> existingPerDay, Set<LocalDate> targetDates) {
+    Map<LocalDate, List<DowithTask>> dowithTaskMap = existingPerDay.stream()
         .collect(Collectors.groupingBy(DowithTask::getDate));
 
     List<LocalDate> notAvailableDates = new ArrayList<>();
@@ -121,7 +129,7 @@ public class DowithTask extends BaseAuditEntity {
       if(dowithTaskMap.containsKey(date)) notAvailableDates.add(date);
     });
 
-    return notAvailableDates.isEmpty();
+    return notAvailableDates.isEmpty(); // TODO - 두윗모드 사용가능 개수 추후 정의 - 아마 잔소리 수(다른 Aggregate)와 비교해야해서 Domain Service로 빠지지 않을까 싶음
   }
 
   public void confirm(String imageUrl) {

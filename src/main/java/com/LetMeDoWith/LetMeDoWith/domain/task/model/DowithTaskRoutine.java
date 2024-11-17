@@ -43,24 +43,4 @@ public class DowithTaskRoutine extends BaseAuditEntity {
   }
 
 
-//  @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//  private List<DowithTaskRoutineDate2> routineDates;
-
-//  public static DowithTaskRoutine from(Set<LocalDate> dates) {
-//    DowithTaskRoutine dowithTaskRoutine = new DowithTaskRoutine();
-//    List<DowithTaskRoutineDate2> dowithTaskRoutineDates = dates.stream()
-//        .map(date -> DowithTaskRoutineDate2.of(dowithTaskRoutine, date))
-//        .collect(Collectors.toList());
-//    dowithTaskRoutine.updateRoutineDates(dowithTaskRoutineDates);
-//    return dowithTaskRoutine;
-//  }
-//
-//  private void updateRoutineDates(List<DowithTaskRoutineDate2> routineDates) {
-//    this.routineDates = routineDates;
-//  }
-
-//  public boolean isEqual(Set<LocalDate> routineDates) {
-//    return this.routineDates.isEqual(routineDates);
-//  }
-
 }

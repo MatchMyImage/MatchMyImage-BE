@@ -38,9 +38,7 @@ public class DowithTaskController {
       dowithTasks.add(registerDowithTaskService.registerDowithTask(memberId, requestBody.toCreateDowithTaskCommand()));
     }
 
-
-    return ResponseUtil.createSuccessResponse();
-
+    return ResponseUtil.createSuccessResponse(CreateDowithTaskResDto.toCreateDowithTaskResDto(dowithTasks));
   }
 
   @PutMapping("")
