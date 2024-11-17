@@ -4,7 +4,10 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +22,7 @@ public class DowithTaskRoutineDates {
   private Set<LocalDate> dates;
 
   public static DowithTaskRoutineDates from(Set<LocalDate> dates) {
-    return new DowithTaskRoutineDates(dates);
+    return new DowithTaskRoutineDates(dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
   }
 
   public void validate() {
