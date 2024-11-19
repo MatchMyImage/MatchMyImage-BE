@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -69,8 +70,8 @@ public class DowithTask extends BaseAuditEntity {
   @Column(name = "complete_at")
   private LocalDateTime completeDateTime;
 
-  @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<DowithTaskConfirm> confirms;
+  @OneToOne(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private DowithTaskConfirm confirms;
 
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "dowith_task_routine_id")
@@ -149,7 +150,7 @@ public class DowithTask extends BaseAuditEntity {
   }
 
   public void confirm(String imageUrl) {
-    confirms.add(DowithTaskConfirm.of(this, imageUrl));
+    confirms = DowithTaskConfirm.of(this, imageUrl);
     this.status = DowithTaskStatus.SUCCESS;
     this.successDateTime = LocalDateTime.now();
   }
