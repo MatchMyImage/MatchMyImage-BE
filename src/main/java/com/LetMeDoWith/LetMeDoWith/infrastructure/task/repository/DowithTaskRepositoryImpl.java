@@ -27,12 +27,12 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
 
   @Override
   public List<DowithTask> getDowithTasks(Long memberId, LocalDate date) {
-    return dowithTaskJpaRepository.findDowithTaskAggregates(memberId, date);
+    return dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, date);
   }
 
   @Override
   public List<DowithTask> getDowithTasks(Long memberId, Set<LocalDate> dates) {
-    return dowithTaskJpaRepository.findDowithTaskAggregates(memberId, dates);
+    return dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, dates);
   }
 
   @Override

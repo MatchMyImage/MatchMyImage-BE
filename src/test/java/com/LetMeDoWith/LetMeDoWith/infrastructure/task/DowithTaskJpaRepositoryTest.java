@@ -177,7 +177,7 @@ public class DowithTaskJpaRepositoryTest {
     dowithTaskJpaRepository.save(dowithTask);
     dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
     entityManager.flush();
-    List<DowithTask> dowithTaskAggregates = dowithTaskJpaRepository.findDowithTaskAggregates(
+    List<DowithTask> dowithTaskAggregates = dowithTaskJpaRepository.findAllDowithTaskAggregates(
         memberId, date2);
 
     // then
@@ -197,7 +197,7 @@ public class DowithTaskJpaRepositoryTest {
     dowithTaskJpaRepository.save(dowithTask);
     dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
     entityManager.flush();
-    List<DowithTask> dowithTaskAggregates = dowithTaskJpaRepository.findDowithTaskAggregates(
+    List<DowithTask> dowithTaskAggregates = dowithTaskJpaRepository.findAllDowithTaskAggregates(
         memberId, Set.of(date2, routineDate4));
 
     // then

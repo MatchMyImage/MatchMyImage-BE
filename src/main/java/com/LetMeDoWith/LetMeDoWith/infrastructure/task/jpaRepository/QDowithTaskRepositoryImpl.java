@@ -36,7 +36,7 @@ private QDowithTaskRoutine qDowithTaskRoutine = QDowithTaskRoutine.dowithTaskRou
   }
 
   @Override
-  public List<DowithTask> findDowithTaskAggregates(Long memberId, LocalDate date) {
+  public List<DowithTask> findAllDowithTaskAggregates(Long memberId, LocalDate date) {
     Date targetDate = Date.valueOf(date);
     return jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
@@ -48,7 +48,7 @@ private QDowithTaskRoutine qDowithTaskRoutine = QDowithTaskRoutine.dowithTaskRou
   }
 
   @Override
-  public List<DowithTask> findDowithTaskAggregates(Long memberId, Set<LocalDate> dates) {
+  public List<DowithTask> findAllDowithTaskAggregates(Long memberId, Set<LocalDate> dates) {
     List<Date> targetDates = dates.stream().map(Date::valueOf).toList();
     return jpaQueryFactory.selectFrom(qDowithTask)
         .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)

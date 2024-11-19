@@ -10,6 +10,6 @@ public interface QDowithTaskRepository {
 
   Optional<DowithTask> findDowithTaskAggregate(Long id);
   Optional<DowithTask> findDowithTaskAggregate(Long id, Long memberId);
-  List<DowithTask> findDowithTaskAggregates(Long memberId, LocalDate date);
-  List<DowithTask> findDowithTaskAggregates(Long memberId, Set<LocalDate> dates);
+  List<DowithTask> findAllDowithTaskAggregates(Long memberId, LocalDate date);
+  List<DowithTask> findAllDowithTaskAggregates(Long memberId, Set<LocalDate> dates);
 }
