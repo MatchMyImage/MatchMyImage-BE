@@ -116,7 +116,7 @@ public class DowithTask extends BaseAuditEntity {
     return result;
   }
 
-  public void validate() {
+  private void validate() {
     if(LocalDate.now().isEqual(date)) {
       if(startTime.isAfter(LocalTime.now())) throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
     }

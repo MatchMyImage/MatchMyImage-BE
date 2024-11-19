@@ -124,7 +124,7 @@ public class DowithTaskIntegrationTest {
   void createDowithTaskWithRoutine() throws Exception {
     // given
     LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
-    LocalDate routineDate1 = startDateTime.plusMonths(1).toLocalDate();
+    LocalDate routineDate1 = startDateTime.plusMonths(3).toLocalDate();
     LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
     ArrayList<LocalDate> targetDates = new ArrayList<>();
     targetDates.add(startDateTime.toLocalDate());
