@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -94,11 +95,11 @@ public class DowithTask extends BaseAuditEntity {
 
   public static List<DowithTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
     List<DowithTask> result = new ArrayList<>();
-    Set<LocalDate> targetDateSet = new HashSet<>(routineDates);
+    Set<LocalDate> targetDateSet = new TreeSet<>(routineDates);
     targetDateSet.add(date);
 
     DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
-    targetDateSet.stream().sorted().toList().forEach(e -> {
+    targetDateSet.stream().toList().forEach(e -> {
       DowithTask newDowithTask = DowithTask.builder()
           .memberId(memberId)
           .taskCategoryId(taskCategoryId)
