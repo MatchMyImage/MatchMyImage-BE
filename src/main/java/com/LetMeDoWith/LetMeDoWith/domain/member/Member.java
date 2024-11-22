@@ -62,7 +62,7 @@ public class Member extends BaseAuditEntity {
     
     @Column(nullable = false)
     private MemberStatus status;
-
+    
     @Column(name = "task_complete_level")
     private TaskCompleteLevel taskCompleteLevel;
     
@@ -95,14 +95,10 @@ public class Member extends BaseAuditEntity {
                      .subject(subject)
                      .type(MemberType.USER)
                      .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                     .taskCompleteLevel(TaskCompleteLevel.GOOD)
                      .build();
     }
-
-    // LAZY Badge 획득 레벨인지 확인
-    public boolean isLazyBadgeAcquireLevel() {
-        return TaskCompleteLevel.BAD.equals(this.taskCompleteLevel);
-    }
-
+    
     public static List<MemberStatus> getAllMemberStatus() {
         return List.of(MemberStatus.NORMAL,
                        MemberStatus.SUSPENDED,
@@ -118,6 +114,11 @@ public class Member extends BaseAuditEntity {
         return List.of(MemberStatus.SUSPENDED,
                        MemberStatus.WITHDRAWN,
                        MemberStatus.SOCIAL_AUTHENTICATED);
+    }
+    
+    // LAZY Badge 획득 레벨인지 확인
+    public boolean isLazyBadgeAcquireLevel() {
+        return TaskCompleteLevel.BAD.equals(this.taskCompleteLevel);
     }
     
     /**
@@ -153,14 +154,38 @@ public class Member extends BaseAuditEntity {
     }
     
     /**
-     * 회원 가입을 완료하는 Member의 개인정보를 업데이트 하고, 회원 가입 완료 상태로 변경한다.
+     * Member의 개인정보를 업데이트 하고, 회원 가입 완료 상태로 변경한다.
      *
      * @param personalInfoVO 회원의 개인 정보.
      * @return 개인정보가 입력되고 회원가입 완료 상태로 변경된 회원 객체
      */
-    public Member updatePersonalInfoAfterCompleteSignUp(MemberPersonalInfoVO personalInfoVO) {
+    public Member updatePersonalInfoWithCompletingSignUp(MemberPersonalInfoVO personalInfoVO) {
         return this.updatePersonalInfo(personalInfoVO)
                    .changeStatusTo(MemberStatus.NORMAL);
+    }
+    
+    /**
+     * Member의 약관 동의 객체를 업데이트한다.
+     * 약관 동의 객체가 없는 경우 초기 생성한다.
+     *
+     * @param isTermsOfAgree  사용 약관 동의 여부
+     * @param isPrivacy       개인정보 활용 동의 여부
+     * @param isAdvertisement 광고성 메세지 수신 동의 여부
+     * @return 약관 동의 여부가 업데이트된 Member
+     */
+    public Member updateTermAgree(boolean isTermsOfAgree,
+                                  boolean isPrivacy,
+                                  boolean isAdvertisement) {
+        if (termAgree != null) {
+            this.termAgree.update(isTermsOfAgree, isPrivacy, isAdvertisement);
+        } else {
+            this.termAgree = MemberTermAgree.ofInit(this,
+                                                    isTermsOfAgree,
+                                                    isPrivacy,
+                                                    isAdvertisement);
+        }
+        
+        return this;
     }
     
     public Member withdraw() {
@@ -171,6 +196,12 @@ public class Member extends BaseAuditEntity {
     
     private Member changeStatusTo(MemberStatus status) {
         this.status = status;
+        
+        return this;
+    }
+    
+    private Member changeTaskCompleteLevelTo(TaskCompleteLevel taskCompleteLevel) {
+        this.taskCompleteLevel = taskCompleteLevel;
         
         return this;
     }
