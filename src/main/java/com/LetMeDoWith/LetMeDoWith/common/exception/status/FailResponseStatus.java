@@ -61,6 +61,8 @@ public enum FailResponseStatus {
                        "E219",
                        HttpStatus.BAD_REQUEST,
                        "이미 존재하는 닉네임입니다"),
+
+    // Badge 도메인 관련 Exception - E22X
     MEMBER_CANNOT_WITHDRAW("MEMBER_CANNOT_WITHDRAW",
         "E220",
         HttpStatus.BAD_REQUEST,
@@ -81,6 +83,30 @@ public enum FailResponseStatus {
                         "E223",
                         HttpStatus.BAD_REQUEST,
                         "획득하지 않은 뱃지입니다"),
+
+    // Dowith Task 관련 Exception - E23X
+    DOWITH_TASK_CREATE_COUNT_EXCEED("DOWITH_TASK_CREATE_COUNT_EXCEED",
+                                "E230",
+                                HttpStatus.BAD_REQUEST,
+                                "일일 등록 가능한 두윗모드 갯수를 초과하였습니다."),
+    DOWITH_TASK_UPDATE_NOT_AVAIL("DOWITH_TASK_UPDATE_NOT_AVAIL",
+                                "E231",
+                                HttpStatus.BAD_REQUEST,
+                                "수정이 불가합니다."),
+    DOWITH_TASK_NOT_EXIST("DOWITH_TASK_NOT_EXIST",
+                                "E232",
+                                HttpStatus.BAD_REQUEST,
+                                "존재하지 않는 두윗모드 테스크입니다."),
+    DOWITH_TASK_NOT_AVAIL_START_TIME("DOWITH_TASK_NOT_AVAIL_START_TIME",
+                                        "E243",
+                                HttpStatus.BAD_REQUEST,
+                                "등록 불가한 시작시간입니다."),
+    DOWITH_TASK_NOT_AVAIL_DATE("DOWITH_TASK_NOT_AVAIL_START_TIME",
+        "E243",
+        HttpStatus.BAD_REQUEST,
+        "등록 불가한 날짜입니다."),
+
+
     /**
      * 401 UnAuthorized Error 인증 관련 오류
      */
@@ -116,7 +142,11 @@ public enum FailResponseStatus {
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR",
                           "E400",
                           HttpStatus.INTERNAL_SERVER_ERROR,
-                          "내부 서버 에러입니다. 다시 시도하세요.");
+                          "내부 서버 에러입니다. 다시 시도하세요."),
+    CODE_ENUM_NOT_EXIST("CODE_ENUM_NOT_EXIST",
+                        "E401",
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                "코드에 대응되는 Enum이 존재하지 않습니다.");
     
     private final String statusName;
     private final String statusCode;

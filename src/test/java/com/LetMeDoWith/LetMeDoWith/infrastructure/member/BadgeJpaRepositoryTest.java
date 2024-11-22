@@ -38,7 +38,7 @@ public class BadgeJpaRepositoryTest {
   private MemberBadgeJpaRepository memberBadgeJpaRepository;
 
   @BeforeEach
-  void beforeEAch() { entityManager.clear(); }
+  void beforeEach() { entityManager.clear(); }
 
   static BadgeStatus badge1Status = BadgeStatus.ACTIVE;
   static String badge1Name = "뱃지1";
