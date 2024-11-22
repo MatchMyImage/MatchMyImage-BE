@@ -5,11 +5,13 @@ CREATE TABLE IF NOT EXISTS member
     updated_at          datetime              NULL,
     created_by          VARCHAR(255)          NULL,
     updated_by          VARCHAR(255)          NULL,
-    email               VARCHAR(255)          NULL,
+    subject             VARCHAR(255)          NULL,
     status              VARCHAR(255)          NOT NULL,
     task_complete_level VARCHAR(10)           NOT NULL,
     nickname            VARCHAR(255)          NULL,
     self_description    VARCHAR(255)          NULL,
+    gender              VARCHAR(2)            NULL,
+    date_of_birth       date                  NULL,
     type                VARCHAR(255)          NOT NULL,
     profile_image_url   VARCHAR(255)          NULL,
     CONSTRAINT pk_member PRIMARY KEY (id)
@@ -83,18 +85,38 @@ create table member_badge
     updated_by varchar(255) null
 );
 
+CREATE TABLE member_term_agree
+(
+    id BIGINT AUTO_INCREMENT NOT NULL,
+    create_at            datetime              NULL,
+    updated_at           datetime              NULL,
+    created_by           VARCHAR(255)          NULL,
+    updated_by           VARCHAR(255)          NULL,
+    member_id            BIGINT                NOT NULL,
+    terms_of_agree       BIT(1)                NOT NULL,
+    privacy              BIT(1)                NOT NULL,
+    advertisement        BIT(1)                NOT NULL,
+    CONSTRAINT pk_member_term_agree PRIMARY KEY (id),
+    CONSTRAINT uc_member_term_agree_member UNIQUE (member_id)
+);
 
--- ALTER TABLE member_follow
---     ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWED FOREIGN KEY (followed_id) REFERENCES member (member_id);
---
--- ALTER TABLE member_follow
---     ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWER FOREIGN KEY (follower_id) REFERENCES member (member_id);
---
--- ALTER TABLE member_push_setting
---     ADD CONSTRAINT FK_MEMBER_PUSH_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
---
--- ALTER TABLE member_social_account
---     ADD CONSTRAINT FK_MEMBER_SOCIAL_ACCOUNT_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
---
--- ALTER TABLE member_status_history
---     ADD CONSTRAINT FK_MEMBER_STATUS_HISTORY_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (member_id);
+CREATE TABLE letmedowith_app.member_alarm_setting
+(
+    id            BIGINT AUTO_INCREMENT NOT NULL,
+    create_at     datetime              NULL,
+    updated_at    datetime              NULL,
+    created_by    VARCHAR(255)          NULL,
+    updated_by    VARCHAR(255)          NULL,
+    member_id     BIGINT                NOT NULL,
+    base_alarm_yn BIT(1)                NOT NULL,
+    todo_bot_yn   BIT(1)                NOT NULL,
+    feedback_yn   BIT(1)                NOT NULL,
+    marketing_yn  BIT(1)                NOT NULL,
+    CONSTRAINT pk_member_alarm_setting PRIMARY KEY (id)
+);
+
+ALTER TABLE letmedowith_app.member_alarm_setting
+    ADD CONSTRAINT uc_member_alarm_setting_member UNIQUE (member_id);
+
+ALTER TABLE letmedowith_app.member_alarm_setting
+    ADD CONSTRAINT FK_MEMBER_ALARM_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES letmedowith_app.member (id);

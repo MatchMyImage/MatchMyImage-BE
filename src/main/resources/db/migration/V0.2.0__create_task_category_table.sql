@@ -1,6 +1,7 @@
 CREATE TABLE letmedowith_app.task_category
 (
     id                 BIGINT AUTO_INCREMENT NOT NULL,
+    active_yn          VARCHAR(255)          NOT NULL,
     create_at          datetime              NULL,
     updated_at         datetime              NULL,
     created_by         VARCHAR(255)          NULL,
