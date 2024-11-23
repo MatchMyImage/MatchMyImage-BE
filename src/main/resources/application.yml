@@ -48,6 +48,45 @@ logging:
     com.LetMeDoWith.LetMeDoWith: debug
     root: debug
 
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver  # TODO - 변경 필요
+    url: jdbc:mysql://localhost:3306/letmedowith_app # TODO - 변경 필요
+  data:
+    redis:
+      host: localhost # TODO - 변경 필요
+      port: 6379 # TODO - 변경 필요
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: validate
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 1
+    enabled: true
+    url: jdbc:mysql://localhost:3306/letmedowith_app
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
+        type:
+          descriptor:
+            sql: trace
+    com.LetMeDoWith.LetMeDoWith: debug
+    root: debug
+
+
 
 ---
 spring:
@@ -66,8 +105,3 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  flyway:
-    baseline-on-migrate: true
-    baseline-version: 1
-    enabled: true
-    url: jdbc:mysql://localhost:3306/letmedowith_app
