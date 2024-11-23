@@ -25,4 +25,4 @@ values ((select id from badge where name = '뱃지1'), 'Y', (select id from memb
        ((select id from badge where name = '뱃지4'), 'N', (select id from member where nickname = 'a1'), now(), now(), 'admin', 'admin'),
        ((select id from badge where name = '뱃지2'), 'N', (select id from member where nickname = 'a2'), now(), now(), 'admin', 'admin'),
        ((select id from badge where name = '뱃지5'), 'N', (select id from member where nickname = 'a2'), now(), now(), 'admin', 'admin'),
-       ((select id from badge where name = '뱃지9'), 'M', (select id from member where nickname = 'a2'), now(), now(), 'admin', 'admin');
+       ((select id from badge where name = '뱃지9'), 'N', (select id from member where nickname = 'a2'), now(), now(), 'admin', 'admin');
