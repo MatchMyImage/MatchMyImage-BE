@@ -3,7 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.TokenType;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.TokenType;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.SignupToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

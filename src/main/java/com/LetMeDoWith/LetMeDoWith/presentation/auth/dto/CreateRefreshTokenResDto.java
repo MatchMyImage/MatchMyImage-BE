@@ -1,14 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.dto;
 
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateRefreshTokenResult;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import java.time.LocalDateTime;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import lombok.Builder;
 
 @Builder
-public record CreateTokenRefreshResDto(
+public record CreateRefreshTokenResDto(
 	AccessTokenDto atk,
 	RefreshTokenDto rtk
 ) {
@@ -18,9 +18,6 @@ public record CreateTokenRefreshResDto(
 		String token,
 		LocalDateTime expireAt
 	) {
-		public static AccessTokenDto from(AuthTokenVO authTokenVO) {
-			return new AccessTokenDto(authTokenVO.token(), authTokenVO.expireAt());
-		}
 		public static AccessTokenDto from(AccessToken accessToken) {
 			return new AccessTokenDto(accessToken.getToken(), accessToken.getExpireAt());
 		}
@@ -36,10 +33,10 @@ public record CreateTokenRefreshResDto(
 		}
 	}
 
-	public static CreateTokenRefreshResDto of(AccessToken accessToken, RefreshToken refreshToken) {
-		return CreateTokenRefreshResDto.builder()
-				.atk(AccessTokenDto.from(accessToken))
-				.rtk(RefreshTokenDto.from(refreshToken))
+	public static CreateRefreshTokenResDto of(CreateRefreshTokenResult result) {
+		return CreateRefreshTokenResDto.builder()
+				.atk(AccessTokenDto.from(result.accessToken()))
+				.rtk(RefreshTokenDto.from(result.refreshToken()))
 				.build();
 	}
 }

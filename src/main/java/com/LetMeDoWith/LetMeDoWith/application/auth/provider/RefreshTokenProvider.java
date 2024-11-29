@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,12 @@ public class RefreshTokenProvider {
   public RefreshToken createRefreshToken(Long memberId, String accessToken, String userAgent) {
     // redis에 저장
     return refreshTokenRepository.save(RefreshToken.of(memberId, accessToken, userAgent, rtkDurationDay * 24 * 60 * 60));
+  }
+
+  public RefreshToken findRefreshToken(String token) {
+    return refreshTokenRepository.getRefreshToken(token).orElseThrow(
+        () -> new RestApiException(
+            FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
   }
 
 

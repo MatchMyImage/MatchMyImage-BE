@@ -4,14 +4,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
+import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,7 +53,7 @@ public class AuthIntegrationTest {
     @Autowired
     RefreshTokenProvider refreshTokenProvider;
     @Autowired
-    AuthService authService;
+    CreateTokenService createTokenService;
     @Autowired
     MemberJpaRepository memberJpaRepository;
     Member member;

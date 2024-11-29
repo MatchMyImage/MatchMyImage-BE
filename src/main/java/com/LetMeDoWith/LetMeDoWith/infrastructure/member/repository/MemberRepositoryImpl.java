@@ -1,13 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.repository;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
-import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberTermAgree;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberSocialAccount;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberTermAgree;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberSocialAccountJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberTermAgreeJpaRepository;

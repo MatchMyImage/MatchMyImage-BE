@@ -1,14 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateRefreshTokenResult;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.Token;
-import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
+import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateAccessTokenReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateRefreshTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     
-    private final AuthService authService;
+    private final CreateTokenService createTokenService;
     
     @PostMapping("/token/refresh")
     public ResponseEntity createTokenRefresh(@RequestBody CreateTokenRefreshReqDto requestBody) {
@@ -30,26 +31,26 @@ public class AuthController {
         String userAgent = HeaderUtil.getUserAgent();
         String accessToken = AuthUtil.getAccessToken();
 
-        CreateTokenRefreshResDto result = authService.createTokenRefresh(accessToken,
-                                                                         requestBody.refreshToken(),
-                                                                         userAgent);
-        
-        return ResponseUtil.createSuccessResponse(result);
+        CreateRefreshTokenResult result = createTokenService.createRefreshToken(accessToken,
+            requestBody.refreshToken(),
+            userAgent);
+
+        return ResponseUtil.createSuccessResponse(CreateRefreshTokenResDto.of(result));
     }
     
     @PostMapping("/token")
     public ResponseEntity createToken(
         @RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
         
-        Token tokenRequestResult = authService.createToken(
+        CreateTokenResult createTokenResultRequestResult = createTokenService.createToken(
             createAccessTokenReqDto.provider(),
             createAccessTokenReqDto.idToken()
         );
         
         return ResponseUtil.createSuccessResponse(
-            tokenRequestResult.signupToken() == null
+            createTokenResultRequestResult.signupToken() == null
                 ? SuccessResponseStatus.OK
                 : SuccessResponseStatus.PROCEED_TO_SIGNUP
-            , CreateTokenResDto.fromCreateTokenResult(tokenRequestResult));
+            , CreateTokenResDto.fromCreateTokenResult(createTokenResultRequestResult));
     }
 }

@@ -1,11 +1,7 @@
-package com.LetMeDoWith.LetMeDoWith.domain.member;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.MEMBER_BADGE_NOT_EXIST;
+package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

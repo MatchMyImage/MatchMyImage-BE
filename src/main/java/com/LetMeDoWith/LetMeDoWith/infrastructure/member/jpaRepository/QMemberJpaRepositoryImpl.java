@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.member.QMemberSocialAccount;

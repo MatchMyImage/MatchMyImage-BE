@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.common;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
+import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.application.auth.factory.SocialProviderAuthFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -27,12 +27,13 @@ public class BeanTest {
     void applicationContextBeanTest() {
         
         // when
-        AuthService authService1 = applicationContext.getBean(AuthService.class);
-        AuthService authService2 = (AuthService) applicationContext.getBean("authService");
+        CreateTokenService createTokenService1 = applicationContext.getBean(CreateTokenService.class);
+        CreateTokenService createTokenService2 = (CreateTokenService) applicationContext.getBean(
+            "createTokenService");
         
         // then
-        Assertions.assertThat(authService1).isInstanceOf(AuthService.class);
-        Assertions.assertThat(authService2).isInstanceOf(AuthService.class);
+        Assertions.assertThat(createTokenService1).isInstanceOf(CreateTokenService.class);
+        Assertions.assertThat(createTokenService2).isInstanceOf(CreateTokenService.class);
     }
     
     @Test
@@ -40,12 +41,13 @@ public class BeanTest {
     void beanFactoryTest() {
         
         // when
-        AuthService authService1 = beanFactory.getBean(AuthService.class);
-        AuthService authService2 = (AuthService) beanFactory.getBean("authService");
+        CreateTokenService createTokenService1 = beanFactory.getBean(CreateTokenService.class);
+        CreateTokenService createTokenService2 = (CreateTokenService) beanFactory.getBean(
+            "createTokenService");
         
         // then
-        Assertions.assertThat(authService1).isInstanceOf(AuthService.class);
-        Assertions.assertThat(authService2).isInstanceOf(AuthService.class);
+        Assertions.assertThat(createTokenService1).isInstanceOf(CreateTokenService.class);
+        Assertions.assertThat(createTokenService2).isInstanceOf(CreateTokenService.class);
     }
     
 }

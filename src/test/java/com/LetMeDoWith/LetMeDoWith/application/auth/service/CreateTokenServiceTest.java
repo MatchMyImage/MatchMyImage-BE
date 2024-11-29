@@ -13,7 +13,7 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepos
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
 
 @ExtendWith({MockitoExtension.class})
-public class AuthServiceTest {
+public class CreateTokenServiceTest {
 
 	@Mock
 	AccessTokenProvider accessTokenProvider;
@@ -28,7 +28,7 @@ public class AuthServiceTest {
 	RefreshTokenRepository refreshTokenRepository;
 
 	@InjectMocks
-	AuthService authService;
+	CreateTokenService createTokenService;
 
 	@Test
 	@DisplayName("[SUCCESS] 토큰 재발급")

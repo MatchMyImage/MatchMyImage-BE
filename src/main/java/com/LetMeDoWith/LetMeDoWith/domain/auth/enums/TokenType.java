@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.auth;
+package com.LetMeDoWith.LetMeDoWith.domain.auth.enums;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
 import lombok.AllArgsConstructor;

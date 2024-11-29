@@ -11,7 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.SignupToken;
  * @param rtk
  * @param signupToken
  */
-public record Token(
+public record CreateTokenResult(
     AuthTokenVO atk,
     AuthTokenVO rtk,
     AuthTokenVO signupToken
@@ -24,24 +24,19 @@ public record Token(
      * @param rtk
      * @return
      */
-//    public static Token atkInit(AuthTokenVO atk, RefreshToken rtk) {
-//        return new Token(atk,
-//                                     AuthTokenVO.fromRtk(rtk),
-//                                     null);
-//    }
 
-    public static Token of(AccessToken atk, RefreshToken rtk) {
-        return new Token(AuthTokenVO.from(atk), AuthTokenVO.fromRtk(rtk), null);
+    public static CreateTokenResult of(AccessToken atk, RefreshToken rtk) {
+        return new CreateTokenResult(AuthTokenVO.from(atk), AuthTokenVO.fromRtk(rtk), null);
     }
     
     /**
      * 회원가입 완료 시 사용되는 SIGNUP token 요청시 응답 포맷
      */
-    public static Token stkInit(AuthTokenVO signupToken) {
-        return new Token(null, null, signupToken);
+    public static CreateTokenResult stkInit(AuthTokenVO signupToken) {
+        return new CreateTokenResult(null, null, signupToken);
     }
 
-    public static Token of(SignupToken signUpToken) {
-        return new Token(null, null, AuthTokenVO.from(signUpToken));
+    public static CreateTokenResult of(SignupToken signUpToken) {
+        return new CreateTokenResult(null, null, AuthTokenVO.from(signUpToken));
     }
 }

@@ -1,10 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
-import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.QMemberBadge;
 import com.querydsl.core.types.Projections;

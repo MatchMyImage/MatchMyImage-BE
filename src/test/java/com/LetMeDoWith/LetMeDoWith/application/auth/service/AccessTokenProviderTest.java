@@ -15,7 +15,7 @@ public class AccessTokenProviderTest {
   @Mock
   RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-  AccessTokenProvider accessTokenProvider = new AccessTokenProvider("sdfdasfsaffdfdslfjldsfkadjldfadfdsafdasfdsfdflkjadlkfdjkfdjlflasjfjdfaflajlkfjldksjfladjdsafkljfdjflasf", refreshTokenRedisRepository);
+  AccessTokenProvider accessTokenProvider = new AccessTokenProvider("sdfdasfsaffdfdslfjldsfkadjldfadfdsafdasfdsfdflkjadlkfdjkfdjlflasjfjdfaflajlkfjldksjfladjdsafkljfdjflasf");
 
   @Test
   void getMemberIdWithoutVerifyTest() {

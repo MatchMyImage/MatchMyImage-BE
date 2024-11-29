@@ -3,7 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.common.interceptor;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.SignupTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.TokenType;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.TokenType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

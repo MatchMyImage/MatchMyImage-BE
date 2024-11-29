@@ -1,7 +1,7 @@
-package com.LetMeDoWith.LetMeDoWith.domain.member;
+package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
