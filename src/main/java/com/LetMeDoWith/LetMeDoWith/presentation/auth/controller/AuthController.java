@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
+import com.LetMeDoWith.LetMeDoWith.application.auth.dto.Token;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
@@ -41,7 +41,7 @@ public class AuthController {
     public ResponseEntity createToken(
         @RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
         
-        CreateTokenResult tokenRequestResult = authService.createToken(
+        Token tokenRequestResult = authService.createToken(
             createAccessTokenReqDto.provider(),
             createAccessTokenReqDto.idToken()
         );

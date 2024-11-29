@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +28,10 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 	@Override
 	public void deleteRefreshTokens(Long memberId) {
 		refreshTokenRedisRepository.deleteByMemberId(memberId);
+	}
+
+	@Override
+	public RefreshToken save(RefreshToken refreshToken) {
+		return refreshTokenRedisRepository.save(refreshToken);
 	}
 }

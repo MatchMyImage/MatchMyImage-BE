@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
+package com.LetMeDoWith.LetMeDoWith.application.auth.factory;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;

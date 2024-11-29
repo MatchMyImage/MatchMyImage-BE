@@ -1,7 +1,8 @@
-package com.LetMeDoWith.LetMeDoWith.domain.auth;
+package com.LetMeDoWith.LetMeDoWith.domain.auth.model;
 
 import java.time.LocalDateTime;
 
+import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -30,6 +31,17 @@ public class RefreshToken {
 
 	@TimeToLive
 	private Long expireSec;
+
+	public static RefreshToken of(Long memberId, String accessToken, String userAgent, Long expireSec) {
+		String refreshToken = UUID.randomUUID().toString();
+		return RefreshToken.builder()
+												.token(refreshToken)
+												.accessToken(accessToken)
+												.memberId(memberId)
+												.userAgent(userAgent)
+												.expireSec(expireSec)
+												.build();
+	}
 
 	public void checkTokenOwnership(Long reqMemberId, String reqAccessToken, String reqUserAgent) {
 
