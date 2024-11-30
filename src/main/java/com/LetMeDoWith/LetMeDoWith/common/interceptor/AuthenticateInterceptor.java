@@ -42,14 +42,12 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         
         String tokenToBeValidated =
             isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
-        TokenType tokenType = isSignupCompleteReq ? TokenType.SIGNUP
-            : TokenType.ATK;
 
         Long memberId;
         if(isSignupCompleteReq) {
-            memberId = accessTokenProvider.validateAccessToken(tokenToBeValidated);
-        }else {
             memberId = signupTokenProvider.validateSignupToken(tokenToBeValidated);
+        }else {
+            memberId = accessTokenProvider.validateAccessToken(tokenToBeValidated);
         }
 
         request.setAttribute("memberId", memberId);

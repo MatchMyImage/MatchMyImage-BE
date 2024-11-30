@@ -1,6 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.domain.auth.model;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider.TokenType;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import java.time.LocalDateTime;

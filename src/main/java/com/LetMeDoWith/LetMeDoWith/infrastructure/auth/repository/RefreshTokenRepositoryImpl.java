@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.auth.repository;
 
 import java.util.Optional;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
+@Profile("!dev")
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
 	private final RefreshTokenRedisRepository refreshTokenRedisRepository;

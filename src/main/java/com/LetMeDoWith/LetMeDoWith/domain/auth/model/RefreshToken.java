@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.domain.auth.model;
 
+import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 
 import java.util.UUID;
