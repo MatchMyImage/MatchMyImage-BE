@@ -120,3 +120,13 @@ ALTER TABLE letmedowith_app.member_alarm_setting
 
 ALTER TABLE letmedowith_app.member_alarm_setting
     ADD CONSTRAINT FK_MEMBER_ALARM_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES letmedowith_app.member (id);
+
+CREATE TABLE letmedowith_app.dev_refresh_token
+(
+    token         VARCHAR(255)          NOT NULL,
+    access_token  VARCHAR(255)          NOT NULL,
+    member_id     bigint                NOT NULL,
+    user_agent    VARCHAR(100)          NOT NULL,
+    expire_at     datetime              NOT NULL,
+    CONSTRAINT pk_dev_refresh_token PRIMARY KEY (token)
+);

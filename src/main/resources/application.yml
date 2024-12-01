@@ -1,8 +1,9 @@
 spring:
   profiles:
-    default: local
+    default: dev
     group:
       "local": "local, local-confidential"
+      "dev": "dev, dev-confidential"
       "prod": "prod, prod-confidential"
 
 server:

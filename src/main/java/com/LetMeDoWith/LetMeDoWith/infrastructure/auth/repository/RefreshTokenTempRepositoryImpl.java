@@ -28,16 +28,26 @@ public class RefreshTokenTempRepositoryImpl implements RefreshTokenRepository {
       repository.delete(tempRefreshToken);
       return Optional.empty();
     }
-    return Optional.of(RefreshToken.of(tempRefreshToken.getMemberId(), tempRefreshToken.getAccessToken(), tempRefreshToken.getUserAgent(),
-        Duration.between(now, tempRefreshToken.getExpireAt()).getSeconds()));
+    return Optional.of(RefreshToken.builder()
+        .token(tempRefreshToken.getToken())
+        .accessToken(tempRefreshToken.getAccessToken())
+        .memberId(tempRefreshToken.getMemberId())
+        .userAgent(tempRefreshToken.getUserAgent())
+        .expireSec(Duration.between(now, tempRefreshToken.getExpireAt()).getSeconds())
+        .build());
   }
 
   @Override
   public RefreshToken save(RefreshToken refreshToken) {
     TempRefreshToken tempRefreshToken = repository.save(TempRefreshToken.from(refreshToken));
     LocalDateTime now = LocalDateTime.now();
-    return RefreshToken.of(tempRefreshToken.getMemberId(), tempRefreshToken.getAccessToken(), tempRefreshToken.getUserAgent(),
-        Duration.between(now, tempRefreshToken.getExpireAt()).getSeconds());
+    return RefreshToken.builder()
+        .token(tempRefreshToken.getToken())
+        .accessToken(tempRefreshToken.getAccessToken())
+        .memberId(tempRefreshToken.getMemberId())
+        .userAgent(tempRefreshToken.getUserAgent())
+        .expireSec(Duration.between(now, tempRefreshToken.getExpireAt()).getSeconds())
+        .build();
   }
 
   @Override

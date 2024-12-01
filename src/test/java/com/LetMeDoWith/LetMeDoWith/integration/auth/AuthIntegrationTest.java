@@ -37,7 +37,7 @@ import org.springframework.util.MultiValueMap;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("local")
+//@ActiveProfiles("local")
 @AutoConfigureMockMvc
 public class AuthIntegrationTest {
     
