@@ -32,11 +32,12 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
     testImplementation 'org.projectlombok:lombok:1.18.22'
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // QueryDSL JPA
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -67,6 +68,9 @@ dependencies {
 
     // for resolve error only causes in Apple Silicon Mac.
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.75.Final:osx-aarch_64")
+
+    // Lambda stream proxy (for Dev deploy)
+    implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.1'
 
 }
 
