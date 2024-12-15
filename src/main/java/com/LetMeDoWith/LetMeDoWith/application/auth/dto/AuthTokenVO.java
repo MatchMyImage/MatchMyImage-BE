@@ -13,7 +13,7 @@ public record AuthTokenVO(String token, LocalDateTime expireAt) {
      * @param rtk
      * @return
      */
-    public static AuthTokenVO fromRtk(RefreshToken rtk) {
+    public static AuthTokenVO from(RefreshToken rtk) {
         return new AuthTokenVO(rtk.getToken(),
                                LocalDateTime.now().plusSeconds(rtk.getExpireSec()));
     }

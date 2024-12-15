@@ -26,7 +26,7 @@ public record CreateTokenResult(
      */
 
     public static CreateTokenResult of(AccessToken atk, RefreshToken rtk) {
-        return new CreateTokenResult(AuthTokenVO.from(atk), AuthTokenVO.fromRtk(rtk), null);
+        return new CreateTokenResult(AuthTokenVO.from(atk), AuthTokenVO.from(rtk), null);
     }
     
     /**
