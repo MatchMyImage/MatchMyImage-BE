@@ -75,6 +75,23 @@ dependencies {
 }
 
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+
+    // 모든 테스트 이벤트 로깅
+    testLogging {
+        events "passed", "skipped", "failed" // 성공, 스킵, 실패한 테스트 이벤트 로깅
+
+        // 예외 메시지 출력
+        showExceptions true // 예외 메시지 출력 활성화
+        showCauses true // 예외 원인 출력 활성화
+        showStackTraces true // 스택 트레이스 출력 활성화
+
+        // 콘솔에 즉시 테스트 결과 표시
+        showStandardStreams = true // 표준 출력 및 오류 스트림 표시
+    }
+}
+
+tasks.test {
+
 }
