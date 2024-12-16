@@ -7,6 +7,30 @@ Globals:
     # API Gateway regional endpoints
     EndpointConfiguration: REGIONAL
 
+Parameters:
+  DbUsername:
+    Type: String
+    Description: "Database username"
+  DbPassword:
+    Type: String
+    Description: "Database password"
+  DbUrl:
+    Type: String
+    Description: "Database URL"
+  DbPort:
+    Type: Number
+    Description: "Database port"
+  DbSchema:
+    Type: String
+    Description: "Database schema"
+  RedisUrl:
+    Type: String
+    Description: "Redis URL"
+  RedisPort:
+    Type: Number
+    Description: "Redis port"
+
+
 Resources:
   LetMeDoWithDev:
     Type: AWS::Serverless::Function
@@ -30,7 +54,13 @@ Resources:
             Method: ANY
       Environment:
         Variables:
-          DB_URL: localhost
+          DB_USERNAME: !Ref DbUsername
+          DB_PASSWORD: !Ref DbPassword
+          DB_URL: !Ref DbUrl
+          DB_PORT: !Ref DbPort
+          DB_SCHEMA: !Ref DbSchema
+          REDIS_URL: !Ref RedisUrl
+          REDIS_PORT: !Ref RedisPort
 
 Outputs:
   LetMeDoWithDevApi:

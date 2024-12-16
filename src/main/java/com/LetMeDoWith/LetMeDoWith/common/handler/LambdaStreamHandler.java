@@ -28,8 +28,8 @@ public class LambdaStreamHandler implements RequestStreamHandler {
     static {
         try {
             handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(LetMeDoWithApplication.class,
-                                                                          "local",
-                                                                          "local-confidential");
+                                                                          "dev",
+                                                                          "dev-confidential");
             
             
         } catch (ContainerInitializationException e) {
