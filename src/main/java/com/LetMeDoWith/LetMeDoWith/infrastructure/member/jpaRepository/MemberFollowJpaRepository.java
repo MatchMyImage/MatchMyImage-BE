@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberFollow;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberFollow;
 
 @Repository
 public interface MemberFollowJpaRepository extends JpaRepository<MemberFollow, Long>, QMemberFollowJpaRepository {

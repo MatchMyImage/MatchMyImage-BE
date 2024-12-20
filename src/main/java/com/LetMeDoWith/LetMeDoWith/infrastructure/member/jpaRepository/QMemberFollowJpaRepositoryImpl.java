@@ -1,15 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository;
 
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberFollow;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberFollow;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberFollow;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.member.QMember;
-import com.LetMeDoWith.LetMeDoWith.domain.member.QMemberFollow;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

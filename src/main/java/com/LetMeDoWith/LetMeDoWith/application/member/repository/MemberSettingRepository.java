@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.repository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberAlarmSetting;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberAlarmSetting;
 
 public interface MemberSettingRepository {
     

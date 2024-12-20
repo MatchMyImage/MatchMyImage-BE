@@ -3,7 +3,10 @@ package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto.OidcPublicKeyVO;
-import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.factory.SocialProviderAuthFactory;
+import com.LetMeDoWith.LetMeDoWith.application.auth.util.EncryptUtil;
+import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
@@ -31,7 +34,7 @@ import org.springframework.stereotype.Component;
 public class OidcIdTokenProvider {
     
     private final SocialProviderAuthFactory socialProviderAuthFactory;
-    private final AuthTokenProvider authTokenProvider;
+    private final AccessTokenProvider accessTokenProvider;
     private final String KID = "kid";
     @Value("${auth.oidc.aud.kakao}")
     private String KAKAO_AUD;
@@ -62,9 +65,9 @@ public class OidcIdTokenProvider {
                                                  .findFirst()
                                                  .orElseThrow(OidcIdTokenPublicKeyNotFoundException::new);
             
-            Key publicKey = authTokenProvider.getRSAPublicKey(keyVO.n(), keyVO.e());
+            Key publicKey = EncryptUtil.getRSAPublicKey(keyVO.n(), keyVO.e());
             
-            return authTokenProvider.parseTokenToJws(token, publicKey);
+            return JwtUtil.parseTokenToJws(token, publicKey);
             
         } catch (OidcIdTokenPublicKeyNotFoundException |
                  NoSuchAlgorithmException |
@@ -83,9 +86,9 @@ public class OidcIdTokenProvider {
                                                      .orElseThrow(
                                                          OidcIdTokenPublicKeyNotFoundException::new);
                 
-                Key publicKey = authTokenProvider.getRSAPublicKey(keyVO.n(), keyVO.e());
+                Key publicKey = EncryptUtil.getRSAPublicKey(keyVO.n(), keyVO.e());
                 
-                return authTokenProvider.parseTokenToJws(token, publicKey);
+                return JwtUtil.parseTokenToJws(token, publicKey);
             } catch (OidcIdTokenPublicKeyNotFoundException |
                      NoSuchAlgorithmException |
                      InvalidKeySpecException ex) {
@@ -167,5 +170,7 @@ public class OidcIdTokenProvider {
             default -> throw new RuntimeException();
         }
     }
+
+
     
 }

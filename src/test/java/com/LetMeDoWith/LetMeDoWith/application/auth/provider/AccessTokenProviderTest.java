@@ -3,9 +3,11 @@ package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
+import com.LetMeDoWith.LetMeDoWith.application.auth.util.EncryptUtil;
+import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.math.BigInteger;
@@ -26,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Slf4j
 //@ExtendWith(MockitoExtension.class)
 @SpringBootTest
-class AuthTokenProviderTest {
+class AccessTokenProviderTest {
     
     /*
      * Sample OIDC ID Tokens for test.
@@ -48,14 +50,14 @@ class AuthTokenProviderTest {
     
     
     @Autowired
-    AuthTokenProvider authTokenProvider;
+    AccessTokenProvider accessTokenProvider;
     
     @Autowired
     OidcIdTokenProvider oidcIdTokenProvider;
     
     @BeforeEach
     void beforeEach() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        SAMPLE_RSA_PUBKEY = authTokenProvider.getRSAPublicKey(SAMPLE_MOD, SAMPLE_EXPONENT);
+        SAMPLE_RSA_PUBKEY = EncryptUtil.getRSAPublicKey(SAMPLE_MOD, SAMPLE_EXPONENT);
     }
     
     @Test
@@ -71,7 +73,7 @@ class AuthTokenProviderTest {
     @Test
     @DisplayName("[SUCCESS] ID token 검증 테스트")
     void verifyNormalTokenTest() {
-        Jws<Claims> oidcToken = authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
+        Jws<Claims> oidcToken = JwtUtil.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
                                                                   SAMPLE_RSA_PUBKEY);
         
         assertEquals(oidcToken.getBody().getIssuer(), SAMPLE_ISS);
@@ -84,12 +86,11 @@ class AuthTokenProviderTest {
     void validateAccessToken() {
         
         // given
-        AuthTokenVO authTokenVO = authTokenProvider.createAccessToken(MEMBER_ID);
-        System.out.println(authTokenVO.token());
+        AccessToken accessToken = accessTokenProvider.createAccessToken(MEMBER_ID);
+        System.out.println(accessToken.getToken());
         
         // when
-        Long memberId = authTokenProvider.validateToken(authTokenVO.token(),
-                                                        AuthTokenProvider.TokenType.ATK);
+        Long memberId = accessTokenProvider.validateAccessToken(accessToken.getToken());
         
         // then
         Assertions.assertThat(memberId).isEqualTo(MEMBER_ID);
@@ -131,7 +132,7 @@ class AuthTokenProviderTest {
     @DisplayName("[FAIL] 만료된 ID token 검증 시도")
     void verifyExpiredTokenTest() {
         assertThrows(RestApiAuthException.class,
-                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_EXPIRED,
+                     () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_EXPIRED,
                                                              SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.TOKEN_EXPIRED.getMessage());
     }
@@ -140,7 +141,7 @@ class AuthTokenProviderTest {
     @DisplayName("[FAIL] 잘못된 signature 가지는 ID token 검증 시도")
     void verifyIllegalSignatureTokenTest() {
         assertThrows(RestApiAuthException.class,
-                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
+                     () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
                                                              SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
@@ -149,7 +150,7 @@ class AuthTokenProviderTest {
     @DisplayName("[FAIL] 잘못된 format 가지는 ID token 검증 시도")
     void verifyMalformedTokenTest() {
         assertThrows(RestApiAuthException.class,
-                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_MALFORMED,
+                     () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_MALFORMED,
                                                              SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
@@ -158,7 +159,7 @@ class AuthTokenProviderTest {
     @DisplayName("[FAIL] 잘못된 RSA Key로 ID token 검증 시도")
     void verifyTokenWithInvalidKeyTest() {
         assertThrows(RestApiAuthException.class,
-                     () -> authTokenProvider.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
+                     () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
                                                              new RSAPublicKey() {
                                                                  @Override
                                                                  public BigInteger getPublicExponent() {

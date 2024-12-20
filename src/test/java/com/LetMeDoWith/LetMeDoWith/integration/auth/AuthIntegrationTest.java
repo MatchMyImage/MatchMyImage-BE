@@ -2,15 +2,16 @@ package com.LetMeDoWith.LetMeDoWith.integration.auth;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +37,7 @@ import org.springframework.util.MultiValueMap;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("local")
+//@ActiveProfiles("local")
 @AutoConfigureMockMvc
 public class AuthIntegrationTest {
     
@@ -48,9 +49,11 @@ public class AuthIntegrationTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    AuthTokenProvider authTokenProvider;
+    AccessTokenProvider accessTokenProvider;
     @Autowired
-    AuthService authService;
+    RefreshTokenProvider refreshTokenProvider;
+    @Autowired
+    CreateTokenService createTokenService;
     @Autowired
     MemberJpaRepository memberJpaRepository;
     Member member;
@@ -103,18 +106,18 @@ public class AuthIntegrationTest {
     void refreshTokenSuccessTest() throws Exception {
         
         // given
-        AuthTokenVO accessTokenVo = authTokenProvider.createAccessToken(member.getId());
-        RefreshToken refreshToken = authTokenProvider.createRefreshToken(member.getId(),
-                                                                         accessTokenVo.token(),
+        AccessToken accessToken = accessTokenProvider.createAccessToken(member.getId());
+        RefreshToken refreshToken = refreshTokenProvider.createRefreshToken(member.getId(),
+                                                                         accessToken.getToken(),
                                                                          userAgent);
         CreateTokenRefreshReqDto requestBody = CreateTokenRefreshReqDto.builder()
                                                                        .refreshToken(refreshToken.getToken())
                                                                        .build();
-        log.info("init accessToken = {}", accessTokenVo.token());
+        log.info("init accessToken = {}", accessToken.getToken());
         log.info("init refreshToken = {}", refreshToken.getToken());
         
         // when
-        ResultActions resultActions = requestTokenRefresh(accessTokenVo.token(), requestBody);
+        ResultActions resultActions = requestTokenRefresh(accessToken.getToken(), requestBody);
         
         // then
         resultActions.andExpect(status().is2xxSuccessful())

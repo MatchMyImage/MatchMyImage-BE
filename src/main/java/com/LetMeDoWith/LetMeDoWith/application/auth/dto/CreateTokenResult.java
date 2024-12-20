@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.auth.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.SignupToken;
 
 /**
  * 토큰 발급 요청에 대한 응답 데이터 모델
@@ -22,10 +24,9 @@ public record CreateTokenResult(
      * @param rtk
      * @return
      */
-    public static CreateTokenResult atkInit(AuthTokenVO atk, RefreshToken rtk) {
-        return new CreateTokenResult(atk,
-                                     AuthTokenVO.fromRtk(rtk),
-                                     null);
+
+    public static CreateTokenResult of(AccessToken atk, RefreshToken rtk) {
+        return new CreateTokenResult(AuthTokenVO.from(atk), AuthTokenVO.from(rtk), null);
     }
     
     /**
@@ -33,5 +34,9 @@ public record CreateTokenResult(
      */
     public static CreateTokenResult stkInit(AuthTokenVO signupToken) {
         return new CreateTokenResult(null, null, signupToken);
+    }
+
+    public static CreateTokenResult of(SignupToken signUpToken) {
+        return new CreateTokenResult(null, null, AuthTokenVO.from(signUpToken));
     }
 }

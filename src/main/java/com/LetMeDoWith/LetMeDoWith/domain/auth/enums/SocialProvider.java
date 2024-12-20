@@ -1,5 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.common.enums;
+package com.LetMeDoWith.LetMeDoWith.domain.auth.enums;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.converter.member.SocialProviderConverter;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;

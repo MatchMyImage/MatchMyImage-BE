@@ -8,17 +8,17 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Badge;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberBadge;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Badge;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.BadgeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberBadgeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
@@ -58,7 +58,7 @@ public class BadgeIntegrationTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    AuthTokenProvider authTokenProvider;
+    AccessTokenProvider accessTokenProvider;
     @Autowired
     MemberJpaRepository memberJpaRepository;
     @Autowired
@@ -68,8 +68,8 @@ public class BadgeIntegrationTest {
     
     Member member;
     Member lazyMember;
-    AuthTokenVO memberAuthTokenVO;
-    AuthTokenVO lazyMemberAuthTokenVO;
+    AccessToken memberAccessToken;
+    AccessToken lazyMemberAccessToken;
     
     Badge badge1;
     Badge badge2;
@@ -102,8 +102,8 @@ public class BadgeIntegrationTest {
                                                     .type(MemberType.USER)
                                                     .build());
         
-        memberAuthTokenVO = authTokenProvider.createAccessToken(member.getId());
-        lazyMemberAuthTokenVO = authTokenProvider.createAccessToken(lazyMember.getId());
+        memberAccessToken = accessTokenProvider.createAccessToken(member.getId());
+        lazyMemberAccessToken = accessTokenProvider.createAccessToken(lazyMember.getId());
         
     }
     
@@ -116,10 +116,10 @@ public class BadgeIntegrationTest {
         
     }
     
-    private ResultActions requestRetrieveBadgesInfo(AuthTokenVO authTokenVO) throws Exception {
+    private ResultActions requestRetrieveBadgesInfo(AccessToken accessToken) throws Exception {
         
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
-        headerMap.add("AUTHORIZATION", "Bearer" + authTokenVO.token());
+        headerMap.add("AUTHORIZATION", "Bearer" + accessToken.getToken());
         
         return mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + RETRIEVE_BADGES_INFO_URL)
                                                      .headers(new HttpHeaders(headerMap))
@@ -130,12 +130,12 @@ public class BadgeIntegrationTest {
         
     }
     
-    private ResultActions requestUpdateMainBadge(AuthTokenVO authTokenVO,
+    private ResultActions requestUpdateMainBadge(AccessToken accessToken,
                                                  UpdateMainBadgeReqDto requestBody)
         throws Exception {
         
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
-        headerMap.add("AUTHORIZATION", "Bearer" + authTokenVO.token());
+        headerMap.add("AUTHORIZATION", "Bearer" + accessToken.getToken());
         
         return mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + UPDATE_MAIN_BADGE)
                                                      .headers(new HttpHeaders(headerMap))
@@ -245,7 +245,7 @@ public class BadgeIntegrationTest {
         insertTestData();
         
         // when
-        ResultActions resultActions = requestRetrieveBadgesInfo(memberAuthTokenVO);
+        ResultActions resultActions = requestRetrieveBadgesInfo(memberAccessToken);
         
         // then
         resultActions.andExpect(status().is2xxSuccessful())
@@ -287,7 +287,7 @@ public class BadgeIntegrationTest {
         insertTestData();
         
         // when
-        ResultActions resultActions = requestRetrieveBadgesInfo(lazyMemberAuthTokenVO);
+        ResultActions resultActions = requestRetrieveBadgesInfo(lazyMemberAccessToken);
         
         // then
         resultActions.andExpect(status().is2xxSuccessful())
@@ -330,7 +330,7 @@ public class BadgeIntegrationTest {
         UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(badge2.getId());
         
         // when
-        ResultActions resultActions = requestUpdateMainBadge(memberAuthTokenVO, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, requestBody);
         MemberBadge oldMemberBadge = memberBadgeJpaRepository.findByMemberIdAndBadge(
             member.getId(), badge1).orElseThrow(() -> new IllegalArgumentException("not found"));
         MemberBadge newMemberBadge = memberBadgeJpaRepository.findByMemberIdAndBadge(
@@ -352,7 +352,7 @@ public class BadgeIntegrationTest {
         UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(badge2.getId());
         
         // when
-        ResultActions resultActions = requestUpdateMainBadge(lazyMemberAuthTokenVO, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(lazyMemberAccessToken, requestBody);
         
         // then
         resultActions.andExpect(status().is4xxClientError())
@@ -371,7 +371,7 @@ public class BadgeIntegrationTest {
         UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(1000L);
         
         // when
-        ResultActions resultActions = requestUpdateMainBadge(memberAuthTokenVO, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, requestBody);
         
         // then
         resultActions.andExpect(status().is4xxClientError())
@@ -390,7 +390,7 @@ public class BadgeIntegrationTest {
         UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(badge3.getId());
         
         // when
-        ResultActions resultActions = requestUpdateMainBadge(memberAuthTokenVO, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, requestBody);
         
         // then
         resultActions.andExpect(status().is4xxClientError())

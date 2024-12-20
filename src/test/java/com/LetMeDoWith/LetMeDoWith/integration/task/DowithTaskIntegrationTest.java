@@ -3,17 +3,15 @@ package com.LetMeDoWith.LetMeDoWith.integration.task;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.AuthTokenVO;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
@@ -26,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsSame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,13 +54,13 @@ public class DowithTaskIntegrationTest {
   @Autowired
   MemberJpaRepository memberJpaRepository;
   @Autowired
-  AuthTokenProvider authTokenProvider;
+  AccessTokenProvider accessTokenProvider;
   @Autowired
   DowithTaskJpaRepository dowithTaskJpaRepository;
 
 
   private Member member;
-  private AuthTokenVO memberAuthTokenVo;
+  private AccessToken memberAccessToken;
 
   @BeforeEach
   void beforeEach() {
@@ -79,12 +76,12 @@ public class DowithTaskIntegrationTest {
         .dateOfBirth(LocalDate.of(1995, 11, 4))
         .type(MemberType.USER)
         .build());
-    memberAuthTokenVo = authTokenProvider.createAccessToken(member.getId());
+    memberAccessToken = accessTokenProvider.createAccessToken(member.getId());
   }
 
-  private ResultActions requestCreateDowithTask(AuthTokenVO authTokenVO, CreateDowithTaskReqDto requestBody) throws Exception {
+  private ResultActions requestCreateDowithTask(AccessToken accessToken, CreateDowithTaskReqDto requestBody) throws Exception {
     LinkedMultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
-    headerMap.add("AUTHORIZATION", "Bearer" + authTokenVO.token());
+    headerMap.add("AUTHORIZATION", "Bearer" + accessToken.getToken());
 
     return mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + CREATE_DOWITH_TASK)
         .headers(new HttpHeaders(headerMap))
@@ -104,7 +101,7 @@ public class DowithTaskIntegrationTest {
         null);
 
     // when
-    ResultActions resultActions = requestCreateDowithTask(memberAuthTokenVo, requestBody);
+    ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
 
     // then
     resultActions.andExpect(status().is2xxSuccessful())
@@ -135,7 +132,7 @@ public class DowithTaskIntegrationTest {
         List.of(routineDate1, routineDate2));
 
     // when
-    ResultActions resultActions = requestCreateDowithTask(memberAuthTokenVo, requestBody);
+    ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
 
     // then
     for (int i = 0; i < targetDates.size(); i++) {

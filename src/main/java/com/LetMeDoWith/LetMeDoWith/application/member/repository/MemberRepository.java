@@ -1,10 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.repository;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
-import com.LetMeDoWith.LetMeDoWith.domain.member.MemberTermAgree;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberSocialAccount;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberTermAgree;
 import java.util.List;
 import java.util.Optional;
 

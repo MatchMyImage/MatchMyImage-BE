@@ -1,8 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.common.interceptor;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AuthTokenProvider.TokenType;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.SignupTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.TokenType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class AuthenticateInterceptor implements HandlerInterceptor {
     
-    private final AuthTokenProvider authTokenProvider;
+    private final AccessTokenProvider accessTokenProvider;
+    private final SignupTokenProvider signupTokenProvider;
     
     private final String SIGNUP_COMPLETE_API_URI = "/api/v1/member";
     private final String SIGNUP_COMPLETE_API_METHOD = "PUT";
@@ -40,9 +42,14 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         
         String tokenToBeValidated =
             isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
-        TokenType tokenType = isSignupCompleteReq ? TokenType.SIGNUP : TokenType.ATK;
-        
-        Long memberId = authTokenProvider.validateToken(tokenToBeValidated, tokenType);
+
+        Long memberId;
+        if(isSignupCompleteReq) {
+            memberId = signupTokenProvider.validateSignupToken(tokenToBeValidated);
+        }else {
+            memberId = accessTokenProvider.validateAccessToken(tokenToBeValidated);
+        }
+
         request.setAttribute("memberId", memberId);
         
         return true;

@@ -1,14 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
-import com.LetMeDoWith.LetMeDoWith.application.auth.service.AuthService;
+import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateMemberTermAgreeReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     
     private final MemberService memberService;
-    private final AuthService authService;
+    private final CreateTokenService createTokenService;
     
     /**
      * 회원가입을 완료한다. 회원가입이 완료되면 로그인한다.
@@ -52,9 +52,10 @@ public class MemberController {
                                               .build();
         
         Member signupCompletedMember = memberService.createSignupCompletedMember(command);
-        CreateTokenResult token = authService.getToken(signupCompletedMember);
+        CreateTokenResult createTokenResult = createTokenService.createToken(signupCompletedMember);
         
-        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK, CreateTokenResDto.fromCreateTokenResult(token));
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK, CreateTokenResDto.fromCreateTokenResult(
+            createTokenResult));
     }
     
     /**

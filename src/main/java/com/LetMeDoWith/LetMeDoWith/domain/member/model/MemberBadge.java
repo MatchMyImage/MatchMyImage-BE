@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.member;
+package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @AggregateRoot
-@Table(name = "MEMBER_BADGE")
+@Table(name = "member_badge")
 public class MemberBadge extends BaseAuditEntity {
 
   @Id

@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.member;
+package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
@@ -83,6 +83,10 @@ public class Member extends BaseAuditEntity {
     
     @Column(name = "profile_image_url")
     private String profileImageUrl;
+
+    public boolean isNormal() {
+        return this.status.equals(MemberStatus.NORMAL);
+    }
     
     /**
      * 소셜 로그인이 완료된 직후 상태(초기 상태)의 Member를 생성한다.
@@ -90,7 +94,7 @@ public class Member extends BaseAuditEntity {
      * @param subject OIDC id token에서 추출한 회원 구분 번호.
      * @return 초기회된 멤버 객체
      */
-    public static Member socialAuthenticated(String subject) {
+    public static Member ofSocialAuthenticated(String subject) {
         return Member.builder()
                      .subject(subject)
                      .type(MemberType.USER)

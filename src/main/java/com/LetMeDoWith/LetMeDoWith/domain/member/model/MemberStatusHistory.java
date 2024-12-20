@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.member;
+package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.converter.member.MemberStatusConverter;
