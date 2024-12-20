@@ -55,12 +55,12 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver  # TODO - 변경 필요
-    url: jdbc:mysql://localhost:3306/letmedowith_app # TODO - 변경 필요
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_SCHEMA}
   data:
     redis:
-      host: localhost # TODO - 변경 필요
-      port: 6379 # TODO - 변경 필요
+      host: ${REDIS_URL}
+      port: ${REDIS_PORT}
   jpa:
     database: mysql
     hibernate:
@@ -74,7 +74,7 @@ spring:
     baseline-on-migrate: true
     baseline-version: 1
     enabled: true
-    url: jdbc:mysql://localhost:3306/letmedowith_app
+    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_SCHEMA}
 
 logging:
   level:
@@ -84,10 +84,8 @@ logging:
         type:
           descriptor:
             sql: trace
-    com.LetMeDoWith.LetMeDoWith: debug
-    root: debug
-
-
+    com.LetMeDoWith.LetMeDoWith: trace
+    root: trace
 
 ---
 spring:

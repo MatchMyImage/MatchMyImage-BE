@@ -32,11 +32,12 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
     testImplementation 'org.projectlombok:lombok:1.18.22'
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // QueryDSL JPA
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -68,9 +69,29 @@ dependencies {
     // for resolve error only causes in Apple Silicon Mac.
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.75.Final:osx-aarch_64")
 
+    // Lambda stream proxy (for Dev deploy)
+    implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.1'
+
 }
 
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
+
+    // 모든 테스트 이벤트 로깅
+    testLogging {
+        events "passed", "skipped", "failed" // 성공, 스킵, 실패한 테스트 이벤트 로깅
+
+        // 예외 메시지 출력
+        showExceptions true // 예외 메시지 출력 활성화
+        showCauses true // 예외 원인 출력 활성화
+        showStackTraces true // 스택 트레이스 출력 활성화
+
+        // 콘솔에 즉시 테스트 결과 표시
+        showStandardStreams = true // 표준 출력 및 오류 스트림 표시
+    }
+}
+
+tasks.test {
+
 }
