@@ -42,7 +42,7 @@ public class AuthController {
         return ResponseUtil.createSuccessResponse(CreateRefreshTokenResDto.of(result));
     }
 
-    @Operation(summary = "토큰 발급", description = "소셜 로그인 idToken을 통해 AccessToken과 RefreshToken을 발급 받습니다.\nProvider : KAKAO - 카카오 / GOOGLE - 구글 / APPLE - 애플")
+    @Operation(summary = "토큰 발급", description = "소셜 로그인 idToken을 통해 AccessToken과 RefreshToken을 발급 받습니다. Provider : KAKAO - 카카오 / GOOGLE - 구글 / APPLE - 애플")
     @PostMapping("/token")
     public ResponseEntity createToken(
         @RequestBody CreateAccessTokenReqDto createAccessTokenReqDto) {
