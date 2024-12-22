@@ -18,7 +18,7 @@ public record CreateTokenResult(
 ) {
     
     /**
-     * 일반 토큰 (atk, rtk) 요청 시 응답 포맷
+     * 일반 토큰 (accessToken, refreshToken) 요청 시 응답 포맷
      *
      * @param atk
      * @param rtk
