@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS member_status_history
     CONSTRAINT pk_member_status_history PRIMARY KEY (id)
 );
 
-create table badge
+CREATE TABLE IF NOT EXISTS badge
 (
     sort_order   int          null,
     create_at    datetime(6)  null,
@@ -72,7 +72,7 @@ create table badge
     updated_by   varchar(255) null
 );
 
-create table member_badge
+CREATE TABLE IF NOT EXISTS member_badge
 (
     badge_id   bigint       not null,
     create_at  datetime(6)  null,
@@ -85,7 +85,7 @@ create table member_badge
     updated_by varchar(255) null
 );
 
-CREATE TABLE member_term_agree
+CREATE TABLE IF NOT EXISTS member_term_agree
 (
     id BIGINT AUTO_INCREMENT NOT NULL,
     create_at            datetime              NULL,
@@ -100,7 +100,7 @@ CREATE TABLE member_term_agree
     CONSTRAINT uc_member_term_agree_member UNIQUE (member_id)
 );
 
-CREATE TABLE letmedowith_app.member_alarm_setting
+CREATE TABLE IF NOT EXISTS letmedowith_app.member_alarm_setting
 (
     id            BIGINT AUTO_INCREMENT NOT NULL,
     create_at     datetime              NULL,
@@ -115,13 +115,7 @@ CREATE TABLE letmedowith_app.member_alarm_setting
     CONSTRAINT pk_member_alarm_setting PRIMARY KEY (id)
 );
 
-ALTER TABLE letmedowith_app.member_alarm_setting
-    ADD CONSTRAINT uc_member_alarm_setting_member UNIQUE (member_id);
-
-ALTER TABLE letmedowith_app.member_alarm_setting
-    ADD CONSTRAINT FK_MEMBER_ALARM_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES letmedowith_app.member (id);
-
-CREATE TABLE letmedowith_app.dev_refresh_token
+CREATE TABLE IF NOT EXISTS letmedowith_app.dev_refresh_token
 (
     token         VARCHAR(255)          NOT NULL,
     access_token  VARCHAR(255)          NOT NULL,

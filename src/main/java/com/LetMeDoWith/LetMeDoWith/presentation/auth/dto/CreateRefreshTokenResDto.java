@@ -9,8 +9,8 @@ import lombok.Builder;
 
 @Builder
 public record CreateRefreshTokenResDto(
-	AccessTokenDto atk,
-	RefreshTokenDto rtk
+	AccessTokenDto accessToken,
+	RefreshTokenDto refreshToken
 ) {
 
 	@Builder
@@ -35,8 +35,8 @@ public record CreateRefreshTokenResDto(
 
 	public static CreateRefreshTokenResDto of(CreateRefreshTokenResult result) {
 		return CreateRefreshTokenResDto.builder()
-				.atk(AccessTokenDto.from(result.accessToken()))
-				.rtk(RefreshTokenDto.from(result.refreshToken()))
+				.accessToken(AccessTokenDto.from(result.accessToken()))
+				.refreshToken(RefreshTokenDto.from(result.refreshToken()))
 				.build();
 	}
 }
