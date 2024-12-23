@@ -22,7 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                     "/health-check",
                     "/api/v1/auth/token",
-                    "/api/v1/auth/token/refresh"
+                    "/api/v1/auth/token/refresh",
+                    "/api/v1/auth/token/temp"
                 );
         // TODO - 운영 반영 시 주석 해제
         // .excludePathPatterns("/**"); // 개발 시, 테스트를 위해 actvice
