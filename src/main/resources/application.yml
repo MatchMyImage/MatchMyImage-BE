@@ -57,10 +57,10 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_SCHEMA}
-  data:
-    redis:
-      host: ${REDIS_URL}
-      port: ${REDIS_PORT}
+#  data:
+#    redis:
+#      host: ${REDIS_URL}
+#      port: ${REDIS_PORT}
   jpa:
     database: mysql
     hibernate:
@@ -84,8 +84,8 @@ logging:
         type:
           descriptor:
             sql: trace
-    com.LetMeDoWith.LetMeDoWith: trace
-    root: trace
+    com.LetMeDoWith.LetMeDoWith: info
+    root: info
 
 ---
 spring:

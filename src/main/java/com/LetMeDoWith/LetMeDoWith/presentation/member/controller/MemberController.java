@@ -12,6 +12,8 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateMemberTermAgreeReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Member", description = "회원")
 @RestController
 @RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
@@ -36,6 +39,7 @@ public class MemberController {
      * @param signupCompleteReqDto 회원가입을 완료하려는 멤버의 추가 정보 및 약관 동의 정보
      * @return 로그인 결과. 액세스 트큰과, refresh 토큰
      */
+    @Operation(summary = "회원가입", description = "소셜 로그인 후 회원가입을 완료합니다.")
     @PutMapping("")
     public ResponseEntity completeSignup(@RequestBody SignupCompleteReqDto signupCompleteReqDto) {
         CreateSignupCompletedMemberCommand command =
@@ -86,6 +90,7 @@ public class MemberController {
      * @param nickname 중복 여부를 검증하려는 닉네임
      * @return 닉네임의 검증 결과
      */
+    @Operation(summary = "닉네임 중복 여부 검증", description = "닉네임 중복 여부를 검증합니다.")
     @PostMapping("/nickname")
     public ResponseEntity checkNickname(@RequestBody String nickname) {
         if (memberService.isExistingNickname(nickname)) {
@@ -101,6 +106,7 @@ public class MemberController {
      * @param memberId 탈퇴하려는 멤버의 id
      * @return 탈퇴 성공 여부
      */
+    @Operation(summary = "탈퇴", description = "해당 회원을 탈퇴 처리 합니다.")
     @DeleteMapping("/{memberId}")
     public ResponseEntity withdrawMember(@PathVariable Long memberId) {
         memberService.withdrawMember(memberId);
