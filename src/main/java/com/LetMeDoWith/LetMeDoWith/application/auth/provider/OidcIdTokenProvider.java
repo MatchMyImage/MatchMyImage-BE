@@ -155,19 +155,16 @@ public class OidcIdTokenProvider {
     
     private String getAudValueForProvider(SocialProvider provider) {
         switch (provider) {
-            case APPLE -> {
+            case APPLE:
                 return APPLE_AUD;
-            }
-            
-            case GOOGLE -> {
+            case GOOGLE:
                 return GOOGLE_AUD;
-            }
-            
-            case KAKAO -> {
+            case KAKAO:
+            case DEV_KAKAO:
                 return KAKAO_AUD;
-            }
             
-            default -> throw new RuntimeException();
+            default:
+                throw new RuntimeException("잘못된 Provider 정보입니다.");
         }
     }
     
