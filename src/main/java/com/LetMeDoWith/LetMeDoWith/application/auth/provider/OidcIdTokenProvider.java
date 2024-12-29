@@ -6,10 +6,10 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto.Oidc
 import com.LetMeDoWith.LetMeDoWith.application.auth.factory.SocialProviderAuthFactory;
 import com.LetMeDoWith.LetMeDoWith.application.auth.util.EncryptUtil;
 import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -74,7 +74,7 @@ public class OidcIdTokenProvider {
                  InvalidKeySpecException e) {
             log.error("일치하는 OIDC ID Token 공개키가 없습니다. API 응답 Cache를 갱신합니다.");
             // TODO: add method invalidates cache for public key.
-            // invalidateCache()
+            // client.invalidateCache()
             
             // Cache를 무효화 한 후, 공개키를 다시 조회한다.
             try {
@@ -170,7 +170,6 @@ public class OidcIdTokenProvider {
             default -> throw new RuntimeException();
         }
     }
-
-
+    
     
 }
