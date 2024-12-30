@@ -1,9 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.domain.auth.enums;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.converter.member.SocialProviderConverter;
+import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,9 @@ public enum SocialProvider implements BaseEnum {
     
     KAKAO("KAKAO", "카카오", "https://kauth.kakao.com"),
     GOOGLE("GOOGLE", "구글", "https://accounts.google.com"),
-    APPLE("APPLE", "애플", "");
+    APPLE("APPLE", "애플", ""),
+    
+    DEV_KAKAO("DEV_KAKAO", "카카오 (개발서버)", "https://kauth.kakao.com");
     
     private final String code;
     private final String description;

@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "KAKAO", cacheManager = "socialProviderPublicKeyCacheManager")
+@Profile("!dev")
 public class KakaoAuthClient implements AuthClient {
     
     private final WebClient webClient;

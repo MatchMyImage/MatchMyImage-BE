@@ -6,10 +6,10 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto.Oidc
 import com.LetMeDoWith.LetMeDoWith.application.auth.factory.SocialProviderAuthFactory;
 import com.LetMeDoWith.LetMeDoWith.application.auth.util.EncryptUtil;
 import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -74,7 +74,7 @@ public class OidcIdTokenProvider {
                  InvalidKeySpecException e) {
             log.error("일치하는 OIDC ID Token 공개키가 없습니다. API 응답 Cache를 갱신합니다.");
             // TODO: add method invalidates cache for public key.
-            // invalidateCache()
+            // client.invalidateCache()
             
             // Cache를 무효화 한 후, 공개키를 다시 조회한다.
             try {
@@ -155,22 +155,18 @@ public class OidcIdTokenProvider {
     
     private String getAudValueForProvider(SocialProvider provider) {
         switch (provider) {
-            case APPLE -> {
+            case APPLE:
                 return APPLE_AUD;
-            }
-            
-            case GOOGLE -> {
+            case GOOGLE:
                 return GOOGLE_AUD;
-            }
-            
-            case KAKAO -> {
+            case KAKAO:
+            case DEV_KAKAO:
                 return KAKAO_AUD;
-            }
             
-            default -> throw new RuntimeException();
+            default:
+                throw new RuntimeException("잘못된 Provider 정보입니다.");
         }
     }
-
-
+    
     
 }
