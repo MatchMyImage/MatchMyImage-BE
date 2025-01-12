@@ -1,11 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_NOT_EXIST;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskWithRoutinesCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateDowithTaskService {
 
   private final DowithTaskRepository dowithTaskRepository;
+  private final TaskCategoryRepository taskCategoryRepository;
+
+  /**
+   * 두윗모드 Task 수정 루틴이 없는 케이스. 루틴이 설정된 경우 루틴 삭제
+   *
+   * @param memberId
+   * @param command
+   */
+  @Transactional
+  public void updateDowithTask(Long memberId, UpdateDowithTaskCommand command) {
+
+    DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
+        .orElseThrow(() -> new RestApiException(DOWITH_TASK_NOT_EXIST));
+
+    taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
+        .orElseThrow(() -> new RestApiException(DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+
+    dowithTask.update(command.title(), command.taskCategoryId(), command.date(),
+        command.startTime());
+
+  }
 
   /**
    * 두윗모드 테스크 수정
@@ -23,16 +48,27 @@ public class UpdateDowithTaskService {
    * @param command
    */
   @Transactional
-  public void updateDowithTaskWithRoutines(Long memberId, UpdateDowithTaskCommand command) {
+  public void updateDowithTaskWithRoutines(Long memberId,
+      UpdateDowithTaskWithRoutinesCommand command) {
 
     DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
         .orElseThrow(() -> new RestApiException(DOWITH_TASK_NOT_EXIST));
-//
-//    dowithTask.updateInfo(command.title(), command.taskCategoryId(), LocalDateTime.of(command.startDate(), command.startTime()));
-//
-//    if(dowithTask.isEqual(command.date(), command.startTime(), command.routineDates())) {
-//
-//    }
+
+    taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
+        .orElseThrow(() -> new RestApiException(DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+
+    if (command.isRoutine()) {
+
+      List<DowithTask> dowithTasksWithRoutines = dowithTaskRepository.getDowithTasks(memberId,
+          dowithTask.getRoutineId());
+
+      DowithTask.updateWithRoutines(dowithTasks, command.title(), command.taskCategoryId(),
+          command.date(),
+          command.startTime(), command.routineDates());
+    } else {
+      dowithTask.update(command.title(), command.taskCategoryId(), command.date(),
+          command.startTime());
+    }
 
   }
 

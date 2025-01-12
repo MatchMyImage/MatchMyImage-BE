@@ -4,8 +4,6 @@ import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.domain.converter.DowithTaskRoutineDatesConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Converter;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,6 +38,10 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     return DowithTaskRoutine.builder()
         .routineDates(DowithTaskRoutineDates.from(dates))
         .build();
+  }
+
+  public void updateRoutineDates(Set<LocalDate> dates) {
+    this.routineDates = DowithTaskRoutineDates.from(dates);
   }
 
 

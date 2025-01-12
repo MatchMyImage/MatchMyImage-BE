@@ -105,6 +105,14 @@ public enum FailResponseStatus {
       "E243",
       HttpStatus.BAD_REQUEST,
       "등록 불가한 날짜입니다."),
+  DOWITH_TASK_TASK_CATEGORY_NOT_EXIST("DOWITH_TASK_TASK_CATEGORY_NOT_EXIST",
+      "E244",
+      HttpStatus.BAD_REQUEST,
+      "존재하지 않는 카테고리 입니다."),
+  DOWITH_TASK_ROUTINE_NOT_EXIST("DOWITH_TASK_ROUTINE_NOT_EXIST",
+      "E245",
+      HttpStatus.BAD_REQUEST,
+      "루틴이 존재하지 않습니다.");
 
   /**
    * 401 UnAuthorized Error 인증 관련 오류
