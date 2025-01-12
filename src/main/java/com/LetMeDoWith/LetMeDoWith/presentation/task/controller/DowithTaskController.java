@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,22 +36,25 @@ public class DowithTaskController {
     Long memberId = AuthUtil.getMemberId();
 
     List<DowithTask> dowithTasks = new ArrayList<>();
-    if(requestBody.isRoutine()) {
-      dowithTasks.addAll(registerDowithTaskService.registerDowithTaskWithRoutine(memberId, requestBody.toCreateDowithTaskRoutineCommand()));
+    if (requestBody.isRoutine()) {
+      dowithTasks.addAll(registerDowithTaskService.registerDowithTaskWithRoutine(memberId,
+          requestBody.toCreateDowithTaskRoutineCommand()));
     } else {
-      dowithTasks.add(registerDowithTaskService.registerDowithTask(memberId, requestBody.toCreateDowithTaskCommand()));
+      dowithTasks.add(registerDowithTaskService.registerDowithTask(memberId,
+          requestBody.toCreateDowithTaskCommand()));
     }
 
-    return ResponseUtil.createSuccessResponse(CreateDowithTaskResDto.toCreateDowithTaskResDto(dowithTasks));
+    return ResponseUtil.createSuccessResponse(
+        CreateDowithTaskResDto.toCreateDowithTaskResDto(dowithTasks));
   }
 
   @Operation(summary = "두윗모드 테스트 수정", description = "두윗모드 테스크를 수정합니다.")
   @PutMapping("")
   public ResponseEntity updateDowithTask(@RequestBody UpdateDowithTaskReqDto requestBody) {
 
-    Long memberId =AuthUtil.getMemberId();
+    Long memberId = AuthUtil.getMemberId();
 
-    updateDowithTaskService.updateDowithTask(memberId, requestBody.toCommand());
+    updateDowithTaskService.updateDowithTaskWithRoutines(memberId, requestBody.toCommand());
 
     return ResponseUtil.createSuccessResponse();
 

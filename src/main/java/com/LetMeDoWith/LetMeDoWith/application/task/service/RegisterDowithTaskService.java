@@ -7,6 +7,8 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRout
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailService;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailService.RegisterAvailResult;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegisterDowithTaskService {
 
+  private final DowithTaskRegisterAvailService dowithTaskRegisterAvailService;
+
   private final DowithTaskRepository dowithTaskRepository;
 
   /**
@@ -30,7 +34,10 @@ public class RegisterDowithTaskService {
 
     Set<LocalDate> targetDateSet = command.getTargetDateSet();
 
-    if(!DowithTask.checkRegisterAvailable(dowithTaskRepository.getDowithTasks(memberId, targetDateSet), targetDateSet)) {
+    RegisterAvailResult registerAvailResult = dowithTaskRegisterAvailService.isRegisterAvail(
+        targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));
+
+    if(!registerAvailResult.isAvail()) {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 
@@ -43,9 +50,12 @@ public class RegisterDowithTaskService {
   @Transactional
   public List<DowithTask> registerDowithTaskWithRoutine(Long memberId, CreateDowithTaskWithRoutineCommand command) {
 
-    Set<LocalDate> tartgetDateSet = command.getTargetDateSet();
-    if(!DowithTask.checkRegisterAvailable(
-        dowithTaskRepository.getDowithTasks(memberId, tartgetDateSet), tartgetDateSet)) {
+    Set<LocalDate> targetDateSet = command.getTargetDateSet();
+
+    RegisterAvailResult registerAvailResult = dowithTaskRegisterAvailService.isRegisterAvail(
+        targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));
+
+    if(!registerAvailResult.isAvail()) {
       throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
     }
 

@@ -2,8 +2,8 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
-import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory;
-import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory.TaskCategoryCreationType;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory.TaskCategoryCreationType;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;

@@ -78,6 +78,7 @@ public class DowithTask extends BaseAuditEntity {
   @JoinColumn(name = "dowith_task_routine_id")
   private DowithTaskRoutine routine;
 
+
   public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
     DowithTask newDowithTask = DowithTask.builder()
         .memberId(memberId)
@@ -99,7 +100,7 @@ public class DowithTask extends BaseAuditEntity {
     targetDateSet.add(date);
 
     DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
-    targetDateSet.stream().toList().forEach(e -> {
+    targetDateSet.stream().sorted().toList().forEach(e -> {
       DowithTask newDowithTask = DowithTask.builder()
           .memberId(memberId)
           .taskCategoryId(taskCategoryId)
@@ -136,18 +137,6 @@ public class DowithTask extends BaseAuditEntity {
     }else {
       return Set.of();
     }
-  }
-
-  public static boolean checkRegisterAvailable(List<DowithTask> existingPerDay, Set<LocalDate> targetDates) {
-    Map<LocalDate, List<DowithTask>> dowithTaskMap = existingPerDay.stream()
-        .collect(Collectors.groupingBy(DowithTask::getDate));
-
-    List<LocalDate> notAvailableDates = new ArrayList<>();
-    targetDates.forEach(date -> {
-      if(dowithTaskMap.containsKey(date)) notAvailableDates.add(date);
-    });
-
-    return notAvailableDates.isEmpty(); // TODO - 두윗모드 사용가능 개수 추후 정의 - 아마 잔소리 수(다른 Aggregate)와 비교해야해서 Domain Service로 빠지지 않을까 싶음
   }
 
   public void confirm(String imageUrl) {

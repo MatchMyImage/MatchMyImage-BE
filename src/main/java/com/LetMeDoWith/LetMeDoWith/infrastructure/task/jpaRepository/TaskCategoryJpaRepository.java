@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
-import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory;
-import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory.TaskCategoryCreationType;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory.TaskCategoryCreationType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
