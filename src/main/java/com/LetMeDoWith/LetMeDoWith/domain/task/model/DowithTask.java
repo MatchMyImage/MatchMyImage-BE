@@ -1,7 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_ROUTINE_NOT_EXIST;
-
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -22,9 +20,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -94,9 +94,9 @@ public class DowithTask extends BaseAuditEntity {
   }
 
   public static List<DowithTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title,
-      LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
+      LocalDate date, LocalTime startTime, Set<LocalDate> routineDateSet) {
     List<DowithTask> result = new ArrayList<>();
-    Set<LocalDate> targetDateSet = new TreeSet<>(routineDates);
+    Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
     targetDateSet.add(date);
 
     DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
@@ -117,57 +117,42 @@ public class DowithTask extends BaseAuditEntity {
     return result;
   }
 
-  public static void updateWithRoutines(List<DowithTask> existings, String title,
-      Long taskCategoryId, LocalDate date,
-      LocalTime startTime, Set<LocalDate> routineDates) {
+  public static List<DowithTask> ofWithRoutine(List<DowithTask> dowithTasks, Long memberId,
+      Long taskCategoryId, String title,
+      LocalDate date, LocalTime startTime, Set<LocalDate> routineDateSet) {
 
-    Set<LocalDate> targetDateSet = new TreeSet<>(routineDates);
+    Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
     targetDateSet.add(date);
 
     DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
 
-    // targetDateSet에 없는 date들은 삭제
+    List<DowithTask> result = new ArrayList<>();
+    List<LocalDate> dowithTaskDates = dowithTasks.stream().map(DowithTask::getDate).toList();
 
-    // targetDateSet에는 있는데, existings에는 없는 애들은 생성
-
-    existings.forEach(task -> task.update(title, taskCategoryId, date, startTime));
-
-    if (!isRoutine()) {
-      throw new RestApiException(DOWITH_TASK_ROUTINE_NOT_EXIST);
-    }
-
-    this.routine.updateRoutineDates();
-
-  }
-
-  public void update(String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {
-
-    this.title = title;
-    this.taskCategoryId = taskCategoryId;
-    this.date = date;
-    this.startTime = startTime;
-
-    if (isRoutine()) {
-      routine = null;
-    }
-
-    validate();
-
-  }
-
-  private void validate() {
-    if (LocalDate.now().isEqual(date)) {
-      if (startTime.isAfter(LocalTime.now())) {
-        throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
+    for (LocalDate targetDate : targetDateSet) {
+      if (!dowithTaskDates.contains(targetDate)) {
+        result.add(DowithTask.builder()
+            .memberId(memberId)
+            .taskCategoryId(taskCategoryId)
+            .title(title)
+            .status(DowithTaskStatus.WAIT)
+            .routine(routine)
+            .date(targetDate)
+            .startTime(startTime)
+            .build());
       }
     }
-    if (date.isBefore(LocalDate.now())) {
-      throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+
+    for (DowithTask dowithTask : dowithTasks) {
+      dowithTask.updateContent(title, taskCategoryId, date, startTime);
+      dowithTask.updateRoutine(routine);
+      result.add(dowithTask);
     }
-    if (isRoutine()) {
-      routine.getRoutineDates().validate();
-    }
+
+    return dowithTasks.stream().sorted(Comparator.comparing(DowithTask::getDate))
+        .collect(Collectors.toList());
   }
+
 
   public boolean isRoutine() {
     return routine != null;
@@ -185,12 +170,66 @@ public class DowithTask extends BaseAuditEntity {
     return isRoutine() ? routine.getId() : null;
   }
 
+  public void update(String title, Long taskCategoryId, LocalDate date, LocalTime startTime,
+      Set<LocalDate> routineDateSet) {
+    Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
+    targetDateSet.add(date);
+
+    DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
+    this.updateContent(title, taskCategoryId, date, startTime);
+    this.updateRoutine(routine);
+  }
+
+  public void updateContent(String title, Long taskCategoryId, LocalDate date,
+      LocalTime startTime) {
+
+    this.title = title;
+    this.taskCategoryId = taskCategoryId;
+    this.date = date;
+    this.startTime = startTime;
+
+    validate();
+
+  }
+
+  public void updateRoutine(DowithTaskRoutine routine) {
+    this.routine = routine;
+  }
+
+  private void validate() {
+    if (LocalDate.now().isEqual(date)) {
+      if (startTime.isAfter(LocalTime.now())) {
+        throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
+      }
+    }
+    if (date.isBefore(LocalDate.now())) {
+      throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+    }
+    if (isRoutine()) {
+      routine.getRoutineDates().validate();
+    }
+  }
+
   public void confirm(String imageUrl) {
     confirms = DowithTaskConfirm.of(this, imageUrl);
     this.status = DowithTaskStatus.SUCCESS;
     this.successDateTime = LocalDateTime.now();
   }
 
+  public void complete() {
+    this.status = DowithTaskStatus.COMPLETE;
+    this.completeDateTime = LocalDateTime.now();
+  }
+
+  public DowithTaskRoutine deleteRoutine() {
+    if (isRoutine()) {
+      DowithTaskRoutine toDelete = this.routine;
+      this.routine = null;
+      return toDelete;
+    } else {
+      return null;
+    }
+  }
 //  public boolean isEqual(LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
 //    if(!this.date.equals(date)) return false;
 //    if(!this.startTime.equals(startTime)) return false;
@@ -201,9 +240,5 @@ public class DowithTask extends BaseAuditEntity {
 //    }
 //  }
 
-  public void complete() {
-    this.status = DowithTaskStatus.COMPLETE;
-    this.completeDateTime = LocalDateTime.now();
-  }
 
 }

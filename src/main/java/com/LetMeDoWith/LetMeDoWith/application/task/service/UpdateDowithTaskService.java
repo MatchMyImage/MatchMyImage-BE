@@ -9,6 +9,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepos
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskUpdateService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UpdateDowithTaskService {
+
+  private final DowithTaskUpdateService updateService;
 
   private final DowithTaskRepository dowithTaskRepository;
   private final TaskCategoryRepository taskCategoryRepository;
@@ -36,8 +39,8 @@ public class UpdateDowithTaskService {
     taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
         .orElseThrow(() -> new RestApiException(DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
 
-    dowithTask.update(command.title(), command.taskCategoryId(), command.date(),
-        command.startTime());
+    updateService.updateDowithTaskWithoutRoutine(dowithTask, command.title(),
+        command.taskCategoryId(), command.date(), command.startTime());
 
   }
 
@@ -65,9 +68,10 @@ public class UpdateDowithTaskService {
       DowithTask.updateWithRoutines(dowithTasks, command.title(), command.taskCategoryId(),
           command.date(),
           command.startTime(), command.routineDates());
+
     } else {
-      dowithTask.update(command.title(), command.taskCategoryId(), command.date(),
-          command.startTime());
+      updateService.updateDowithTaskWithoutRoutine(dowithTask, command.title(),
+          command.taskCategoryId(), command.date(), command.startTime());
     }
 
   }
