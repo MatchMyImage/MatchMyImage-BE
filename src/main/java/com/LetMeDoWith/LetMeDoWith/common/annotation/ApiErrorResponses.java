@@ -1,11 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.common.annotation;
 
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 
 /**
  * Swagger API Docs에서 각 Endpoint 별 응답 가능한 Error 목록을 표시하기 위한 Annotation.
@@ -15,5 +13,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiErrorResponses {
     
-    FailResponseStatus[] errors() default {};
+    ApiErrorResponse[] value() default {};
 }

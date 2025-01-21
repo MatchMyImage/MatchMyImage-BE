@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.config;
 
+import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -64,19 +65,26 @@ public class SwaggerConfig {
                 ApiResponses responses = operation.getResponses();
                 
                 // HTTP Status 별 Fail Status 그룹화
-                Map<HttpStatus, List<FailResponseStatus>> failStatusesByHttpStatus =
-                    Arrays.stream(errorResponses.errors())
-                          .collect(Collectors.groupingBy(FailResponseStatus::getHttpStatusCode));
+                Map<HttpStatus, List<ApiErrorResponse>> failStatusesByHttpStatus =
+                    Arrays.stream(errorResponses.value())
+                          .collect(Collectors.groupingBy(errorResponse -> errorResponse.status()
+                                                                                       .getHttpStatusCode()));
                 
                 // HTTP Status 별 응답 예시 생성
-                failStatusesByHttpStatus.forEach((httpStatus, failStatusList) -> {
+                failStatusesByHttpStatus.forEach((httpStatus, errorResponseList) -> {
                     Content content = new Content();
                     MediaType mediaType = new MediaType();
                     ApiResponse apiResponse = new ApiResponse();
                     
-                    failStatusList.forEach(failStatus -> {
-                        mediaType.addExamples(failStatus.getStatusCode(),
-                                              getResponseExample(failStatus));
+                    errorResponseList.forEach(errorResponse -> {
+                        String description =
+                            errorResponse.description().isEmpty()
+                                ? errorResponse.status()
+                                               .getMessage()
+                                : errorResponse.description();
+                        mediaType.addExamples(errorResponse.status().getStatusCode(),
+                                              getResponseExample(errorResponse.status(),
+                                                                 description));
                     });
                     
                     content.addMediaType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE,
@@ -97,16 +105,16 @@ public class SwaggerConfig {
      * @param status
      * @return Example 객체
      */
-    private Example getResponseExample(FailResponseStatus status) {
+    private Example getResponseExample(FailResponseStatus status, String description) {
         FailResponseDto response = FailResponseDto.builder()
                                                   .statusCode(status.getStatusCode())
-                                                  .message(status.getMessage())
+                                                  .message(description)
                                                   .build();
         
         return new Example()
             .value(response)
             .summary(status.getStatusCode() + " (" + status.getStatusName() + ")")
-            .description(status.getMessage());
+            .description(description);
     }
     
 }
