@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
+import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
@@ -13,7 +14,6 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateMemberTermAgreeReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,10 +44,10 @@ public class MemberController {
      */
     @Operation(summary = "회원가입", description = "회원가입을 완료하고 로그인합니다.")
     @ApiSuccessResponse(description = "회원가입 완료, 회원 정보를 업데이트하고 로그인을 완료함 (토큰 발급).")
-    @ApiErrorResponses(errors = {
-        FailResponseStatus.MEMBER_NOT_EXIST,
-        FailResponseStatus.DUPLICATE_NICKNAME,
-        FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "SIGNUP TOKEN 을 통해 얻은 memberId가 존재하지 않을 때 발생"),
+        @ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME),
+        @ApiErrorResponse(status = FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN, description = "ATK가 운영자에 의해 강제로 만료됨. 재시도 필요")
     })
     @PutMapping("")
     public ResponseEntity<ResponseDto<CreateTokenResDto>> completeSignup(
@@ -74,28 +74,6 @@ public class MemberController {
     }
     
     /**
-     * 멤버의 약관 동의 사항을 생성한다.
-     *
-     * @param memberId                    약관동의를 생성할 멤버
-     * @param createMemberTermAgreeReqDto 멤버의 약관 동의 사항. 필수 동의사항은 false일 수 없다.
-     * @return 성공 메세지
-     */
-    @Deprecated
-    @PostMapping("/{memberId}/agreement")
-    public ResponseEntity createMemberTermAgree(
-        @PathVariable Long memberId,
-        @RequestBody CreateMemberTermAgreeReqDto createMemberTermAgreeReqDto) {
-        
-        memberService.createMemberTermAgree(
-            createMemberTermAgreeReqDto.termsOfAgree(),
-            createMemberTermAgreeReqDto.privacy(),
-            createMemberTermAgreeReqDto.advertisement()
-        );
-        
-        return ResponseUtil.createSuccessResponse();
-    }
-    
-    /**
      * 닉네임의 중복 여부를 검증한다. 닉네임은 공백일 수 없다.
      *
      * @param nickname 중복 여부를 검증하려는 닉네임
@@ -103,7 +81,10 @@ public class MemberController {
      */
     @Operation(summary = "닉네임 중복 여부 검증", description = "닉네임 중복 여부를 검증합니다.")
     @ApiSuccessResponse(description = "사용 가능한 닉네임")
-    @ApiErrorResponses(errors = {FailResponseStatus.DUPLICATE_NICKNAME})
+    @ApiErrorResponses({
+        @ApiErrorResponse(
+            status = FailResponseStatus.DUPLICATE_NICKNAME)
+    })
     @PostMapping("/nickname")
     public ResponseEntity<ResponseDto<String>> checkNickname(@RequestBody String nickname) {
         if (memberService.isExistingNickname(nickname)) {
@@ -121,7 +102,9 @@ public class MemberController {
      */
     @Operation(summary = "탈퇴", description = "해당 회원을 탈퇴 처리 합니다.")
     @ApiSuccessResponse(description = "회원 탈퇴 완료")
-    @ApiErrorResponses(errors = {FailResponseStatus.MEMBER_NOT_EXIST})
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)
+    })
     @DeleteMapping("/{memberId}")
     public <T> ResponseEntity<ResponseDto<T>> withdrawMember(@PathVariable Long memberId) {
         memberService.withdrawMember(memberId);
