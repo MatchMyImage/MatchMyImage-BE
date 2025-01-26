@@ -4,7 +4,6 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,13 +21,12 @@ public class DowithTaskRoutineDates {
   private Set<LocalDate> dates;
 
   public static DowithTaskRoutineDates from(Set<LocalDate> dates) {
-    return new DowithTaskRoutineDates(dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
-  }
-
-  public void validate() {
     dates.forEach(date -> {
-      if(date.isBefore(LocalDate.now())) throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+      if (date.isBefore(LocalDate.now())) {
+        throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+      }
     });
+    return new DowithTaskRoutineDates(
+        dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
   }
-
 }

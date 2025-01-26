@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskWithRout
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskUpdateService;
 import java.util.List;
@@ -31,16 +32,17 @@ public class UpdateDowithTaskService {
    * @param command
    */
   @Transactional
-  public void updateDowithTask(Long memberId, UpdateDowithTaskCommand command) {
+  public void updateDowithTaskContents(Long memberId, UpdateDowithTaskCommand command) {
 
     DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
         .orElseThrow(() -> new RestApiException(DOWITH_TASK_NOT_EXIST));
 
-    taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
+    TaskCategory taskCategory = taskCategoryRepository.getActiveTaskCategory(
+            command.taskCategoryId(), memberId)
         .orElseThrow(() -> new RestApiException(DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
 
-    updateService.updateDowithTaskWithoutRoutine(dowithTask, command.title(),
-        command.taskCategoryId(), command.date(), command.startTime());
+    updateService.updateDowithTaskContents(dowithTask, command.title(),
+        taskCategory, command.date(), command.startTime());
 
   }
 
@@ -70,7 +72,7 @@ public class UpdateDowithTaskService {
           command.startTime(), command.routineDates());
 
     } else {
-      updateService.updateDowithTaskWithoutRoutine(dowithTask, command.title(),
+      updateService.updateDowithTaskContents(dowithTask, command.title(),
           command.taskCategoryId(), command.date(), command.startTime());
     }
 

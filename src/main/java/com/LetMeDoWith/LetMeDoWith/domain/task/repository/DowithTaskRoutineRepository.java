@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface DowithTaskRoutineRepository {
 
+  DowithTaskRoutine save(DowithTaskRoutine dowithTaskRoutine);
+
   void delete(DowithTaskRoutine dowithTaskRoutine);
 
   void delete(List<DowithTaskRoutine> dowithTaskRoutines);

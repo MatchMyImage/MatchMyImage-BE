@@ -153,9 +153,16 @@ public class DowithTask extends BaseAuditEntity {
         .collect(Collectors.toList());
   }
 
-
   public boolean isRoutine() {
     return routine != null;
+  }
+
+  public boolean isContentsEditable() {
+    LocalDateTime now = LocalDateTime.now();
+    if (now.toLocalDate().equals(this.date)) {
+      return !now.toLocalTime().isAfter(this.startTime);
+    }
+    return true;
   }
 
   public Set<LocalDate> getRoutineDates() {
@@ -171,11 +178,7 @@ public class DowithTask extends BaseAuditEntity {
   }
 
   public void update(String title, Long taskCategoryId, LocalDate date, LocalTime startTime,
-      Set<LocalDate> routineDateSet) {
-    Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
-    targetDateSet.add(date);
-
-    DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
+      DowithTaskRoutine routine) {
     this.updateContent(title, taskCategoryId, date, startTime);
     this.updateRoutine(routine);
   }
@@ -204,9 +207,6 @@ public class DowithTask extends BaseAuditEntity {
     }
     if (date.isBefore(LocalDate.now())) {
       throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
-    }
-    if (isRoutine()) {
-      routine.getRoutineDates().validate();
     }
   }
 

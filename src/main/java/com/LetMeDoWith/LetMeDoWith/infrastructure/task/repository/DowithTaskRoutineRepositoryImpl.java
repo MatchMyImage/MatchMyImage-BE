@@ -14,6 +14,11 @@ public class DowithTaskRoutineRepositoryImpl implements DowithTaskRoutineReposit
   private final DowithTaskRoutineJpaRepository jpaRepository;
 
   @Override
+  public DowithTaskRoutine save(DowithTaskRoutine dowithTaskRoutine) {
+    return jpaRepository.save(dowithTaskRoutine);
+  }
+
+  @Override
   public void delete(DowithTaskRoutine dowithTaskRoutine) {
     jpaRepository.delete(dowithTaskRoutine);
   }
