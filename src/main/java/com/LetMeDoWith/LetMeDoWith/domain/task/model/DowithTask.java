@@ -93,6 +93,22 @@ public class DowithTask extends BaseAuditEntity {
     return newDowithTask;
   }
 
+  public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date,
+      LocalTime startTime, DowithTaskRoutine routine) {
+    DowithTask newDowithTask = DowithTask.builder()
+        .memberId(memberId)
+        .taskCategoryId(taskCategoryId)
+        .title(title)
+        .status(DowithTaskStatus.WAIT)
+        .date(date)
+        .startTime(startTime)
+        .routine(null)
+        .confirms(null)
+        .build();
+    newDowithTask.validate();
+    return newDowithTask;
+  }
+
   public static List<DowithTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title,
       LocalDate date, LocalTime startTime, Set<LocalDate> routineDateSet) {
     List<DowithTask> result = new ArrayList<>();
@@ -151,6 +167,24 @@ public class DowithTask extends BaseAuditEntity {
 
     return dowithTasks.stream().sorted(Comparator.comparing(DowithTask::getDate))
         .collect(Collectors.toList());
+  }
+
+  public List<DowithTask> createRoutine(Set<LocalDate> routineDates) {
+
+    DowithTaskRoutine routine = DowithTaskRoutine.from(routineDates);
+    this.updateRoutine(routine);
+
+    List<DowithTask> result = new ArrayList<>();
+    result.add(this);
+    routineDates.stream().filter(date -> !date.isEqual(this.date))
+        .collect(Collectors.toSet()).forEach(date ->
+            result.add(
+                DowithTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime,
+                    routine))
+        );
+
+    return result;
+
   }
 
   public boolean isRoutine() {

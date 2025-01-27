@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,40 +65,34 @@ public class DowithTaskUpdateService {
 
   }
 
-  public void updateDowithTaskWithRoutine(DowithTask dowithTask, String title, Long taskCategoryId,
-      LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
-
-    Set<LocalDate> tartgetDateSet = new HashSet<>();
-    tartgetDateSet.addAll(routineDates);
-    tartgetDateSet.add(date);
+  public void updateDowithTaskRoutine(DowithTask dowithTask, Set<LocalDate> routineDates) {
 
     if (dowithTask.isRoutine()) {
 
-      List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(dowithTask.getRoutine());
+      Map<Boolean, List<DowithTask>> routineDowithTaskMap = new HashMap<>();
+      routineDowithTaskMap.put(true, new ArrayList<>());
+      routineDowithTaskMap.put(false, new ArrayList<>());
+      dowithTaskRepository.getDowithTasks(dowithTask.getRoutine()).forEach(task -> {
+        boolean isUpdateTarget = !task.getDate().isBefore(LocalDate.now());
+        routineDowithTaskMap.get(isUpdateTarget).add(task);
+      });
 
-      // 기존 DowithTask 초기화 및 삭제 대상 선별
-      // 기존 DowithTaskRoutine 삭제
-      DowithTaskRoutine toDeleteRoutine = null;
-      List<DowithTask> toDeleteTasks = new ArrayList<>();
-      for (DowithTask task : dowithTasks) {
-        toDeleteRoutine = task.deleteRoutine();
-        if (!tartgetDateSet.contains(task.getDate())) {
-          toDeleteTasks.add(task);
-          dowithTasks.remove(task);
-        }
-      }
-      dowithTaskRoutineRepository.delete(toDeleteRoutine);
-      dowithTaskRepository.delete(toDeleteTasks);
+      // 기존 routine 삭제
+      dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
 
-      // 새로운 Routine 연결된 DowithTask 리스트 생성
-      List<DowithTask> result = DowithTask.ofWithRoutine(dowithTasks,
-          dowithTask.getMemberId(), taskCategoryId, title, date, startTime, routineDates);
+      // 과거 Task 루틴 삭제
+      routineDowithTaskMap.get(false).forEach(DowithTask::deleteRoutine);
 
-      dowithTaskRepository.saveDowithTasks(result);
+      // 현재, 미래 루틴 변경
+      DowithTaskRoutine newRoutine = dowithTaskRoutineRepository.save(DowithTaskRoutine.from(
+          routineDowithTaskMap.get(true).stream().map(DowithTask::getDate)
+              .collect(Collectors.toSet())));
+      routineDowithTaskMap.get(true).forEach(task -> task.updateRoutine(newRoutine));
 
     } else {
 
-      dowithTask.update(title, taskCategoryId, date, startTime, routineDates);
+      dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
+      dowithTask.createRoutine(routineDates);
 
     }
 

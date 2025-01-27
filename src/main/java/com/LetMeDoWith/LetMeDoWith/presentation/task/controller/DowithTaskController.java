@@ -54,7 +54,7 @@ public class DowithTaskController {
 
     Long memberId = AuthUtil.getMemberId();
 
-    updateDowithTaskService.updateDowithTaskWithRoutines(memberId, requestBody.toCommand());
+    updateDowithTaskService.updateDowithTaskRoutine(memberId, requestBody.toCommand());
 
     return ResponseUtil.createSuccessResponse();
 
