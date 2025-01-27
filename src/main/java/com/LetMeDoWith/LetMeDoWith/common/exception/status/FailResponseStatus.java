@@ -112,7 +112,7 @@ public enum FailResponseStatus {
   DOWITH_TASK_ROUTINE_NOT_EXIST("DOWITH_TASK_ROUTINE_NOT_EXIST",
       "E245",
       HttpStatus.BAD_REQUEST,
-      "루틴이 존재하지 않습니다.");
+      "루틴이 존재하지 않습니다."),
 
   /**
    * 401 UnAuthorized Error 인증 관련 오류
