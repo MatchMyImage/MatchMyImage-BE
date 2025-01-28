@@ -235,7 +235,7 @@ public class DowithTask extends BaseAuditEntity {
 
   private void validate() {
     if (LocalDate.now().isEqual(date)) {
-      if (startTime.isAfter(LocalTime.now())) {
+      if (LocalTime.now().isAfter(startTime)) {
         throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
       }
     }
