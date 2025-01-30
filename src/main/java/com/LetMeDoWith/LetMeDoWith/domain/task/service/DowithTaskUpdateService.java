@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
 
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
@@ -22,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 @DomainService
 @RequiredArgsConstructor
 public class DowithTaskUpdateService {
+
+  private final DowithTaskRegisterAvailService registerAvailService;
 
   private final DowithTaskRepository dowithTaskRepository;
   private final DowithTaskRoutineRepository dowithTaskRoutineRepository;
@@ -62,11 +65,15 @@ public class DowithTaskUpdateService {
       dowithTask.updateContent(title, taskCategory.getId(), date, startTime);
 
     }
-    // TODO - 각 date 사용 유효한지 체크
 
   }
 
   public void updateDowithTaskRoutine(DowithTask dowithTask, Set<LocalDate> routineDates) {
+
+    if (!registerAvailService.isRegisterAvail(routineDates,
+        dowithTaskRepository.getDowithTasks(dowithTask.getMemberId(), routineDates)).isAvail()) {
+      throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
+    }
 
     if (dowithTask.isRoutine()) {
 
@@ -96,7 +103,6 @@ public class DowithTaskUpdateService {
       dowithTask.createRoutine(routineDates);
 
     }
-    // TODO - 각 date 사용 유효한지 체크
 
   }
 
