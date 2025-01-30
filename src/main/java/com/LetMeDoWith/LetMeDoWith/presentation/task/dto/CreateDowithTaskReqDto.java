@@ -2,20 +2,20 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRoutineCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.DowithTaskRoutineInfoVO;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.Data;
 
 public record CreateDowithTaskReqDto(
-    String title,
+    @NotBlank @Size(max = 40) String title,
     Long taskCategoryId,
-    LocalDateTime startDateTime,
-    Boolean isRoutine,
+    @NotNull LocalDateTime startDateTime,
+    @NotNull Boolean isRoutine,
     List<LocalDate> routineDates
 ) {
 

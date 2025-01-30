@@ -42,7 +42,7 @@ import org.springframework.util.LinkedMultiValueMap;
 @SpringBootTest
 @ActiveProfiles("local")
 @AutoConfigureMockMvc
-public class DowithTaskIntegrationTest {
+public class CreateDowithTaskIntegrationTest {
 
   static final String BASE_URL = "/api/v1/task/dowith";
   static final String CREATE_DOWITH_TASK = "";
@@ -79,16 +79,17 @@ public class DowithTaskIntegrationTest {
     memberAccessToken = accessTokenProvider.createAccessToken(member.getId());
   }
 
-  private ResultActions requestCreateDowithTask(AccessToken accessToken, CreateDowithTaskReqDto requestBody) throws Exception {
+  private ResultActions requestCreateDowithTask(AccessToken accessToken,
+      CreateDowithTaskReqDto requestBody) throws Exception {
     LinkedMultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
     headerMap.add("AUTHORIZATION", "Bearer" + accessToken.getToken());
 
     return mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + CREATE_DOWITH_TASK)
-        .headers(new HttpHeaders(headerMap))
-        .contentType(MediaType.APPLICATION_JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .characterEncoding(StandardCharsets.UTF_8)
-        .content(objectMapper.writeValueAsString(requestBody)))
+            .headers(new HttpHeaders(headerMap))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .characterEncoding(StandardCharsets.UTF_8)
+            .content(objectMapper.writeValueAsString(requestBody)))
         .andDo(System.out::println);
   }
 
@@ -97,7 +98,8 @@ public class DowithTaskIntegrationTest {
   void createDowithTask() throws Exception {
     // given
     LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
-    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime, Boolean.FALSE,
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
+        Boolean.FALSE,
         null);
 
     // when
@@ -106,11 +108,15 @@ public class DowithTaskIntegrationTest {
     // then
     resultActions.andExpect(status().is2xxSuccessful())
         .andExpect(jsonPath("$.data.dowithTaskDtos[0].id").exists())
-        .andExpect(jsonPath("$.data.dowithTaskDtos[0].taskCategoryId").value(requestBody.taskCategoryId()))
+        .andExpect(
+            jsonPath("$.data.dowithTaskDtos[0].taskCategoryId").value(requestBody.taskCategoryId()))
         .andExpect(jsonPath("$.data.dowithTaskDtos[0].title").value(requestBody.title()))
-        .andExpect(jsonPath("$.data.dowithTaskDtos[0].status").value(DowithTaskStatus.WAIT.getCode()))
-        .andExpect(jsonPath("$.data.dowithTaskDtos[0].date").value(DateTimeUtil.toFormatString(startDateTime.toLocalDate())))
-        .andExpect(jsonPath("$.data.dowithTaskDtos[0].startTime").value(DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
+        .andExpect(
+            jsonPath("$.data.dowithTaskDtos[0].status").value(DowithTaskStatus.WAIT.getCode()))
+        .andExpect(jsonPath("$.data.dowithTaskDtos[0].date").value(
+            DateTimeUtil.toFormatString(startDateTime.toLocalDate())))
+        .andExpect(jsonPath("$.data.dowithTaskDtos[0].startTime").value(
+            DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
         .andExpect(jsonPath("$.data.dowithTaskDtos[0].isRoutine").value(Boolean.FALSE))
         .andDo(System.out::println);
 
@@ -128,7 +134,8 @@ public class DowithTaskIntegrationTest {
     targetDates.add(routineDate1);
     targetDates.add(routineDate2);
     Collections.sort(targetDates);
-    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime, Boolean.TRUE,
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
+        Boolean.TRUE,
         List.of(routineDate1, routineDate2));
 
     // when
@@ -138,13 +145,20 @@ public class DowithTaskIntegrationTest {
     for (int i = 0; i < targetDates.size(); i++) {
       resultActions.andExpect(status().is2xxSuccessful())
           .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].id").exists())
-          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].taskCategoryId").value(requestBody.taskCategoryId()))
+          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].taskCategoryId").value(
+              requestBody.taskCategoryId()))
           .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].title").value(requestBody.title()))
-          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].status").value(DowithTaskStatus.WAIT.getCode()))
-          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].date").value(DateTimeUtil.toFormatString(targetDates.get(i))))
-          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].startTime").value(DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
+          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].status").value(
+              DowithTaskStatus.WAIT.getCode()))
+          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].date").value(
+              DateTimeUtil.toFormatString(targetDates.get(i))))
+          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].startTime").value(
+              DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
           .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].isRoutine").value(Boolean.TRUE))
-          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].routineDates").value(new IsEqual<>(List.of(DateTimeUtil.toFormatString(targetDates.get(0)), DateTimeUtil.toFormatString(targetDates.get(1)), DateTimeUtil.toFormatString(targetDates.get(2)))), List.class))
+          .andExpect(jsonPath("$.data.dowithTaskDtos[" + i + "].routineDates").value(new IsEqual<>(
+              List.of(DateTimeUtil.toFormatString(targetDates.get(0)),
+                  DateTimeUtil.toFormatString(targetDates.get(1)),
+                  DateTimeUtil.toFormatString(targetDates.get(2)))), List.class))
           .andDo(System.out::println);
     }
 

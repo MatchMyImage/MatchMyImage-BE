@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum FailResponseStatus {
 
-  NOT_FOUND("NOT_FOUND", "E510", HttpStatus.NOT_FOUND, "존재하지 않는 API Endpoint 입니다."),
-
   /**
    * 400 BAD Request Error 클라이언트 요청에 대한 오류
    */
@@ -154,7 +152,9 @@ public enum FailResponseStatus {
   CODE_ENUM_NOT_EXIST("CODE_ENUM_NOT_EXIST",
       "E401",
       HttpStatus.INTERNAL_SERVER_ERROR,
-      "코드에 대응되는 Enum이 존재하지 않습니다.");
+      "코드에 대응되는 Enum이 존재하지 않습니다."),
+
+  NOT_FOUND("NOT_FOUND", "E510", HttpStatus.NOT_FOUND, "존재하지 않는 API Endpoint 입니다.");
 
   private final String statusName;
   private final String statusCode;

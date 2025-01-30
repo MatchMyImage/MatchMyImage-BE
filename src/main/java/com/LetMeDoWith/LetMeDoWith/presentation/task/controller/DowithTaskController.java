@@ -9,6 +9,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class DowithTaskController {
 
   @Operation(summary = "두윗모드 테스트 생성", description = "두윗모드 테스크를 생성합니다.")
   @PostMapping("")
-  public ResponseEntity createDowithTask(@RequestBody CreateDowithTaskReqDto requestBody) {
+  public ResponseEntity createDowithTask(@Valid @RequestBody CreateDowithTaskReqDto requestBody) {
 
     Long memberId = AuthUtil.getMemberId();
 
