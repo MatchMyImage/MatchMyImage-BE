@@ -44,5 +44,4 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     this.routineDates = DowithTaskRoutineDates.from(dates);
   }
 
-
 }

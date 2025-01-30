@@ -2,6 +2,11 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
+import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
+import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -29,8 +34,28 @@ public class DowithTaskController {
   private final UpdateDowithTaskService updateDowithTaskService;
 
   @Operation(summary = "두윗모드 테스트 생성", description = "두윗모드 테스크를 생성합니다.")
+  @ApiSuccessResponse(description = "두윗모드 Task 생성 성공. 루틴인 경우 루틴으로 인해 생성된 두윗모드 Task를 포함하여 N개의 Obejct가 반환됩니다.")
+  @ApiErrorResponses({
+      @ApiErrorResponse(
+          status = FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST,
+          description = "두윗모드 Task 카테고리가 존재하지 않는 경우"
+      ),
+      @ApiErrorResponse(
+          status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
+          description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다."
+      ),
+      @ApiErrorResponse(
+          status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE,
+          description = "등록 두윗모드 Task의 일자(루틴포함)가 과거인 경우"
+      ),
+      @ApiErrorResponse(
+          status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME,
+          description = "등록 두윗모드 Task의 일자가 오늘 일자인데, 시작시간이 미래인 과거인 경우"
+      )
+  })
   @PostMapping("")
-  public ResponseEntity createDowithTask(@Valid @RequestBody CreateDowithTaskReqDto requestBody) {
+  public ResponseEntity<ResponseDto<CreateDowithTaskResDto>> createDowithTask(
+      @Valid @RequestBody CreateDowithTaskReqDto requestBody) {
 
     Long memberId = AuthUtil.getMemberId();
 

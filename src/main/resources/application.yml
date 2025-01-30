@@ -46,8 +46,8 @@ logging:
         type:
           descriptor:
             sql: trace
-    com.LetMeDoWith.LetMeDoWith: debug
-    root: debug
+    com.LetMeDoWith.LetMeDoWith: info
+    root: info
 
 ---
 spring:
