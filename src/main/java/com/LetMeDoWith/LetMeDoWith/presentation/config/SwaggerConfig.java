@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.config;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
+import com.LetMeDoWith.LetMeDoWith.common.dto.InvalidParamResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -81,9 +82,15 @@ public class SwaggerConfig {
                     ? errorResponse.status()
                     .getMessage()
                     : errorResponse.description();
-            mediaType.addExamples(errorResponse.status().getStatusCode(),
-                getResponseExample(errorResponse.status(),
-                    description));
+
+            if (errorResponse.status().equals(FailResponseStatus.INVALID_PARAM_ERROR)) {
+              mediaType.addExamples(errorResponse.status().getStatusCode(),
+                  getInvalidParamResponseExample(description));
+            } else {
+              mediaType.addExamples(errorResponse.status().getStatusCode(),
+                  getFailResponseExample(errorResponse.status(),
+                      description));
+            }
           });
 
           content.addMediaType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE,
@@ -104,7 +111,7 @@ public class SwaggerConfig {
    * @param status
    * @return Example 객체
    */
-  private Example getResponseExample(FailResponseStatus status, String description) {
+  private Example getFailResponseExample(FailResponseStatus status, String description) {
     FailResponseDto response = FailResponseDto.builder()
         .statusCode(status.getStatusCode())
         .message(status.getMessage())
@@ -113,6 +120,20 @@ public class SwaggerConfig {
     return new Example()
         .value(response)
         .summary(status.getStatusCode() + " (" + status.getStatusName() + ")")
+        .description(description);
+  }
+
+  private Example getInvalidParamResponseExample(String description) {
+    InvalidParamResponseDto response = InvalidParamResponseDto.builder()
+        .statusCode(FailResponseStatus.INVALID_PARAM_ERROR.getStatusCode())
+        .message(FailResponseStatus.INVALID_PARAM_ERROR.getMessage())
+        .invalidParams(Map.of("파라미터명", "invalid 사유"))
+        .build();
+
+    return new Example()
+        .value(response)
+        .summary(FailResponseStatus.INVALID_PARAM_ERROR.getStatusCode() + " ("
+            + FailResponseStatus.INVALID_PARAM_ERROR.getStatusName() + ")")
         .description(description);
   }
 

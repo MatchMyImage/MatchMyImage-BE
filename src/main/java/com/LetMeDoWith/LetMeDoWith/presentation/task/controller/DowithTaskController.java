@@ -33,9 +33,13 @@ public class DowithTaskController {
   private final RegisterDowithTaskService registerDowithTaskService;
   private final UpdateDowithTaskService updateDowithTaskService;
 
-  @Operation(summary = "두윗모드 테스트 생성", description = "두윗모드 테스크를 생성합니다.")
+  @Operation(summary = "두윗모드 테스트 생성", description = "두윗모드 테스크를 생성합니다. 루틴이 설정된 Task인 경우 isRoutine을 true로 세팅하고 rountineDates에 Task의 date 포함한 루틴 일자를 리스트로 넣어줍니다.")
   @ApiSuccessResponse(description = "두윗모드 Task 생성 성공. 루틴인 경우 루틴으로 인해 생성된 두윗모드 Task를 포함하여 N개의 Obejct가 반환됩니다.")
   @ApiErrorResponses({
+      @ApiErrorResponse(
+          status = FailResponseStatus.INVALID_PARAM_ERROR,
+          description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"
+      ),
       @ApiErrorResponse(
           status = FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST,
           description = "두윗모드 Task 카테고리가 존재하지 않는 경우"
