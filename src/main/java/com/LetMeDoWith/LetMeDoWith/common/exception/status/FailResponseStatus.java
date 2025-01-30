@@ -99,10 +99,6 @@ public enum FailResponseStatus {
       "E243",
       HttpStatus.BAD_REQUEST,
       "등록 불가한 시작시간입니다."),
-  DOWITH_TASK_NOT_AVAIL_DATE("DOWITH_TASK_NOT_AVAIL_START_TIME",
-      "E243",
-      HttpStatus.BAD_REQUEST,
-      "등록 불가한 날짜입니다."),
   DOWITH_TASK_TASK_CATEGORY_NOT_EXIST("DOWITH_TASK_TASK_CATEGORY_NOT_EXIST",
       "E244",
       HttpStatus.BAD_REQUEST,
@@ -111,6 +107,10 @@ public enum FailResponseStatus {
       "E245",
       HttpStatus.BAD_REQUEST,
       "루틴이 존재하지 않습니다."),
+  DOWITH_TASK_NOT_AVAIL_DATE("DOWITH_TASK_NOT_AVAIL_DATE",
+      "E246",
+      HttpStatus.BAD_REQUEST,
+      "등록 불가한 날짜입니다."),
 
   /**
    * 401 UnAuthorized Error 인증 관련 오류

@@ -37,9 +37,11 @@ public class RegisterDowithTaskService {
 
     Set<LocalDate> targetDateSet = command.getTargetDateSet();
 
-    taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
-        .orElseThrow(() -> new RestApiException(
-            FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+    if (command.taskCategoryId() != null) {
+      taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
+          .orElseThrow(() -> new RestApiException(
+              FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+    }
 
     RegisterAvailResult registerAvailResult = dowithTaskRegisterAvailService.isRegisterAvail(
         targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));

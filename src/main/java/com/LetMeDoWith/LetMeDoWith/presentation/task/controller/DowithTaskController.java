@@ -54,7 +54,7 @@ public class DowithTaskController {
       ),
       @ApiErrorResponse(
           status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME,
-          description = "등록 두윗모드 Task의 일자가 오늘 일자인데, 시작시간이 미래인 과거인 경우"
+          description = "등록 두윗모드 Task의 일자가 오늘 일자인데, 시작시간이 과거인 경우"
       )
   })
   @PostMapping("")

@@ -1,5 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -12,6 +16,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
@@ -19,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -94,11 +99,11 @@ public class CreateDowithTaskIntegrationTest {
   }
 
   @Test
-  @DisplayName("[SUCCESS] Dowith Task 등록")
+  @DisplayName("[SUCCESS] 성공 - 루틴이 없는 경우")
   void createDowithTask() throws Exception {
     // given
     LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
-    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", null, startDateTime,
         Boolean.FALSE,
         null);
 
@@ -123,20 +128,18 @@ public class CreateDowithTaskIntegrationTest {
   }
 
   @Test
-  @DisplayName("[SUCCESS] Dowith Task 등록")
+  @DisplayName("[SUCCESS] 성공 - 루틴이 있는 경우")
   void createDowithTaskWithRoutine() throws Exception {
     // given
     LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
     LocalDate routineDate1 = startDateTime.plusMonths(3).toLocalDate();
     LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
-    ArrayList<LocalDate> targetDates = new ArrayList<>();
-    targetDates.add(startDateTime.toLocalDate());
-    targetDates.add(routineDate1);
-    targetDates.add(routineDate2);
+    List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1,
+        routineDate2);
     Collections.sort(targetDates);
     CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
         Boolean.TRUE,
-        List.of(routineDate1, routineDate2));
+        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
 
     // when
     ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
@@ -162,6 +165,132 @@ public class CreateDowithTaskIntegrationTest {
           .andDo(System.out::println);
     }
 
-    // TODO - 등록 실패 케이스 - 화면설계서 구체화되면 작성
+  }
+
+  @Test
+  @DisplayName("[FAIL] Task 카테고리가 존재하지 않는 경우")
+  void createDowithTask_taskCategoryNotExist() throws Exception {
+    // given
+    LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 100L, startDateTime,
+        Boolean.FALSE,
+        null);
+
+    // when
+    ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
+
+    // then
+    resultActions.andExpect(status().is4xxClientError())
+        .andExpect(
+            jsonPath("$.statusCode").value(DOWITH_TASK_TASK_CATEGORY_NOT_EXIST.getStatusCode()))
+        .andDo(System.out::println);
+
+  }
+
+  @Test
+  @DisplayName("[FAIL] Task일자에 이미 Task 등록된 경우")
+  void createDowithTaskWithRoutine_taskCreateCountExceed1() throws Exception {
+    // given
+    LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
+    LocalDate routineDate1 = startDateTime.plusMonths(3).toLocalDate();
+    LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
+    List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1,
+        routineDate2);
+    Collections.sort(targetDates);
+
+    dowithTaskJpaRepository.saveAndFlush(
+        DowithTask.of(member.getId(), 1L, "이미 있던 Task", startDateTime.toLocalDate(),
+            startDateTime.toLocalTime()));
+
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
+        Boolean.TRUE,
+        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+
+    // when
+    ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
+
+    // then
+    resultActions.andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
+        .andDo(System.out::println);
+
+  }
+
+  @Test
+  @DisplayName("[FAIL] 루틴일자에 이미 Task 등록된 경우")
+  void createDowithTaskWithRoutine_taskCreateCountExceed2() throws Exception {
+    // given
+    LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
+    LocalDate routineDate1 = startDateTime.plusMonths(3).toLocalDate();
+    LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
+    List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1,
+        routineDate2);
+    Collections.sort(targetDates);
+
+    dowithTaskJpaRepository.saveAndFlush(
+        DowithTask.of(member.getId(), 1L, "이미 있던 Task", routineDate1, startDateTime.toLocalTime()));
+
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
+        Boolean.TRUE,
+        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+
+    // when
+    ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
+
+    // then
+    resultActions.andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
+        .andDo(System.out::println);
+
+  }
+
+  @Test
+  @DisplayName("[FAIL] 루틴일자에 과거가 포함된 경우")
+  void createDowithTaskWithRoutine_taskNotAvailDate() throws Exception {
+    // given
+    LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
+    LocalDate routineDate1 = startDateTime.minusMonths(1).toLocalDate();
+    LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
+    List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1,
+        routineDate2);
+    Collections.sort(targetDates);
+
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
+        Boolean.TRUE,
+        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+
+    // when
+    ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
+
+    // then
+    resultActions.andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_NOT_AVAIL_DATE.getStatusCode()))
+        .andDo(System.out::println);
+
+  }
+
+  @Test
+  @DisplayName("[FAIL] 일자가 오늘인데, 시작시간이 과거인 경우")
+  void createDowithTaskWithRoutine_taskNotAvailStartTime() throws Exception {
+    // given
+    LocalDateTime startDateTime = LocalDateTime.now().minusMinutes(10);
+    LocalDate routineDate1 = startDateTime.plusMonths(1).toLocalDate();
+    LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
+    List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1,
+        routineDate2);
+    Collections.sort(targetDates);
+
+    CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
+        Boolean.TRUE,
+        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+
+    // when
+    ResultActions resultActions = requestCreateDowithTask(memberAccessToken, requestBody);
+
+    // then
+    resultActions.andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_NOT_AVAIL_START_TIME.getStatusCode()))
+        .andDo(System.out::println);
+
   }
 }

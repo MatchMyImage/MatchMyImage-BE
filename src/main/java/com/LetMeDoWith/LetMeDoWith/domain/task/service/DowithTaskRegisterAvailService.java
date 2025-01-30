@@ -26,7 +26,7 @@ public class DowithTaskRegisterAvailService {
     boolean isAvail = true;
     List<LocalDate> notAvailDates = new ArrayList<>();
     for (Map.Entry<LocalDate, List<DowithTask>> entry : dowithTaskMap.entrySet()) {
-      if (entry.getValue().size() > DEFAULT_AVAIL_COUNT_PER_DAY) {
+      if (entry.getValue().size() >= DEFAULT_AVAIL_COUNT_PER_DAY) {
         isAvail = false;
         notAvailDates.add(entry.getKey());
       }
