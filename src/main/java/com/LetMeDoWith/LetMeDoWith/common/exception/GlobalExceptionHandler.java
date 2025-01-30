@@ -45,7 +45,6 @@ public class GlobalExceptionHandler {
     Map<String, String> invalidParamMap = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach((error) -> {
       String fieldName = ((FieldError) error).getField();
-      String validationType = error.getCode();
       String errorMessage = error.getDefaultMessage();
       invalidParamMap.put(fieldName, errorMessage);
     });
