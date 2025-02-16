@@ -216,24 +216,11 @@ public class DowithTask extends BaseAuditEntity {
     }
     
     /**
-     * 두윗모드Task 과거 루틴 일자 조회
+     * 수정가능한 두윗모드Task 루틴 일자 조회
      *
      * @return
      */
-    public Set<LocalDate> getPastRoutineDates() {
-        if (isRoutine()) {
-            return this.routine.getDatesBefore(LocalDate.now());
-        } else {
-            return Set.of();
-        }
-    }
-    
-    /**
-     * 두윗모드Task 현재, 미래 루틴 일자 조회
-     *
-     * @return
-     */
-    public Set<LocalDate> getCurrentAndFutureRoutineDates() {
+    public Set<LocalDate> getUpdateAvailRoutineDates() {
         if (isRoutine()) {
             return this.routine.getDatesAfterAndEqual(LocalDate.now());
         } else {

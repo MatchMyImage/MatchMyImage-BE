@@ -145,7 +145,7 @@ public class UpdateDowithTaskService {
     
     private Map<Boolean, List<DowithTask>> getUpdateAvailTaskMap(DowithTask dowithTask) {
         
-        Set<LocalDate> updateAvailDates = dowithTask.getCurrentAndFutureRoutineDates();
+        Set<LocalDate> updateAvailDates = dowithTask.getUpdateAvailRoutineDates();
         
         Map<Boolean, List<DowithTask>> updateAvailTaskMap = new HashMap<>();
         updateAvailTaskMap.put(true, new ArrayList<>());
