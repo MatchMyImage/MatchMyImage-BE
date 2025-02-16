@@ -60,30 +60,27 @@ public class UpdateDowithTaskService {
         }
         
         if (dowithTask.isRoutine()) {
-            // date 기준으로 업데이트 대상 판별
-            Map<Boolean, List<DowithTask>> routineDowithTaskMap = new HashMap<>();
-            routineDowithTaskMap.put(true, new ArrayList<>());
-            routineDowithTaskMap.put(false, new ArrayList<>());
-            dowithTaskRepository.getDowithTasks(dowithTask.getRoutine()).forEach(task -> {
-                boolean isUpdateTarget = !task.getDate().isBefore(LocalDate.now());
-                routineDowithTaskMap.get(isUpdateTarget).add(task);
-            });
+            
+            // updateAvailDates 기준으로 업데이트 대상 판별
+            Map<Boolean, List<DowithTask>> updateAvailTaskMap = getUpdateAvailTaskMap(dowithTask);
             
             // 기존 routine 삭제
             dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
             // 과거 Task 루틴 삭제
-            routineDowithTaskMap.get(false).forEach(DowithTask::deleteRoutine);
+            updateAvailTaskMap.get(false).forEach(DowithTask::deleteRoutine);
             
             // 현재, 미래 Task 콘텐츠 + 루틴 변경
             DowithTaskRoutine newRoutine = dowithTaskRoutineRepository.save(DowithTaskRoutine.from(
-                routineDowithTaskMap.get(true).stream().map(DowithTask::getDate)
-                                    .collect(Collectors.toSet())));
-            routineDowithTaskMap.get(true)
-                                .forEach(task -> task.update(command.title(),
-                                                             taskCategory.getId(),
-                                                             command.date(),
-                                                             command.startTime(),
-                                                             newRoutine));
+                updateAvailTaskMap.get(true)
+                                  .stream()
+                                  .map(DowithTask::getDate)
+                                  .collect(Collectors.toSet())));
+            updateAvailTaskMap.get(true)
+                              .forEach(task -> task.update(command.title(),
+                                                           taskCategory.getId(),
+                                                           command.date(),
+                                                           command.startTime(),
+                                                           newRoutine));
             
         } else {
             
@@ -120,25 +117,22 @@ public class UpdateDowithTaskService {
         
         if (dowithTask.isRoutine()) {
             
-            Map<Boolean, List<DowithTask>> routineDowithTaskMap = new HashMap<>();
-            routineDowithTaskMap.put(true, new ArrayList<>());
-            routineDowithTaskMap.put(false, new ArrayList<>());
-            dowithTaskRepository.getDowithTasks(dowithTask.getRoutine()).forEach(task -> {
-                boolean isUpdateTarget = !task.getDate().isBefore(LocalDate.now());
-                routineDowithTaskMap.get(isUpdateTarget).add(task);
-            });
+            // updateAvailDates 기준으로 업데이트 대상 판별
+            Map<Boolean, List<DowithTask>> updateAvailTaskMap = getUpdateAvailTaskMap(dowithTask);
             
             // 기존 routine 삭제
             dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
             
             // 과거 Task 루틴 삭제
-            routineDowithTaskMap.get(false).forEach(DowithTask::deleteRoutine);
+            updateAvailTaskMap.get(false).forEach(DowithTask::deleteRoutine);
             
             // 현재, 미래 루틴 변경
             DowithTaskRoutine newRoutine = dowithTaskRoutineRepository.save(DowithTaskRoutine.from(
-                routineDowithTaskMap.get(true).stream().map(DowithTask::getDate)
-                                    .collect(Collectors.toSet())));
-            routineDowithTaskMap.get(true).forEach(task -> task.updateRoutine(newRoutine));
+                updateAvailTaskMap.get(true)
+                                  .stream()
+                                  .map(DowithTask::getDate)
+                                  .collect(Collectors.toSet())));
+            updateAvailTaskMap.get(true).forEach(task -> task.updateRoutine(newRoutine));
             
         } else {
             
@@ -147,6 +141,22 @@ public class UpdateDowithTaskService {
             
         }
         
+    }
+    
+    private Map<Boolean, List<DowithTask>> getUpdateAvailTaskMap(DowithTask dowithTask) {
+        
+        Set<LocalDate> updateAvailDates = dowithTask.getCurrentAndFutureRoutineDates();
+        
+        Map<Boolean, List<DowithTask>> updateAvailTaskMap = new HashMap<>();
+        updateAvailTaskMap.put(true, new ArrayList<>());
+        updateAvailTaskMap.put(false, new ArrayList<>());
+        dowithTaskRepository.getDowithTasks(dowithTask.getRoutine())
+                            .forEach(task ->
+                                         updateAvailTaskMap.get(updateAvailDates.contains(task.getDate()))
+                                                           .add(task)
+                            );
+        
+        return updateAvailTaskMap;
     }
     
 }

@@ -213,6 +213,22 @@ public class DowithTask extends BaseAuditEntity {
         }
     }
     
+    public Set<LocalDate> getPastRoutineDates() {
+        if (isRoutine()) {
+            return this.routine.getDatesBefore(LocalDate.now());
+        } else {
+            return Set.of();
+        }
+    }
+    
+    public Set<LocalDate> getCurrentAndFutureRoutineDates() {
+        if (isRoutine()) {
+            return this.routine.getDatesAfterAndEqual(LocalDate.now());
+        } else {
+            return Set.of();
+        }
+    }
+    
     public Long getRoutineId() {
         return isRoutine() ? routine.getId() : null;
     }
