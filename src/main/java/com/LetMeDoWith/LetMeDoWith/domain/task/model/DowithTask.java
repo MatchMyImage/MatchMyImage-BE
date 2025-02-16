@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -134,43 +133,12 @@ public class DowithTask extends BaseAuditEntity {
         return result;
     }
     
-    public static List<DowithTask> ofWithRoutine(List<DowithTask> dowithTasks, Long memberId,
-                                                 Long taskCategoryId, String title,
-                                                 LocalDate date, LocalTime startTime,
-                                                 Set<LocalDate> routineDateSet) {
-        
-        Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
-        targetDateSet.add(date);
-        
-        DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
-        
-        List<DowithTask> result = new ArrayList<>();
-        List<LocalDate> dowithTaskDates = dowithTasks.stream().map(DowithTask::getDate).toList();
-        
-        for (LocalDate targetDate : targetDateSet) {
-            if (!dowithTaskDates.contains(targetDate)) {
-                result.add(DowithTask.builder()
-                                     .memberId(memberId)
-                                     .taskCategoryId(taskCategoryId)
-                                     .title(title)
-                                     .status(DowithTaskStatus.WAIT)
-                                     .routine(routine)
-                                     .date(targetDate)
-                                     .startTime(startTime)
-                                     .build());
-            }
-        }
-        
-        for (DowithTask dowithTask : dowithTasks) {
-            dowithTask.updateContent(title, taskCategoryId, date, startTime);
-            dowithTask.updateRoutine(routine);
-            result.add(dowithTask);
-        }
-        
-        return dowithTasks.stream().sorted(Comparator.comparing(DowithTask::getDate))
-                          .collect(Collectors.toList());
-    }
-    
+    /**
+     * 두윗모드Task 루틴 생성
+     *
+     * @param routineDates 루틴대상일자
+     * @return 루틴 생성된 DowithTask domain entity 리스트
+     */
     public List<DowithTask> createRoutine(Set<LocalDate> routineDates) {
         
         DowithTaskRoutine routine = DowithTaskRoutine.from(routineDates);
@@ -193,10 +161,39 @@ public class DowithTask extends BaseAuditEntity {
         
     }
     
+    /**
+     * 두윗모드Task 인증
+     *
+     * @param imageUrl 인증이미지URl
+     */
+    public void confirm(String imageUrl) {
+        confirms = DowithTaskConfirm.of(this, imageUrl);
+        this.status = DowithTaskStatus.SUCCESS;
+        this.successDateTime = LocalDateTime.now();
+    }
+    
+    /**
+     * 두윗모드Task 완료
+     */
+    public void complete() {
+        this.status = DowithTaskStatus.COMPLETE;
+        this.completeDateTime = LocalDateTime.now();
+    }
+    
+    /**
+     * 두윗모드Task 루틴 여부
+     *
+     * @return
+     */
     public boolean isRoutine() {
         return routine != null;
     }
     
+    /**
+     * 두윗모드Task 내용 수정 가능 여부
+     *
+     * @return
+     */
     public boolean isContentsEditable() {
         LocalDateTime now = LocalDateTime.now();
         if (now.toLocalDate().equals(this.date)) {
@@ -205,6 +202,11 @@ public class DowithTask extends BaseAuditEntity {
         return true;
     }
     
+    /**
+     * 두윗모드Task 루틴 일자 조회
+     *
+     * @return
+     */
     public Set<LocalDate> getRoutineDates() {
         if (isRoutine()) {
             return this.routine.getRoutineDates().getDates();
@@ -213,6 +215,11 @@ public class DowithTask extends BaseAuditEntity {
         }
     }
     
+    /**
+     * 두윗모드Task 과거 루틴 일자 조회
+     *
+     * @return
+     */
     public Set<LocalDate> getPastRoutineDates() {
         if (isRoutine()) {
             return this.routine.getDatesBefore(LocalDate.now());
@@ -221,6 +228,11 @@ public class DowithTask extends BaseAuditEntity {
         }
     }
     
+    /**
+     * 두윗모드Task 현재, 미래 루틴 일자 조회
+     *
+     * @return
+     */
     public Set<LocalDate> getCurrentAndFutureRoutineDates() {
         if (isRoutine()) {
             return this.routine.getDatesAfterAndEqual(LocalDate.now());
@@ -255,6 +267,21 @@ public class DowithTask extends BaseAuditEntity {
         this.routine = routine;
     }
     
+    /**
+     * 두윗모드Task 루틴 삭제
+     *
+     * @return 물리 삭제할 DowithTaskRoutine domain entity
+     */
+    public DowithTaskRoutine deleteRoutine() {
+        if (isRoutine()) {
+            DowithTaskRoutine toDelete = this.routine;
+            this.routine = null;
+            return toDelete;
+        } else {
+            return null;
+        }
+    }
+    
     private void validate() {
         if (LocalDate.now().isEqual(date)) {
             if (LocalTime.now().isAfter(startTime)) {
@@ -263,32 +290,6 @@ public class DowithTask extends BaseAuditEntity {
         }
         if (date.isBefore(LocalDate.now())) {
             throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
-        }
-    }
-    
-    /**
-     * dlswmd
-     *
-     * @param imageUrl
-     */
-    public void confirm(String imageUrl) {
-        confirms = DowithTaskConfirm.of(this, imageUrl);
-        this.status = DowithTaskStatus.SUCCESS;
-        this.successDateTime = LocalDateTime.now();
-    }
-    
-    public void complete() {
-        this.status = DowithTaskStatus.COMPLETE;
-        this.completeDateTime = LocalDateTime.now();
-    }
-    
-    public DowithTaskRoutine deleteRoutine() {
-        if (isRoutine()) {
-            DowithTaskRoutine toDelete = this.routine;
-            this.routine = null;
-            return toDelete;
-        } else {
-            return null;
         }
     }
 //  public boolean isEqual(LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
