@@ -1,15 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.DowithTaskRoutineInfoVO;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskWithRoutinesCommand;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Builder;
-import lombok.Data;
 
 @Builder
 public record UpdateDowithTaskReqDto(
@@ -21,8 +17,8 @@ public record UpdateDowithTaskReqDto(
     List<LocalDate> routineDates
 ) {
 
-  public UpdateDowithTaskCommand toCommand() {
-    return UpdateDowithTaskCommand.builder()
+  public UpdateDowithTaskWithRoutinesCommand toCommand() {
+    return UpdateDowithTaskWithRoutinesCommand.builder()
         .title(this.title)
         .taskCategoryId(this.taskCategoryId)
         .date(this.date)

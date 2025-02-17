@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory;
-import com.LetMeDoWith.LetMeDoWith.domain.task.TaskCategory.TaskCategoryCreationType;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory.TaskCategoryCreationType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import java.util.List;
@@ -21,7 +21,7 @@ public record GetAllTaskCategoryRes(
 ) {
     
     // todo: 단일 객체 형태 말고 List 형태로 수정할 것.
-    
+
     public static GetAllTaskCategoryRes from(TaskCategory taskCategory) {
         return new GetAllTaskCategoryRes(taskCategory.getId(),
                                          taskCategory.getTitle(),

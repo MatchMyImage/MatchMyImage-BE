@@ -1,7 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.repository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskConfirmJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskRoutineJpaRepository;
@@ -35,8 +36,9 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
     return dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, dates);
   }
 
+
   @Override
-  public List<DowithTask> getDowithTasks(Long memberId, Long DowithTaskRoutineId) {
+  public List<DowithTask> getDowithTasks(DowithTaskRoutine dowithTaskRoutine) {
     return null; // TODO - 구현 필요
   }
 
@@ -48,5 +50,10 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
   @Override
   public List<DowithTask> saveDowithTasks(List<DowithTask> dowithTasks) {
     return dowithTaskJpaRepository.saveAll(dowithTasks);
+  }
+
+  @Override
+  public void delete(List<DowithTask> dowithTasks) {
+    dowithTaskJpaRepository.deleteAll(dowithTasks);
   }
 }

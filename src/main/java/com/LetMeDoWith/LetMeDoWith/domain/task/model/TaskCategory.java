@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.task;
+package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;

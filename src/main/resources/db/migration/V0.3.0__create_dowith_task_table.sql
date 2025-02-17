@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS dowith_task
     id                      BIGINT AUTO_INCREMENT NOT NULL,
     member_id               BIGINT                NOT NULL,
     dowith_task_routine_id  BIGINT                NULL,
-    task_category_id        BIGINT                NOT NULL,
+    task_category_id        BIGINT                NULL,
     title                   VARCHAR(255)          NOT NULL,
     status                  VARCHAR(20)           NOT NULL,
     date                    date                  NOT NULL,
